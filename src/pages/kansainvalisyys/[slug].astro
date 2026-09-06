@@ -200,6 +200,28 @@ const hasCards = cardsList.length > 0;
         </div>
       )}
 
+      {/* Main Banner Image if uploaded in Sanity */}
+      {page?.mainImage && (
+        <div class="group relative rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white hover:shadow-xl transition-all">
+          <a href={urlFor(page.mainImage)?.width(1920).quality(95).url()} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden bg-slate-50 flex flex-col justify-center">
+            <img
+              src={urlFor(page.mainImage)?.width(1920).quality(95).url()}
+              alt={page.mainImage.alt || page.mainImage.caption || page?.title || 'Sivun kuva'}
+              loading="eager"
+              class="w-full h-auto object-contain rounded-t-3xl group-hover:scale-[1.01] transition-transform duration-300 max-h-[700px]"
+            />
+            <div class="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-slate-900/85 text-white text-xs font-semibold backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 shadow-md">
+              <span>Avaa kuva täysikokoisena / Suurenna 🔍</span>
+            </div>
+          </a>
+          {page.mainImage.caption && (
+            <div class="p-4 bg-white border-t border-slate-100 text-sm text-slate-700 font-semibold text-center">
+              {page.mainImage.caption}
+            </div>
+          )}
+        </div>
+      )}
+
       <!-- CARDS GRID LAYOUT: Unified side-by-side 2-column sections (Text on Left, Image/Video on Right) -->
       {isCardsLayout ? (
         <div class="space-y-8">

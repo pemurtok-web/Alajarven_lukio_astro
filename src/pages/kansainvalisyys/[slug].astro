@@ -20,7 +20,7 @@ const { slug } = Astro.params;
 const page = await getPageBySlug(slug as string);
 
 const anchors = extractPageAnchors(page);
-const isCardsLayout = page?.layoutStyle === 'cards' || slug === 'jiyu-gakuen' || slug === 'mukawa';
+const isCardsLayout = page?.layoutStyle ? page.layoutStyle === 'cards' : (slug === 'jiyu-gakuen' || slug === 'mukawa');
 const bodyCards = page?.body ? splitBodyIntoCards(page.body) : [];
 
 const defaultDetails: Record<string, { title: string; subtitle: string; lead?: string; contentHTML?: string; sections?: any[]; gallery?: any[]; cards?: any[] }> = {

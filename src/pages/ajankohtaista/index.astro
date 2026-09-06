@@ -5,6 +5,8 @@ import Footer from '../../components/Footer.astro';
 import { getAllNews, urlFor } from '../../lib/sanity';
 import { Newspaper, Calendar, ArrowRight, ChevronRight, Search } from 'lucide-astro';
 
+export const prerender = false;
+
 const allPosts = await getAllNews();
 ---
 

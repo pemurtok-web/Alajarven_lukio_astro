@@ -8,7 +8,7 @@ export const sanityClient = projectId
   ? createClient({
       projectId,
       dataset,
-      useCdn: import.meta.env.PROD,
+      useCdn: false,
       apiVersion: '2024-01-01',
     })
   : null;

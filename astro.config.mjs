@@ -11,10 +11,12 @@ export default defineConfig({
     sanity({
       projectId: '8idyoy2x',
       dataset: 'production',
-      useCdn: process.env.NODE_ENV === 'production',
-
+      useCdn: false,
       apiVersion: '2024-01-01',
       studioBasePath: '/studio',
+      stega: {
+        studioUrl: '/studio',
+      },
     }),
   ],
 });

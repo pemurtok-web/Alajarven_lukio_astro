@@ -23,11 +23,10 @@ export default defineConfig({
   title: 'Alajärven lukio - Sisällönhallinta',
   projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID || '8idyoy2x',
   dataset: import.meta.env.PUBLIC_SANITY_DATASET || 'production',
-  basePath: process.env.NODE_ENV === 'development' ? '/' : '/studio',
   plugins: [
     presentationTool({
       previewUrl: {
-        origin: process.env.NODE_ENV === 'development' ? 'http://localhost:4324' : 'https://alajarven-lukio-dev.netlify.app',
+        preview: '/',
       },
       title: '👁️ Reaaliaikainen esikatselu',
     }),

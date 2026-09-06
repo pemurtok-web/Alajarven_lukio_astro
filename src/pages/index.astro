@@ -9,8 +9,6 @@ import EventCalendar from '../components/EventCalendar.astro';
 import { Award, BookOpen, Compass, CheckCircle2, ArrowRight } from 'lucide-astro';
 import { getHomepage, urlFor } from '../lib/sanity';
 
-export const prerender = false;
-
 const homepage = await getHomepage();
 const introImgUrl = homepage.introImage ? urlFor(homepage.introImage)?.width(800).url() : null;
 ---

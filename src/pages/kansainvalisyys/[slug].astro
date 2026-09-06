@@ -8,7 +8,13 @@ import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 import { getPageBySlug, urlFor, extractPageAnchors, splitBodyIntoCards } from '../../lib/sanity';
 import { Globe, ChevronRight, Compass, Heart, Users, Image as ImageIcon, ExternalLink, FileText } from 'lucide-astro';
 
-export const prerender = false;
+export function getStaticPaths() {
+  return [
+    { params: { slug: 'jiyu-gakuen' } },
+    { params: { slug: 'mukawa' } },
+    { params: { slug: 'muu' } },
+  ];
+}
 
 const { slug } = Astro.params;
 const page = await getPageBySlug(slug as string);

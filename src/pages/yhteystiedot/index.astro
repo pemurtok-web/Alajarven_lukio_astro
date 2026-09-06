@@ -7,8 +7,6 @@ import PortableText from '../../components/PortableText.astro';
 import { getPageBySlug } from '../../lib/sanity';
 import { MapPin, Phone, Mail, User, Clock, Send, Trophy, GraduationCap, HeartHandshake, ShieldCheck } from 'lucide-astro';
 
-export const prerender = false;
-
 const page = await getPageBySlug('yhteystiedot');
 
 const anchors = [

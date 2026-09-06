@@ -1,6 +1,5 @@
 import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
-import { presentationTool } from 'sanity/presentation';
 import { schemaTypes } from './sanity/schemas';
 
 const pageTemplates = [
@@ -24,12 +23,6 @@ export default defineConfig({
   projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID || '8idyoy2x',
   dataset: import.meta.env.PUBLIC_SANITY_DATASET || 'production',
   plugins: [
-    presentationTool({
-      previewUrl: {
-        preview: '/',
-      },
-      title: '👁️ Reaaliaikainen esikatselu',
-    }),
     structureTool({
       structure: (S) =>
         S.list()

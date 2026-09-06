@@ -11,3 +11,10 @@
   from = "/studio/*"
   to = "/studio/index.html"
   status = 200
+
+# Prevent search engine indexing on Netlify (Noindex)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+

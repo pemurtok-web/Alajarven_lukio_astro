@@ -6,12 +6,7 @@ import PortableText from '../../components/PortableText.astro';
 import { getNewsBySlug, getAllNews, urlFor } from '../../lib/sanity';
 import { Calendar, ChevronRight, ArrowLeft, Share2, Tag } from 'lucide-astro';
 
-export async function getStaticPaths() {
-  const posts = await getAllNews();
-  return posts.map((post) => ({
-    params: { slug: post.slug.current },
-  }));
-}
+export const prerender = false;
 
 const { slug } = Astro.params;
 const post = await getNewsBySlug(slug as string);

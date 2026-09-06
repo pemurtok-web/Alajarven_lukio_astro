@@ -7,18 +7,7 @@ import PortableText from '../../components/PortableText.astro';
 import { getPageBySlug, urlFor, extractPageAnchors, splitBodyIntoCards } from '../../lib/sanity';
 import { BookOpen, ChevronRight, FileText, Calendar, ShieldCheck, HeartHandshake, Award, Image as ImageIcon, ExternalLink } from 'lucide-astro';
 
-export function getStaticPaths() {
-  return [
-    { params: { slug: 'opinto-opas' } },
-    { params: { slug: 'opintotarjotin' } },
-    { params: { slug: 'tyoaika' } },
-    { params: { slug: 'opinto-ohjaus' } },
-    { params: { slug: 'opiskeluhuolto' } },
-    { params: { slug: 'yo-kirjoitukset' } },
-    { params: { slug: 'lomakkeet' } },
-    { params: { slug: 'kodin-ja-koulun-yhteistyo' } },
-  ];
-}
+export const prerender = false;
 
 const { slug } = Astro.params;
 const page = await getPageBySlug(slug as string);

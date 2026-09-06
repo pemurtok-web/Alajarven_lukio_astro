@@ -14,9 +14,6 @@ export default defineConfig({
       useCdn: false,
       apiVersion: '2024-01-01',
       studioBasePath: '/studio',
-      stega: {
-        studioUrl: '/studio',
-      },
     }),
   ],
 });

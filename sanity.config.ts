@@ -1,5 +1,6 @@
 import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
+import { presentationTool } from 'sanity/presentation';
 import { schemaTypes } from './sanity/schemas';
 
 const pageTemplates = [
@@ -24,6 +25,12 @@ export default defineConfig({
   dataset: import.meta.env.PUBLIC_SANITY_DATASET || 'production',
   basePath: process.env.NODE_ENV === 'development' ? '/' : '/studio',
   plugins: [
+    presentationTool({
+      previewUrl: {
+        origin: process.env.NODE_ENV === 'development' ? 'http://localhost:4324' : 'https://alajarven-lukio-dev.netlify.app',
+      },
+      title: '👁️ Reaaliaikainen esikatselu',
+    }),
     structureTool({
       structure: (S) =>
         S.list()

@@ -4,28 +4,32 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import LongPageNav from '../../components/LongPageNav.astro';
 import PortableText from '../../components/PortableText.astro';
-import { getPageBySlug } from '../../lib/sanity';
-import { GraduationCap, CheckCircle, Sparkles, BookOpen, Globe, Award, HelpCircle, ArrowRight } from 'lucide-astro';
+import { getPageBySlug, urlFor, extractPageAnchors } from '../../lib/sanity';
+import { GraduationCap, CheckCircle, Sparkles, BookOpen, Globe, Award, HelpCircle, ArrowRight, FileText } from 'lucide-astro';
 
 const page = await getPageBySlug('hakijalle');
 
-const anchors = [
+const dynamicAnchors = extractPageAnchors(page);
+const defaultAnchors = [
   { id: 'miksi-alajarven-lukio', label: '1. Miksi Alajärven lukio?' },
   { id: 'valintaperusteet', label: '2. Valintaperusteet' },
   { id: 'hakeminen', label: '3. Kuinka haetaan (Yhteishaku)' },
   { id: 'yhdistelmaopinnot', label: '4. Kaksoistutkinto & yhdistelmäopinnot' },
   { id: 'lukiolinjat', label: '5. Opintotarjonta & linjat' },
 ];
+
+const anchors = dynamicAnchors.length > 0 ? dynamicAnchors : defaultAnchors;
+const hasDynamicSections = page?.sections && page.sections.length > 0;
 ---
 
 <Layout title={`${page?.title || 'Hakijalle'} | Alajärven lukio`}>
   <Header />
 
   <main class="py-12 bg-slate-50">
-    <div class="max-w-6xl mx-auto px-4 sm:px-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-8 space-y-8">
       
       <!-- Page Hero Header -->
-      <div class="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-alajarvi-700 text-white shadow-2xl mb-8 relative overflow-hidden">
+      <div class="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-alajarvi-700 text-white shadow-2xl relative overflow-hidden">
         <div class="relative z-10 space-y-4 max-w-3xl">
           <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-xs font-semibold text-sky-200 border border-white/20">
             <GraduationCap class="w-4 h-4 text-amber-300" />
@@ -35,13 +39,35 @@ const anchors = [
             {page?.title || 'Tervetuloa Alajärven lukioon!'}
           </h1>
           <p class="text-lg text-slate-200 leading-relaxed font-normal">
-            Alajärven lukio on turvallinen, kannustava ja korkeatasoinen lukio Etelä-Pohjanmaalla. Tältä sivulta löydät kaiken tarvittavan tiedon yhteishakuun ja opintojen aloittamiseen.
+            {page?.lead || 'Alajärven lukio on turvallinen, kannustava ja korkeatasoinen lukio Etelä-Pohjanmaalla. Tältä sivulta löydät kaiken tarvittavan tiedon yhteishakuun ja opintojen aloittamiseen.'}
           </p>
         </div>
       </div>
 
-      {page?.body && (
-        <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200/80 mb-12">
+      <!-- Main Banner Image if uploaded in Sanity -->
+      {page?.mainImage && (
+        <div class="group relative rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white hover:shadow-xl transition-all">
+          <a href={urlFor(page.mainImage)?.width(1920).quality(95).url()} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden bg-slate-50 flex flex-col justify-center">
+            <img
+              src={urlFor(page.mainImage)?.width(1920).quality(95).url()}
+              alt={page.mainImage.alt || page.mainImage.caption || page?.title || 'Hakijalle sivun kuva'}
+              loading="eager"
+              class="w-full h-auto object-contain rounded-t-3xl group-hover:scale-[1.01] transition-transform duration-300 max-h-[700px]"
+            />
+            <div class="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-slate-900/85 text-white text-xs font-semibold backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 shadow-md">
+              <span>Avaa kuva täysikokoisena / Suurenna 🔍</span>
+            </div>
+          </a>
+          {page.mainImage.caption && (
+            <div class="p-4 bg-white border-t border-slate-100 text-sm text-slate-700 font-semibold text-center">
+              {page.mainImage.caption}
+            </div>
+          )}
+        </div>
+      )}
+
+      {page?.body && page.body.length > 0 && (
+        <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200/80">
           <PortableText value={page.body} />
         </div>
       )}
@@ -50,150 +76,235 @@ const anchors = [
       <LongPageNav anchors={anchors} title="Hakijalle - Sisällysluettelo" />
 
       <!-- Long Page Sections -->
-      <div class="space-y-12">
-        
-        <!-- Section 1: Miksi Alajärven lukio -->
-        <section id="miksi-alajarven-lukio" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
-              1
-            </div>
-            <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
-              Miksi valita juuri Alajärven lukio?
-            </h2>
-          </div>
+      {hasDynamicSections ? (
+        <div class="space-y-8">
+          {page.sections.map((sec: any, idx: number) => {
+            const secId = sec.anchorId || `miksi-alajarven-lukio`;
+            const secImage = sec.image;
+            const imageUrl = secImage?.src || (secImage?.asset ? urlFor(secImage)?.width(1600).quality(95).url() : null);
 
-          <p class="text-slate-700 leading-relaxed text-base">
-            Alajärven lukio tunnetaan hyvästä yhteishengestään, omistautuneista opettajistaan ja korkeista opiskelutuloksistaan. Pienessä ja ketterässä lukiossa et huku massaan – saat yksilöllistä ohjausta ja tukea joka vaiheessa.
-          </p>
+            return (
+              <section
+                id={secId}
+                class="scroll-mt-28 p-6 sm:p-8 md:p-10 rounded-3xl bg-white shadow-md border border-slate-200/90 hover:border-alajarvi-300 transition-all space-y-6"
+              >
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+                  <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-alajarvi-600 to-alajarvi-800 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
+                    {idx + 1}
+                  </div>
+                  <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
+                    {sec.title}
+                  </h2>
+                </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-            <div class="p-5 rounded-2xl bg-alajarvi-50/60 border border-alajarvi-100 space-y-2">
-              <div class="flex items-center gap-2 font-bold text-alajarvi-900">
-                <CheckCircle class="w-5 h-5 text-alajarvi-500" />
-                <span>Maksuton 2. asteen koulutus</span>
+                <div class="grid grid-cols-1 lg:grid-cols-[1fr,auto] gap-8 items-center">
+                  <div class="text-slate-700 leading-relaxed text-base space-y-3">
+                    {sec.content ? (
+                      <PortableText value={sec.content} />
+                    ) : (
+                      <p>Sisältöä päivitetään.</p>
+                    )}
+                  </div>
+
+                  {imageUrl && (
+                    <div class="w-full lg:max-w-md shrink-0">
+                      <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-slate-50">
+                        <a href={imageUrl} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden">
+                          <img
+                            src={imageUrl}
+                            alt={secImage?.alt || sec.title}
+                            loading="lazy"
+                            class="w-full h-auto max-h-[360px] object-cover rounded-t-2xl group-hover:scale-[1.02] transition-transform duration-300"
+                          />
+                          <div class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-900/85 text-white text-xs font-semibold backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 shadow-md">
+                            <span>Avaa kuva 🔍</span>
+                          </div>
+                        </a>
+                        {secImage?.caption && (
+                          <div class="p-3 bg-white border-t border-slate-100 text-xs text-slate-600 font-medium text-center">
+                            {secImage.caption}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+      ) : (
+        <div class="space-y-12">
+          <!-- Section 1: Miksi Alajärven lukio -->
+          <section id="miksi-alajarven-lukio" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
+                1
               </div>
-              <p class="text-xs text-slate-600 leading-relaxed">
-                Opiskelijamme saavat oppikirjat, kannettavan tietokoneen ja muut oppimateriaalit veloituksetta oppivelvollisuuslain mukaisesti.
-              </p>
+              <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
+                Miksi valita juuri Alajärven lukio?
+              </h2>
             </div>
 
-            <div class="p-5 rounded-2xl bg-alajarvi-50/60 border border-alajarvi-100 space-y-2">
-              <div class="flex items-center gap-2 font-bold text-alajarvi-900">
-                <Globe class="w-5 h-5 text-amber-500" />
-                <span>Aito kansainvälisyys</span>
+            <p class="text-slate-700 leading-relaxed text-base">
+              Alajärven lukio tunnetaan hyvästä yhteishengestään, omistautuneista opettajistaan ja korkeista opiskelutuloksistaan. Pienessä ja ketterässä lukiossa et huku massaan – saat yksilöllistä ohjausta ja tukea joka vaiheessa.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+              <div class="p-5 rounded-2xl bg-alajarvi-50/60 border border-alajarvi-100 space-y-2">
+                <div class="flex items-center gap-2 font-bold text-alajarvi-900">
+                  <CheckCircle class="w-5 h-5 text-alajarvi-500" />
+                  <span>Maksuton 2. asteen koulutus</span>
+                </div>
+                <p class="text-xs text-slate-600 leading-relaxed">
+                  Opiskelijamme saavat oppikirjat, kannettavan tietokoneen ja muut oppimateriaalit veloituksetta oppivelvollisuuslain mukaisesti.
+                </p>
               </div>
-              <p class="text-xs text-slate-600 leading-relaxed">
-                Lukion pitkäaikainen yhteistyö Japanin Jiyu Gakuen -koulun ja Mukawan kaupungin kanssa avaa ainutlaatuisia vaihtomahdollisuuksia.
-              </p>
+
+              <div class="p-5 rounded-2xl bg-alajarvi-50/60 border border-alajarvi-100 space-y-2">
+                <div class="flex items-center gap-2 font-bold text-alajarvi-900">
+                  <Globe class="w-5 h-5 text-amber-500" />
+                  <span>Aito kansainvälisyys</span>
+                </div>
+                <p class="text-xs text-slate-600 leading-relaxed">
+                  Lukion pitkäaikainen yhteistyö Japanin Jiyu Gakuen -koulun ja Mukawan kaupungin kanssa avaa ainutlaatuisia vaihtomahdollisuuksia.
+                </p>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <!-- Section 2: Valintaperusteet -->
-        <section id="valintaperusteet" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
-              2
+          <!-- Section 2: Valintaperusteet -->
+          <section id="valintaperusteet" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
+                2
+              </div>
+              <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
+                Valintaperusteet ja keskiarvoraja
+              </h2>
             </div>
-            <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
-              Valintaperusteet ja keskiarvoraja
-            </h2>
-          </div>
 
-          <p class="text-slate-700 leading-relaxed">
-            Alajärven lukioon haetaan lukuaineiden keskiarvon perusteella valtakunnallisessa yhteishaussa.
-          </p>
+            <p class="text-slate-700 leading-relaxed">
+              Alajärven lukioon haetaan lukuaineiden keskiarvon perusteella valtakunnallisessa yhteishaussa.
+            </p>
 
-          <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Yleislinjan keskiarvoraja</span>
-              <span class="text-3xl font-extrabold font-display text-alajarvi-700">7,00</span>
-              <p class="text-xs text-slate-600 mt-1">Peruskoulun päättötodistuksen lukuaineiden keskiarvo.</p>
-            </div>
-            <div>
-              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Aloituspaikat</span>
-              <span class="text-3xl font-extrabold font-display text-alajarvi-700">n. 60–70</span>
-              <p class="text-xs text-slate-600 mt-1">Aloituspaikkoja tarkistetaan vuosittain tarpeen mukaan.</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Section 3: Kuinka haetaan -->
-        <section id="hakeminen" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
-              3
-            </div>
-            <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
-              Kuinka haetaan (Yhteishaku)
-            </h2>
-          </div>
-
-          <p class="text-slate-700 leading-relaxed">
-            Haku lukioon tapahtuu osoitteessa <a href="https://opintopolku.fi" target="_blank" class="text-alajarvi-600 font-bold underline">Opintopolku.fi</a> kevään yhteishaun aikana (helmi-maaliskuussa).
-          </p>
-
-          <div class="space-y-4">
-            <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50">
-              <span class="w-8 h-8 rounded-full bg-alajarvi-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">1</span>
+            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <h4 class="font-bold text-slate-900">Täytä yhteishakulomake Opintopolussa</h4>
-                <p class="text-xs text-slate-600">Valitse ensimmäiseksi hakutoiveeksesi Alajärven lukio.</p>
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Yleislinjan keskiarvoraja</span>
+                <span class="text-3xl font-extrabold font-display text-alajarvi-700">7,00</span>
+                <p class="text-xs text-slate-600 mt-1">Peruskoulun päättötodistuksen lukuaineiden keskiarvo.</p>
               </div>
-            </div>
-
-            <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50">
-              <span class="w-8 h-8 rounded-full bg-alajarvi-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">2</span>
               <div>
-                <h4 class="font-bold text-slate-900">Tiedotustilaisuudet ja tutustumisopastukset</h4>
-                <p class="text-xs text-slate-600">Alajärven ja lähikuntien 9.-luokkalaisille järjestetään tutustumispäivät lukiolla.</p>
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Aloituspaikat</span>
+                <span class="text-3xl font-extrabold font-display text-alajarvi-700">n. 60–70</span>
+                <p class="text-xs text-slate-600 mt-1">Aloituspaikkoja tarkistetaan vuosittain tarpeen mukaan.</p>
               </div>
             </div>
+          </section>
 
-            <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50">
-              <span class="w-8 h-8 rounded-full bg-alajarvi-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">3</span>
-              <div>
-                <h4 class="font-bold text-slate-900">Valintojen tulokset ja paikan vastaanottaminen</h4>
-                <p class="text-xs text-slate-600">Tulokset julkaistaan kesäkuussa. Vahvista opiskelupaikka sähköisesti.</p>
+          <!-- Section 3: Kuinka haetaan -->
+          <section id="hakeminen" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
+                3
+              </div>
+              <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
+                Kuinka haetaan (Yhteishaku)
+              </h2>
+            </div>
+
+            <p class="text-slate-700 leading-relaxed">
+              Haku lukioon tapahtuu osoitteessa <a href="https://opintopolku.fi" target="_blank" class="text-alajarvi-600 font-bold underline">Opintopolku.fi</a> kevään yhteishaun aikana (helmi-maaliskuussa).
+            </p>
+
+            <div class="space-y-4">
+              <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50">
+                <span class="w-8 h-8 rounded-full bg-alajarvi-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">1</span>
+                <div>
+                  <h4 class="font-bold text-slate-900">Täytä yhteishakulomake Opintopolussa</h4>
+                  <p class="text-xs text-slate-600">Valitse ensimmäiseksi hakutoiveeksesi Alajärven lukio.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50">
+                <span class="w-8 h-8 rounded-full bg-alajarvi-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">2</span>
+                <div>
+                  <h4 class="font-bold text-slate-900">Tiedotustilaisuudet ja tutustumisopastukset</h4>
+                  <p class="text-xs text-slate-600">Alajärven ja lähikuntien 9.-luokkalaisille järjestetään tutustumispäivät lukiolla.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50">
+                <span class="w-8 h-8 rounded-full bg-alajarvi-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">3</span>
+                <div>
+                  <h4 class="font-bold text-slate-900">Valintojen tulokset ja paikan vastaanottaminen</h4>
+                  <p class="text-xs text-slate-600">Tulokset julkaistaan kesäkuussa. Vahvista opiskelupaikka sähköisesti.</p>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <!-- Section 4: Kaksoistutkinto & yhdistelmäopinnot -->
-        <section id="yhdistelmaopinnot" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
-              4
+          <!-- Section 4: Kaksoistutkinto & yhdistelmäopinnot -->
+          <section id="yhdistelmaopinnot" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
+                4
+              </div>
+              <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
+                Kaksoistutkinto & yhdistelmäopinnot
+              </h2>
             </div>
-            <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
-              Kaksoistutkinto & yhdistelmäopinnot
-            </h2>
-          </div>
 
-          <p class="text-slate-700 leading-relaxed">
-            Voit yhdistää joustavasti lukio-opintojasi ammatilliseen perustutkintoon (JAMI). Kaksoistutkinnossa suoritat sekä ammatillisen tutkinnon että ylioppilastutkinnon.
-          </p>
-        </section>
+            <p class="text-slate-700 leading-relaxed">
+              Voit yhdistää joustavasti lukio-opintojasi ammatilliseen perustutkintoon (JAMI). Kaksoistutkinnossa suoritat sekä ammatillisen tutkinnon että ylioppilastutkinnon.
+            </p>
+          </section>
 
-        <!-- Section 5: Opintotarjonta & linjat -->
-        <section id="lukiolinjat" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
-              5
+          <!-- Section 5: Opintotarjonta & linjat -->
+          <section id="lukiolinjat" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
+                5
+              </div>
+              <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
+                Monipuoliset opintopolut
+              </h2>
             </div>
-            <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
-              Monipuoliset opintopolut
-            </h2>
+
+            <p class="text-slate-700 leading-relaxed">
+              Alajärven lukiossa voit syventää osaamistasi matemaattis-luonnontieteellisissä aineissa, vieraissa kielissä, humanistisissa aineissa sekä liikunnassa ja taiteissa.
+            </p>
+          </section>
+        </div>
+      )}
+
+      <!-- PDF files section if added in Sanity -->
+      {page?.pdfFiles && page.pdfFiles.length > 0 && (
+        <div class="space-y-4 pt-4">
+          <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+            <FileText class="w-5 h-5 text-alajarvi-600" />
+            <span>Ladattavat liitedokumentit & PDF-tiedostot</span>
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {page.pdfFiles.map((file: any) => (
+              file.fileUrl && (
+                <a
+                  href={file.fileUrl}
+                  target="_blank"
+                  download
+                  class="p-5 rounded-2xl bg-white border border-slate-200 hover:border-alajarvi-300 shadow-sm hover:shadow-md flex items-center justify-between gap-3 group transition-all"
+                >
+                  <div>
+                    <h4 class="font-bold text-slate-900 text-sm group-hover:text-alajarvi-600 transition-colors">{file.title || 'Ladattava PDF'}</h4>
+                    {file.description && <p class="text-xs text-slate-500 mt-0.5">{file.description}</p>}
+                  </div>
+                  <FileText class="w-5 h-5 text-alajarvi-500 shrink-0 group-hover:scale-110 transition-transform" />
+                </a>
+              )
+            ))}
           </div>
-
-          <p class="text-slate-700 leading-relaxed">
-            Alajärven lukiossa voit syventää osaamistasi matemaattis-luonnontieteellisissä aineissa, vieraissa kielissä, humanistisissa aineissa sekä liikunnassa ja taiteissa.
-          </p>
-        </section>
-
-      </div>
+        </div>
+      )}
 
     </div>
   </main>

@@ -29,17 +29,72 @@ export const pageSchema = defineType({
     }),
     defineField({
       name: 'layoutStyle',
-      title: 'Sivun asettelutyyppi (Asettelu)',
+      title: 'Sivun asettelutyyppi (Valitse sivupohja)',
       description: 'Valitse miten sivu ja sen osiot asettuvat sivustolle',
       type: 'string',
       options: {
         list: [
-          { title: '🖼️ Teksti ja kuva rinnakkain (2-palstaiset kortit rinnakkain)', value: 'cards' },
-          { title: '📑 Vakioasettelu (Artikkelimainen lukukortti allekkain)', value: 'standard' },
+          { title: '🖼️ 1. Teksti ja kuva rinnakkain (2-palstaiset kortit, esim. Mukawa & Jiyu Gakuen)', value: 'cards' },
+          { title: '📑 2. Perinteinen tekstiartikkeli (Perinteinen lukusivu, esim. Opinto-opas & Työajat)', value: 'standard' },
+          { title: '📊 3. Esittelysivu (Infokortit, tilastonumerot ja osiot, esim. Hakijalle-sivu)', value: 'presentation' },
         ],
         layout: 'radio',
       },
       initialValue: 'cards',
+    }),
+    defineField({
+      name: 'stats',
+      title: '📊 Tilasto- / Numerokortit (esim. Keskiarvoraja 7,00, Aloituspaikat 60–70)',
+      description: 'Voit lisätä sivulle suuria numerokortteja esittelemään avainlukuja',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          title: 'Numerokortti',
+          fields: [
+            { name: 'number', type: 'string', title: 'Suuri numero / tieto (esim. 7,00 tai 100 %)', validation: (Rule) => Rule.required() },
+            { name: 'label', type: 'string', title: 'Otsikko / Selite (esim. YLEISLINJAN KESKIARVORAJA)', validation: (Rule) => Rule.required() },
+            { name: 'description', type: 'string', title: 'Lisätieto (esim. Peruskoulun lukuaineiden keskiarvo)' },
+          ],
+          preview: {
+            select: { title: 'number', subtitle: 'label' },
+          }
+        }
+      ]
+    }),
+    defineField({
+      name: 'features',
+      title: '💡 Info- / Korostuskortit (esim. Maksuton koulutus, Aito kansainvälisyys)',
+      description: 'Voit lisätä sivulle vahvuus- ja korostuslaatikoita',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          title: 'Infokortti',
+          fields: [
+            { name: 'title', type: 'string', title: 'Kortin otsikko (esim. Maksuton 2. asteen koulutus)', validation: (Rule) => Rule.required() },
+            { name: 'description', type: 'text', rows: 2, title: 'Kortin teksti', validation: (Rule) => Rule.required() },
+            {
+              name: 'icon',
+              type: 'string',
+              title: 'Kuvake',
+              options: {
+                list: [
+                  { title: '✓ Valintamerkki (Maksuttomuus / Edut)', value: 'check' },
+                  { title: '🌐 Maapallo (Kansainvälisyys)', value: 'globe' },
+                  { title: '⭐ Tähti (Laatu / Erikoisuus)', value: 'star' },
+                  { title: '📚 Kirja (Opiskelu / Kurssit)', value: 'book' },
+                  { title: '🏆 Palkinto / Menestys', value: 'award' },
+                ]
+              },
+              initialValue: 'check'
+            }
+          ],
+          preview: {
+            select: { title: 'title', subtitle: 'description' }
+          }
+        }
+      ]
     }),
     defineField({
       name: 'externalLink',

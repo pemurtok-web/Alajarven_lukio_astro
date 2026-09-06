@@ -17,7 +17,35 @@ const hakijalleDoc = {
     current: 'hakijalle'
   },
   lead: 'Alajärven lukio on turvallinen, kannustava ja korkeatasoinen lukio Etelä-Pohjanmaalla. Tältä sivulta löydät kaiken tarvittavan tiedon yhteishakuun ja opintojen aloittamiseen.',
-  layoutStyle: 'sections',
+  layoutStyle: 'presentation',
+  stats: [
+    {
+      _key: 'st-1',
+      number: '7,00',
+      label: 'YLEISLINJAN KESKIARVORAJA',
+      description: 'Peruskoulun päättötodistuksen lukuaineiden keskiarvo.'
+    },
+    {
+      _key: 'st-2',
+      number: 'n. 60–70',
+      label: 'ALOITUSPAIKAT',
+      description: 'Aloituspaikkoja tarkistetaan vuosittain tarpeen mukaan.'
+    }
+  ],
+  features: [
+    {
+      _key: 'ft-1',
+      title: 'Maksuton 2. asteen koulutus',
+      description: 'Opiskelijamme saavat oppikirjat, kannettavan tietokoneen ja muut oppimateriaalit veloituksetta oppivelvollisuuslain mukaisesti.',
+      icon: 'check'
+    },
+    {
+      _key: 'ft-2',
+      title: 'Aito kansainvälisyys',
+      description: 'Lukion pitkäaikainen yhteistyö Japanin Jiyu Gakuen -koulun ja Mukawan kaupungin kanssa avaa ainutlaatuisia vaihtomahdollisuuksia.',
+      icon: 'globe'
+    }
+  ],
   sections: [
     {
       _key: 'sec-1',

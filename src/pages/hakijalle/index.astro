@@ -98,11 +98,43 @@ const hasDynamicSections = page?.sections && page.sections.length > 0;
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-[1fr,auto] gap-8 items-center">
-                  <div class="text-slate-700 leading-relaxed text-base space-y-3">
+                  <div class="text-slate-700 leading-relaxed text-base space-y-4">
                     {sec.content ? (
                       <PortableText value={sec.content} />
                     ) : (
                       <p>Sisältöä päivitetään.</p>
+                    )}
+
+                    {/* Stats cards inside section 2 / valintaperusteet */}
+                    {idx === 1 && page?.stats && page.stats.length > 0 && (
+                      <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                        {page.stats.map((st: any) => (
+                          <div>
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">{st.label}</span>
+                            <span class="text-3xl font-extrabold font-display text-alajarvi-700">{st.number}</span>
+                            {st.description && <p class="text-xs text-slate-600 mt-1">{st.description}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Features cards inside section 1 / miksi alajarven lukio */}
+                    {idx === 0 && page?.features && page.features.length > 0 && (
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 mt-4">
+                        {page.features.map((feat: any) => (
+                          <div class="p-5 rounded-2xl bg-alajarvi-50/60 border border-alajarvi-100 space-y-2">
+                            <div class="flex items-center gap-2 font-bold text-alajarvi-900">
+                              {feat.icon === 'globe' ? (
+                                <Globe class="w-5 h-5 text-amber-500" />
+                              ) : (
+                                <CheckCircle class="w-5 h-5 text-alajarvi-500" />
+                              )}
+                              <span>{feat.title}</span>
+                            </div>
+                            <p class="text-xs text-slate-600 leading-relaxed">{feat.description}</p>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
 

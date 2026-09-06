@@ -310,7 +310,7 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
           "fileUrl": asset->url
         },
         gallery,
-        sections, mainImage
+        sections, mainImage, stats, features
       }`,
       { slug }
     );

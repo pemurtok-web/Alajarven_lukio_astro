@@ -1,0 +1,105 @@
+---
+import { getUpcomingEvents } from '../lib/sanity';
+import { Calendar as CalendarIcon, Clock, MapPin, ChevronRight, Sparkles } from 'lucide-astro';
+
+const events = await getUpcomingEvents();
+
+function formatDateBadge(dateStr: string) {
+  const d = new Date(dateStr);
+  const day = d.getDate();
+  const monthNames = ['TAM', 'HEL', 'MAA', 'HUB', 'TOU', 'KES', 'HEI', 'ELO', 'SYY', 'LOK', 'MAR', 'JOUL'];
+  const month = monthNames[d.getMonth()] || 'SYY';
+  return { day, month };
+}
+---
+
+<section class="py-20 bg-white border-t border-slate-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      
+      <!-- Section Info Left (4 cols) -->
+      <div class="lg:col-span-4 space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider">
+          <CalendarIcon class="w-3.5 h-3.5 text-emerald-600" />
+          <span>Tapahtumakalenteri</span>
+        </div>
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-alajarvi-900 tracking-tight">
+          Tulevat tapahtumat & lukuvuoden tärkeät päivämäärät
+        </h2>
+        <p class="text-slate-600 text-base leading-relaxed">
+          Pysy ajan tasalla lukion tapahtumista, kokeista, vanhempainilloista ja loma-ajoista.
+        </p>
+
+        <div class="pt-4 p-5 rounded-2xl bg-alajarvi-50 border border-alajarvi-100 space-y-2">
+          <div class="flex items-center gap-2 text-alajarvi-800 font-bold text-sm">
+            <Sparkles class="w-4 h-4 text-alajarvi-500" />
+            <span>Onko sinulla kysyttävää aikatauluista?</span>
+          </div>
+          <p class="text-xs text-slate-600">
+            Tarkemmat ryhmäkohtaiset lukujärjestykset ja kokeiden salijaot löydät aina Wilmasta.
+          </p>
+          <a
+            href="https://alajarvi.inschool.fi"
+            target="_blank"
+            class="inline-block pt-1 text-xs font-bold text-alajarvi-600 hover:text-alajarvi-800 underline"
+          >
+            Siirry Wilmaan →
+          </a>
+        </div>
+      </div>
+
+      <!-- Events List Right (8 cols) -->
+      <div class="lg:col-span-8 space-y-4">
+        {events.map((evt) => {
+          const { day, month } = formatDateBadge(evt.date);
+          return (
+            <div class="group p-5 rounded-2xl bg-slate-50 hover:bg-white border border-slate-200/80 hover:border-alajarvi-300 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-5">
+              
+              <!-- Date Badge -->
+              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-alajarvi-500 to-alajarvi-700 text-white flex flex-col items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                <span class="text-xs font-bold tracking-widest text-alajarvi-200 uppercase leading-none">{month}</span>
+                <span class="text-2xl font-extrabold font-display leading-none mt-0.5">{day}</span>
+              </div>
+
+              <!-- Event Details -->
+              <div class="flex-1 space-y-1.5">
+                <h3 class="font-display font-bold text-lg text-slate-900 group-hover:text-alajarvi-600 transition-colors">
+                  {evt.title}
+                </h3>
+                
+                {evt.description && (
+                  <p class="text-sm text-slate-600 line-clamp-2">
+                    {evt.description}
+                  </p>
+                )}
+
+                <div class="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500 pt-1">
+                  {evt.time && (
+                    <span class="inline-flex items-center gap-1">
+                      <Clock class="w-3.5 h-3.5 text-alajarvi-500" />
+                      {evt.time}
+                    </span>
+                  )}
+                  {evt.location && (
+                    <span class="inline-flex items-center gap-1">
+                      <MapPin class="w-3.5 h-3.5 text-alajarvi-500" />
+                      {evt.location}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div class="self-end sm:self-center">
+                <div class="w-8 h-8 rounded-full bg-white group-hover:bg-alajarvi-100 text-slate-400 group-hover:text-alajarvi-600 flex items-center justify-center transition-colors">
+                  <ChevronRight class="w-4 h-4" />
+                </div>
+              </div>
+
+            </div>
+          );
+        })}
+      </div>
+
+    </div>
+  </div>
+</section>

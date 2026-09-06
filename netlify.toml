@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  PUBLIC_SANITY_PROJECT_ID = "8idyoy2x"
+  PUBLIC_SANITY_DATASET = "production"
+
+# SPA redirect for embedded Sanity Studio (/studio)
+[[redirects]]
+  from = "/studio/*"
+  to = "/studio/index.html"
+  status = 200

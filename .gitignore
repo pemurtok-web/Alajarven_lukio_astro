@@ -1,0 +1,22 @@
+# build output
+dist/
+
+# dependencies
+node_modules/
+
+# astro
+.astro/
+
+# sanity
+.sanity/
+
+# environment variables
+.env
+.env*.local
+
+# logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

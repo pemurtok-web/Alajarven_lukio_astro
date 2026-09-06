@@ -1,0 +1,231 @@
+---
+import { getQuickLinks, getSiteSettings, urlFor } from '../lib/sanity';
+import { ExternalLink, ChevronDown, Menu, X, BookOpen, Utensils, GraduationCap } from 'lucide-astro';
+
+const quickLinks = await getQuickLinks();
+const siteSettings = await getSiteSettings();
+
+const logoUrl = siteSettings.logoImage ? urlFor(siteSettings.logoImage)?.height(100).url() : null;
+
+const opiskelijallePages = [
+  { title: 'Opinto-opas', href: '/opiskelijalle/opinto-opas' },
+  { title: 'Opintotarjotin', href: '/opiskelijalle/opintotarjotin' },
+  { title: 'Työaika', href: '/opiskelijalle/tyoaika' },
+  { title: 'Opinto-ohjaus', href: '/opiskelijalle/opinto-ohjaus' },
+  { title: 'Opiskeluhuolto', href: '/opiskelijalle/opiskeluhuolto' },
+  { title: 'YO-kirjoitukset', href: '/opiskelijalle/yo-kirjoitukset' },
+  { title: 'Lomakkeet', href: '/opiskelijalle/lomakkeet' },
+  { title: 'Kodin ja koulun yhteistyö', href: '/opiskelijalle/kodin-ja-koulun-yhteistyo' },
+];
+
+const kansainvalisyysPages = [
+  { title: 'Jiyu Gakuen (Japani)', href: '/kansainvalisyys/jiyu-gakuen' },
+  { title: 'Mukawa (Japani)', href: '/kansainvalisyys/mukawa' },
+  { title: 'Muu kansainvälinen toiminta', href: '/kansainvalisyys/muu' },
+];
+---
+
+<header class="sticky top-0 z-50 shadow-sm bg-white/95 backdrop-blur-md border-b border-slate-100 transition-all duration-300 w-full max-w-full">
+  <!-- Top Quicklinks Bar -->
+  <div class="bg-alajarvi-800 text-white text-xs py-2 px-4 sm:px-8 w-full">
+    <div class="max-w-7xl mx-auto flex justify-between items-center gap-2">
+      <div class="flex items-center space-x-4 text-slate-300 shrink-0">
+        <span class="font-medium text-white flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          {siteSettings.title || 'Alajärven lukio'}
+        </span>
+        <span class="hidden md:inline">|</span>
+        <span class="hidden md:inline text-slate-300">{siteSettings.address || 'Koulutie 1, 62900 Alajärvi'}</span>
+      </div>
+
+      <!-- Quicklinks Badges -->
+      <div class="flex items-center space-x-2 sm:space-x-3 overflow-x-auto shrink max-w-[55%] sm:max-w-none">
+        {quickLinks.map(link => (
+          <a
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/10 hover:bg-alajarvi-500 text-slate-100 hover:text-white transition-all text-xs font-medium border border-white/10 shrink-0"
+          >
+            {link.icon === 'wilma' && <GraduationCap class="w-3.5 h-3.5 text-blue-300" />}
+            {link.icon === 'utensils' && <Utensils class="w-3.5 h-3.5 text-amber-300" />}
+            {link.icon === 'book-open' && <BookOpen class="w-3.5 h-3.5 text-emerald-300" />}
+            <span>{link.title}</span>
+            <ExternalLink class="w-3 h-3 opacity-70 ml-0.5" />
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navigation Bar -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4">
+    <!-- Brand Logo & Text -->
+    <a href="/" class="group flex items-center gap-3 shrink-0">
+      {logoUrl ? (
+        <img src={logoUrl} alt={siteSettings.title || 'Alajärven lukio logo'} class="h-10 sm:h-12 w-auto object-contain group-hover:scale-105 transition-transform" />
+      ) : (
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-alajarvi-500 to-alajarvi-700 flex items-center justify-center text-white font-bold text-xl shadow-md group-hover:scale-105 transition-transform">
+          AL
+        </div>
+      )}
+      <div>
+        <span class="block font-display font-extrabold text-base sm:text-xl text-alajarvi-800 tracking-tight leading-none group-hover:text-alajarvi-500 transition-colors">
+          {siteSettings.title || 'ALAJÄRVEN LUKIO'}
+        </span>
+        <span class="block text-[10px] sm:text-[11px] font-semibold text-slate-500 uppercase tracking-widest mt-1">
+          {siteSettings.subtitle || 'SIVISTYS & OSAAMINEN'}
+        </span>
+      </div>
+    </a>
+
+
+    <!-- Desktop Navigation Menu -->
+    <nav class="hidden lg:flex items-center space-x-1">
+      <a href="/" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-alajarvi-500 hover:bg-alajarvi-50 transition-colors">
+        Etusivu
+      </a>
+
+      <!-- Opiskelijalle Dropdown -->
+      <div class="relative group">
+        <button class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-alajarvi-500 hover:bg-alajarvi-50 transition-colors inline-flex items-center gap-1">
+          <span>Opiskelijalle</span>
+          <ChevronDown class="w-4 h-4 text-slate-400 group-hover:rotate-180 transition-transform duration-200" />
+        </button>
+        <div class="absolute left-0 mt-1 w-64 rounded-xl bg-white shadow-xl border border-slate-100 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform origin-top-left group-hover:translate-y-0 translate-y-2">
+          {opiskelijallePages.map(page => (
+            <a
+              href={page.href}
+              class="block px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-alajarvi-50 hover:text-alajarvi-600 transition-colors font-medium"
+            >
+              {page.title}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Hakijalle (Long Page) -->
+      <a href="/hakijalle" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-alajarvi-500 hover:bg-alajarvi-50 transition-colors">
+        Hakijalle
+      </a>
+
+      <!-- Kansainvälisyys Dropdown -->
+      <div class="relative group">
+        <button class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-alajarvi-500 hover:bg-alajarvi-50 transition-colors inline-flex items-center gap-1">
+          <span>Kansainvälisyys</span>
+          <ChevronDown class="w-4 h-4 text-slate-400 group-hover:rotate-180 transition-transform duration-200" />
+        </button>
+        <div class="absolute left-0 mt-1 w-64 rounded-xl bg-white shadow-xl border border-slate-100 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform origin-top-left group-hover:translate-y-0 translate-y-2">
+          {kansainvalisyysPages.map(page => (
+            <a
+              href={page.href}
+              class="block px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-alajarvi-50 hover:text-alajarvi-600 transition-colors font-medium"
+            >
+              {page.title}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Ajankohtaista Archive -->
+      <a href="/ajankohtaista" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-alajarvi-500 hover:bg-alajarvi-50 transition-colors">
+        Ajankohtaista
+      </a>
+
+      <!-- Yhteystiedot (Long Page) -->
+      <a href="/yhteystiedot" class="ml-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-alajarvi-500 hover:bg-alajarvi-600 shadow-sm hover:shadow transition-all">
+        Yhteystiedot
+      </a>
+    </nav>
+
+    <!-- Mobile Menu Toggle Button -->
+    <button
+      id="mobile-menu-btn"
+      class="lg:hidden p-2.5 rounded-xl text-slate-700 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-alajarvi-500 min-w-[44px] min-h-[44px] flex items-center justify-center border border-slate-200/60 active:scale-95 transition-all"
+      aria-label="Avaa päävalikko"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <Menu id="icon-open" class="w-6 h-6" />
+      <X id="icon-close" class="w-6 h-6 hidden" />
+    </button>
+  </div>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-100 bg-white/98 backdrop-blur-lg px-4 pt-3 pb-6 shadow-2xl max-h-[85vh] overflow-y-auto">
+    <div class="flex flex-col space-y-1">
+      <a href="/" class="px-3.5 py-2.5 rounded-xl text-base font-semibold text-slate-800 hover:bg-alajarvi-50 hover:text-alajarvi-600 transition-colors">
+        Etusivu
+      </a>
+
+      <div class="pt-2 pb-1">
+        <span class="px-3 text-xs font-bold text-alajarvi-500 uppercase tracking-wider">Opiskelijalle</span>
+        <div class="mt-1 pl-2 space-y-1 border-l-2 border-alajarvi-200">
+          {opiskelijallePages.map(page => (
+            <a href={page.href} class="block px-3 py-2 text-sm font-medium text-slate-700 hover:text-alajarvi-600 hover:bg-alajarvi-50 rounded-lg transition-colors">
+              {page.title}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <a href="/hakijalle" class="px-3.5 py-2.5 rounded-xl text-base font-semibold text-slate-800 hover:bg-alajarvi-50 hover:text-alajarvi-600 transition-colors">
+        Hakijalle
+      </a>
+
+      <div class="pt-2 pb-1">
+        <span class="px-3 text-xs font-bold text-alajarvi-500 uppercase tracking-wider">Kansainvälisyys</span>
+        <div class="mt-1 pl-2 space-y-1 border-l-2 border-alajarvi-200">
+          {kansainvalisyysPages.map(page => (
+            <a href={page.href} class="block px-3 py-2 text-sm font-medium text-slate-700 hover:text-alajarvi-600 hover:bg-alajarvi-50 rounded-lg transition-colors">
+              {page.title}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <a href="/ajankohtaista" class="px-3.5 py-2.5 rounded-xl text-base font-semibold text-slate-800 hover:bg-alajarvi-50 hover:text-alajarvi-600 transition-colors">
+        Ajankohtaista
+      </a>
+
+      <a href="/yhteystiedot" class="mt-3 block w-full text-center px-4 py-3 rounded-xl text-base font-bold text-white bg-alajarvi-500 hover:bg-alajarvi-600 shadow-md active:scale-95 transition-all">
+        Yhteystiedot
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const iconOpen = document.getElementById('icon-open');
+  const iconClose = document.getElementById('icon-close');
+
+  if (menuBtn && menu && iconOpen && iconClose) {
+    menuBtn.addEventListener('click', () => {
+      const isOpen = !menu.classList.contains('hidden');
+      if (isOpen) {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        menuBtn.setAttribute('aria-expanded', 'false');
+        menuBtn.setAttribute('aria-label', 'Avaa päävalikko');
+      } else {
+        menu.classList.remove('hidden');
+        iconOpen.classList.add('hidden');
+        iconClose.classList.remove('hidden');
+        menuBtn.setAttribute('aria-expanded', 'true');
+        menuBtn.setAttribute('aria-label', 'Sulje päävalikko');
+      }
+    });
+
+    // Close menu when clicking links inside
+    menu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+      });
+    });
+  }
+</script>

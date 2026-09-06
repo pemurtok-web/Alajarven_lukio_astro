@@ -1,0 +1,111 @@
+---
+import { X } from 'lucide-astro';
+---
+
+<div
+  id="lightbox-modal"
+  class="fixed inset-0 z-[1000] hidden bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 transition-opacity duration-200 opacity-0"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Kuvan suurennos"
+>
+  <!-- Close Button -->
+  <button
+    id="lightbox-close"
+    class="absolute top-4 right-4 sm:top-6 sm:right-6 w-12 h-12 rounded-2xl bg-white/15 hover:bg-white/25 text-white flex items-center justify-center border border-white/20 transition-all cursor-pointer z-10 active:scale-95 shadow-xl group"
+    aria-label="Sulje kuva"
+  >
+    <X class="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
+  </button>
+
+  <!-- Image & Caption Container -->
+  <div class="relative max-w-5xl max-h-[90vh] flex flex-col items-center justify-center my-auto">
+    <img
+      id="lightbox-img"
+      src=""
+      alt=""
+      class="max-w-full max-h-[82vh] w-auto h-auto object-contain rounded-2xl shadow-2xl border border-white/15 bg-slate-900"
+    />
+    <p
+      id="lightbox-caption"
+      class="text-white text-xs sm:text-sm font-semibold mt-3 text-center bg-slate-900/90 px-4 py-2 rounded-xl backdrop-blur-md hidden border border-white/15 shadow-md"
+    ></p>
+  </div>
+</div>
+
+<script>
+  function setupLightbox() {
+    const modal = document.getElementById('lightbox-modal');
+    const modalImg = document.getElementById('lightbox-img') as HTMLImageElement;
+    const modalCaption = document.getElementById('lightbox-caption');
+    const closeBtn = document.getElementById('lightbox-close');
+
+    if (!modal || !modalImg || !modalCaption || !closeBtn) return;
+
+    function openLightbox(src: string, captionText?: string, altText?: string) {
+      modalImg.src = src;
+      modalImg.alt = altText || captionText || 'Suurennettu kuva';
+
+      if (captionText && captionText.trim()) {
+        modalCaption.textContent = captionText;
+        modalCaption.classList.remove('hidden');
+      } else {
+        modalCaption.textContent = '';
+        modalCaption.classList.add('hidden');
+      }
+
+      modal.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0');
+        modal.classList.add('opacity-100');
+      });
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      modal.classList.remove('opacity-100');
+      modal.classList.add('opacity-0');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modalImg.src = '';
+        document.body.style.overflow = '';
+      }, 200);
+    }
+
+    // Attach click handlers to zoomable images / links across page
+    document.body.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const zoomAnchor = target.closest('a.cursor-zoom-in, [data-lightbox]');
+
+      if (zoomAnchor) {
+        e.preventDefault();
+        const href = (zoomAnchor as HTMLAnchorElement).href;
+        const img = zoomAnchor.querySelector('img') || (target.tagName === 'IMG' ? target : null);
+        const caption = zoomAnchor.closest('figure, div')?.querySelector('figcaption, div.p-4')?.textContent?.trim() || img?.getAttribute('alt') || '';
+        if (href) {
+          openLightbox(href, caption, img?.getAttribute('alt') || '');
+        }
+      }
+    });
+
+    closeBtn.addEventListener('click', closeLightbox);
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal || (e.target as HTMLElement).classList.contains('flex')) {
+        closeLightbox();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        closeLightbox();
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupLightbox);
+  } else {
+    setupLightbox();
+  }
+</script>

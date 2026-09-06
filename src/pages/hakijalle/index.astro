@@ -1,0 +1,202 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import LongPageNav from '../../components/LongPageNav.astro';
+import PortableText from '../../components/PortableText.astro';
+import { getPageBySlug } from '../../lib/sanity';
+import { GraduationCap, CheckCircle, Sparkles, BookOpen, Globe, Award, HelpCircle, ArrowRight } from 'lucide-astro';
+
+const page = await getPageBySlug('hakijalle');
+
+const anchors = [
+  { id: 'miksi-alajarven-lukio', label: '1. Miksi Alajärven lukio?' },
+  { id: 'valintaperusteet', label: '2. Valintaperusteet' },
+  { id: 'hakeminen', label: '3. Kuinka haetaan (Yhteishaku)' },
+  { id: 'yhdistelmaopinnot', label: '4. Kaksoistutkinto & yhdistelmäopinnot' },
+  { id: 'lukiolinjat', label: '5. Opintotarjonta & linjat' },
+];
+---
+
+<Layout title={`${page?.title || 'Hakijalle'} | Alajärven lukio`}>
+  <Header />
+
+  <main class="py-12 bg-slate-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-8">
+      
+      <!-- Page Hero Header -->
+      <div class="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-alajarvi-700 text-white shadow-2xl mb-8 relative overflow-hidden">
+        <div class="relative z-10 space-y-4 max-w-3xl">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-xs font-semibold text-sky-200 border border-white/20">
+            <GraduationCap class="w-4 h-4 text-amber-300" />
+            <span>Tule opiskelemaan meille</span>
+          </div>
+          <h1 class="font-display font-extrabold text-4xl sm:text-5xl text-white tracking-tight">
+            {page?.title || 'Tervetuloa Alajärven lukioon!'}
+          </h1>
+          <p class="text-lg text-slate-200 leading-relaxed font-normal">
+            Alajärven lukio on turvallinen, kannustava ja korkeatasoinen lukio Etelä-Pohjanmaalla. Tältä sivulta löydät kaiken tarvittavan tiedon yhteishakuun ja opintojen aloittamiseen.
+          </p>
+        </div>
+      </div>
+
+      {page?.body && (
+        <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200/80 mb-12">
+          <PortableText value={page.body} />
+        </div>
+      )}
+
+      <!-- Sticky Anchor Links Bar -->
+      <LongPageNav anchors={anchors} title="Hakijalle - Sisällysluettelo" />
+
+      <!-- Long Page Sections -->
+      <div class="space-y-12">
+        
+        <!-- Section 1: Miksi Alajärven lukio -->
+        <section id="miksi-alajarven-lukio" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
+              1
+            </div>
+            <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
+              Miksi valita juuri Alajärven lukio?
+            </h2>
+          </div>
+
+          <p class="text-slate-700 leading-relaxed text-base">
+            Alajärven lukio tunnetaan hyvästä yhteishengestään, omistautuneista opettajistaan ja korkeista opiskelutuloksistaan. Pienessä ja ketterässä lukiossa et huku massaan – saat yksilöllistä ohjausta ja tukea joka vaiheessa.
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+            <div class="p-5 rounded-2xl bg-alajarvi-50/60 border border-alajarvi-100 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-alajarvi-900">
+                <CheckCircle class="w-5 h-5 text-alajarvi-500" />
+                <span>Maksuton 2. asteen koulutus</span>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Opiskelijamme saavat oppikirjat, kannettavan tietokoneen ja muut oppimateriaalit veloituksetta oppivelvollisuuslain mukaisesti.
+              </p>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-alajarvi-50/60 border border-alajarvi-100 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-alajarvi-900">
+                <Globe class="w-5 h-5 text-amber-500" />
+                <span>Aito kansainvälisyys</span>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Lukion pitkäaikainen yhteistyö Japanin Jiyu Gakuen -koulun ja Mukawan kaupungin kanssa avaa ainutlaatuisia vaihtomahdollisuuksia.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Valintaperusteet -->
+        <section id="valintaperusteet" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
+              2
+            </div>
+            <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
+              Valintaperusteet ja keskiarvoraja
+            </h2>
+          </div>
+
+          <p class="text-slate-700 leading-relaxed">
+            Alajärven lukioon haetaan lukuaineiden keskiarvon perusteella valtakunnallisessa yhteishaussa.
+          </p>
+
+          <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Yleislinjan keskiarvoraja</span>
+              <span class="text-3xl font-extrabold font-display text-alajarvi-700">7,00</span>
+              <p class="text-xs text-slate-600 mt-1">Peruskoulun päättötodistuksen lukuaineiden keskiarvo.</p>
+            </div>
+            <div>
+              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Aloituspaikat</span>
+              <span class="text-3xl font-extrabold font-display text-alajarvi-700">n. 60–70</span>
+              <p class="text-xs text-slate-600 mt-1">Aloituspaikkoja tarkistetaan vuosittain tarpeen mukaan.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: Kuinka haetaan -->
+        <section id="hakeminen" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
+              3
+            </div>
+            <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
+              Kuinka haetaan (Yhteishaku)
+            </h2>
+          </div>
+
+          <p class="text-slate-700 leading-relaxed">
+            Haku lukioon tapahtuu osoitteessa <a href="https://opintopolku.fi" target="_blank" class="text-alajarvi-600 font-bold underline">Opintopolku.fi</a> kevään yhteishaun aikana (helmi-maaliskuussa).
+          </p>
+
+          <div class="space-y-4">
+            <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50">
+              <span class="w-8 h-8 rounded-full bg-alajarvi-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">1</span>
+              <div>
+                <h4 class="font-bold text-slate-900">Täytä yhteishakulomake Opintopolussa</h4>
+                <p class="text-xs text-slate-600">Valitse ensimmäiseksi hakutoiveeksesi Alajärven lukio.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50">
+              <span class="w-8 h-8 rounded-full bg-alajarvi-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">2</span>
+              <div>
+                <h4 class="font-bold text-slate-900">Tiedotustilaisuudet ja tutustumisopastukset</h4>
+                <p class="text-xs text-slate-600">Alajärven ja lähikuntien 9.-luokkalaisille järjestetään tutustumispäivät lukiolla.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50">
+              <span class="w-8 h-8 rounded-full bg-alajarvi-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">3</span>
+              <div>
+                <h4 class="font-bold text-slate-900">Valintojen tulokset ja paikan vastaanottaminen</h4>
+                <p class="text-xs text-slate-600">Tulokset julkaistaan kesäkuussa. Vahvista opiskelupaikka sähköisesti.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Kaksoistutkinto & yhdistelmäopinnot -->
+        <section id="yhdistelmaopinnot" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
+              4
+            </div>
+            <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
+              Kaksoistutkinto & yhdistelmäopinnot
+            </h2>
+          </div>
+
+          <p class="text-slate-700 leading-relaxed">
+            Voit yhdistää joustavasti lukio-opintojasi ammatilliseen perustutkintoon (JAMI). Kaksoistutkinnossa suoritat sekä ammatillisen tutkinnon että ylioppilastutkinnon.
+          </p>
+        </section>
+
+        <!-- Section 5: Opintotarjonta & linjat -->
+        <section id="lukiolinjat" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
+              5
+            </div>
+            <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
+              Monipuoliset opintopolut
+            </h2>
+          </div>
+
+          <p class="text-slate-700 leading-relaxed">
+            Alajärven lukiossa voit syventää osaamistasi matemaattis-luonnontieteellisissä aineissa, vieraissa kielissä, humanistisissa aineissa sekä liikunnassa ja taiteissa.
+          </p>
+        </section>
+
+      </div>
+
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

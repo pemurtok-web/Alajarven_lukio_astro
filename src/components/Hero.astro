@@ -1,0 +1,145 @@
+---
+import { ArrowRight, Sparkles, Globe, Compass, GraduationCap, Users } from 'lucide-astro';
+import { urlFor } from '../lib/sanity';
+
+interface Props {
+  badge?: string;
+  title?: string;
+  description?: string;
+  heroBgImage?: any;
+  heroImage?: any;
+}
+
+const {
+  badge = 'Laadukasta lukio-opetusta Alajärvellä',
+  title = 'Rakenna tulevaisuutesi Alajärven lukiossa',
+  description = 'Tarjoamme turvallisen, yhteisöllisen ja nykyaikaisen oppimisympäristön. Meillä saat yksilöllistä ohjausta, vahvat valmiudet jatko-opintoihin sekä ainutlaatuisia kansainvälisyyskokemuksia muun muassa Japanin vaihto-ohjelmissa.',
+  heroBgImage,
+  heroImage,
+} = Astro.props;
+
+const bgUrl = heroBgImage ? urlFor(heroBgImage)?.width(1920).url() : null;
+const mainImgUrl = heroImage ? urlFor(heroImage)?.width(800).url() : null;
+---
+
+<section class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-alajarvi-700 text-white py-16 sm:py-24">
+  {bgUrl && (
+    <img src={bgUrl} alt="" class="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none" />
+  )}
+  <!-- Subtle Background Pattern -->
+
+  <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+  <div class="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 rounded-full bg-alajarvi-400/20 blur-3xl"></div>
+  <div class="absolute bottom-0 left-0 -mb-12 -ml-12 w-80 h-80 rounded-full bg-alajarvi-500/20 blur-3xl"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      
+      <!-- Text & CTA Column (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-semibold text-alajarvi-100 backdrop-blur-md">
+          <Sparkles class="w-4 h-4 text-amber-300 animate-spin-slow" />
+          <span>{badge}</span>
+        </div>
+
+        <h1 class="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.15] text-white">
+          {title}
+        </h1>
+
+        <p class="text-base sm:text-lg text-slate-200 leading-relaxed font-normal max-w-2xl">
+          {description}
+        </p>
+
+
+        <!-- CTA Action Buttons (Full width on mobile for easy tap) -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+          <a
+            href="/hakijalle"
+            class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-alajarvi-900 bg-white hover:bg-alajarvi-50 shadow-lg shadow-black/10 transition-all hover:scale-[1.02] active:scale-95 text-sm sm:text-base text-center"
+          >
+            <span>Tule opiskelemaan (Hakijalle)</span>
+            <ArrowRight class="w-4 h-4 shrink-0" />
+          </a>
+          
+          <a
+            href="/opiskelijalle/opinto-opas"
+            class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md transition-all active:scale-95 text-sm sm:text-base text-center"
+          >
+            <GraduationCap class="w-4 h-4 text-sky-300 shrink-0" />
+            <span>Tutustu opinto-oppaaseen</span>
+          </a>
+        </div>
+
+        <!-- Quick Highlight Badges -->
+        <div class="pt-6 border-t border-white/10 grid grid-cols-3 gap-2 sm:gap-4 text-center sm:text-left">
+          <div class="space-y-0.5 sm:space-y-1">
+            <div class="text-xl sm:text-3xl font-extrabold font-display text-white">100%</div>
+            <div class="text-[11px] sm:text-xs text-slate-300">Yksilöllinen OPO-ohjaus</div>
+          </div>
+          <div class="space-y-0.5 sm:space-y-1">
+            <div class="text-xl sm:text-3xl font-extrabold font-display text-sky-300">Japani</div>
+            <div class="text-[11px] sm:text-xs text-slate-300">Jiyu Gakuen -vaihto</div>
+          </div>
+          <div class="space-y-0.5 sm:space-y-1">
+            <div class="text-xl sm:text-3xl font-extrabold font-display text-amber-300">0 €</div>
+            <div class="text-[11px] sm:text-xs text-slate-300">Maksuton 2. aste</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image & Cards Column (5 cols) -->
+      <div class="lg:col-span-5 relative">
+        <!-- Main Featured Image Container -->
+        <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 group">
+          {mainImgUrl ? (
+            <img src={mainImgUrl} alt="Alajärven lukio" class="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-500" />
+          ) : (
+            <div class="aspect-[4/3] bg-gradient-to-br from-alajarvi-600 to-alajarvi-800 flex items-center justify-center p-6 sm:p-8 text-center">
+              <!-- Stylized School Visual Mockup -->
+              <div class="space-y-3">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-inner">
+                  <GraduationCap class="w-8 h-8 sm:w-10 sm:h-10 text-sky-300" />
+                </div>
+                <h3 class="font-display text-xl sm:text-2xl font-bold text-white">Innostava lukioympäristö</h3>
+                <p class="text-xs text-slate-200 max-w-xs mx-auto">
+                  Modernit oppimistilat, Alvar Aallon kaupungin inspiroiva ilmapiiri ja lämmin kouluyhteisö.
+                </p>
+              </div>
+            </div>
+          )}
+          <div class="absolute inset-0 bg-gradient-to-t from-alajarvi-950/80 via-transparent to-transparent opacity-60"></div>
+        </div>
+
+
+        <!-- Floating Interactive Quick Cards -->
+        <div class="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <a href="/kansainvalisyys/jiyu-gakuen" class="p-3.5 sm:p-4 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 backdrop-blur-md transition-all group">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-amber-400/20 text-amber-300 flex items-center justify-center shrink-0">
+                <Globe class="w-5 h-5" />
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white group-hover:text-amber-300 transition-colors">Kansainvälisyys</h4>
+                <p class="text-[11px] text-slate-300">Japanin vaihto-ohjelmat</p>
+              </div>
+            </div>
+          </a>
+
+          <a href="/yhteystiedot#opinto-ohjaus" class="p-3.5 sm:p-4 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 backdrop-blur-md transition-all group">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-sky-400/20 text-sky-300 flex items-center justify-center shrink-0">
+                <Users class="w-5 h-5" />
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white group-hover:text-sky-300 transition-colors">OPO & Tuki</h4>
+                <p class="text-[11px] text-slate-300">Aina apuna opiskelussa</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>

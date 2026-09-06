@@ -1,0 +1,119 @@
+---
+import { MapPin, Phone, Mail, ExternalLink, Heart } from 'lucide-astro';
+---
+
+<footer class="bg-alajarvi-900 text-white pt-16 pb-12 border-t border-alajarvi-800">
+  <div class="max-w-7xl mx-auto px-4 sm:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+      <!-- Brand & Info -->
+      <div class="space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-alajarvi-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+            AL
+          </div>
+          <div>
+            <span class="block font-display font-bold text-lg text-white tracking-tight">
+              ALAJÄRVEN LUKIO
+            </span>
+            <span class="block text-xs text-alajarvi-300">Alajärven kaupunki</span>
+          </div>
+        </div>
+        <p class="text-sm text-slate-300 leading-relaxed">
+          Tulevaisuuteen suuntaavaa, laadukasta ja yhteisöllistä lukio-opetusta Etelä-Pohjanmaalla Alvar Aallon arkkitehtuurikaupungissa.
+        </p>
+        <div class="pt-2">
+          <a
+            href="https://alajarvi.fi"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 text-xs text-alajarvi-300 hover:text-white transition-colors"
+          >
+            <span>Alajärven kaupungin verkkosivut</span>
+            <ExternalLink class="w-3.5 h-3.5" />
+          </a>
+        </div>
+      </div>
+
+      <!-- Quick Navigation -->
+      <div>
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-alajarvi-500 pl-3">
+          Pikavalikko
+        </h3>
+        <ul class="space-y-2 text-sm text-slate-300">
+          <li><a href="/" class="hover:text-alajarvi-300 transition-colors">Etusivu</a></li>
+          <li><a href="/hakijalle" class="hover:text-alajarvi-300 transition-colors">Hakijalle (Tule opiskelemaan)</a></li>
+          <li><a href="/opiskelijalle/opinto-opas" class="hover:text-alajarvi-300 transition-colors">Opinto-opas & Opintotarjotin</a></li>
+          <li><a href="/kansainvalisyys/jiyu-gakuen" class="hover:text-alajarvi-300 transition-colors">Kansainvälisyystoiminta</a></li>
+          <li><a href="/ajankohtaista" class="hover:text-alajarvi-300 transition-colors">Ajankohtaista & Uutiset</a></li>
+          <li><a href="/yhteystiedot" class="hover:text-alajarvi-300 transition-colors">Henkilökunta & Yhteystiedot</a></li>
+        </ul>
+      </div>
+
+      <!-- Online Services -->
+      <div>
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-alajarvi-500 pl-3">
+          Verkkopalvelut
+        </h3>
+        <ul class="space-y-2.5 text-sm text-slate-300">
+          <li>
+            <a href="https://alajarvi.inschool.fi" target="_blank" class="hover:text-white flex items-center gap-2 group">
+              <span class="w-2 h-2 rounded-full bg-blue-400 group-hover:scale-125 transition-transform"></span>
+              <span>Wilma - Kouluhallinto</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://alajarvi.fi/ruokalistat" target="_blank" class="hover:text-white flex items-center gap-2 group">
+              <span class="w-2 h-2 rounded-full bg-amber-400 group-hover:scale-125 transition-transform"></span>
+              <span>Kouluruokalista</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://eperusteet.opintopolku.fi" target="_blank" class="hover:text-white flex items-center gap-2 group">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 group-hover:scale-125 transition-transform"></span>
+              <span>Opetussuunnitelma (ePerusteet)</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Contact Details -->
+      <div>
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-alajarvi-500 pl-3">
+          Ota yhteyttä
+        </h3>
+        <ul class="space-y-3 text-sm text-slate-300">
+          <li class="flex items-start gap-2.5">
+            <MapPin class="w-4 h-4 text-alajarvi-400 mt-1 shrink-0" />
+            <span>Kaupintie 7, 62900 Alajärvi</span>
+          </li>
+          <li class="flex items-center gap-2.5">
+            <Phone class="w-4 h-4 text-alajarvi-400 shrink-0" />
+            <a href="tel:0406739091" class="hover:text-white">040 673 9091 (Rehtori)</a>
+          </li>
+          <li class="flex items-center gap-2.5">
+            <Phone class="w-4 h-4 text-alajarvi-400 shrink-0" />
+            <a href="tel:0406620717" class="hover:text-white">040 662 0717 (Kanslia)</a>
+          </li>
+          <li class="flex items-center gap-2.5">
+            <Mail class="w-4 h-4 text-alajarvi-400 shrink-0" />
+            <a href="mailto:anne.luodeslampi@alajarvi.fi" class="hover:text-white text-xs">anne.luodeslampi@alajarvi.fi</a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Bottom Line -->
+    <div class="pt-8 border-t border-alajarvi-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+      <div class="space-y-1 text-center sm:text-left">
+        <p>© {new Date().getFullYear()} Alajärven lukio | Alajärven kaupunki. Kaikki oikeudet pidätetään.</p>
+        <p class="text-[11px] text-slate-400">Sivusto noudattaa julkisen sektorin saavutettavuusvaatimuksia (WCAG 2.1 AA -taso, Digipalvelulaki 306/2019).</p>
+      </div>
+      <div class="flex items-center gap-1 text-slate-400">
+        <span>Toteutettu saavutettavalla</span>
+        <span class="text-alajarvi-300 font-semibold">Astro + Sanity</span>
+        <span>-arkkitehtuurilla</span>
+      </div>
+    </div>
+  </div>
+</footer>

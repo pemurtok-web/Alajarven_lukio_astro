@@ -96,11 +96,31 @@ const features = (homepage.features && homepage.features.length > 0)
             <!-- Feature Points -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               {features.map((feat: any) => (
-                <div class="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+                <div class="flex items-start gap-3 p-4 rounded-2xl bg-slate-50/90 border border-slate-200/80 shadow-2xs hover:border-alajarvi-300 transition-all">
                   <CheckCircle2 class="w-5 h-5 text-alajarvi-500 shrink-0 mt-0.5" />
-                  <div>
-                    <h4 class="font-bold text-sm text-slate-800">{feat.title}</h4>
-                    <p class="text-xs text-slate-500">{feat.description}</p>
+                  <div class="space-y-1 w-full">
+                    <h4 class="font-bold text-sm text-slate-900">{feat.title}</h4>
+                    {feat.listItems && feat.listItems.length > 0 ? (
+                      <ul class="space-y-1 text-xs text-slate-600 pt-1">
+                        {feat.listItems.map((item: string) => (
+                          <li class="flex items-start gap-1.5">
+                            <span class="text-alajarvi-500 font-bold">•</span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : feat.description && feat.description.includes('\n') ? (
+                      <ul class="space-y-1 text-xs text-slate-600 pt-1">
+                        {feat.description.split('\n').filter((l: string) => l.trim()).map((line: string) => (
+                          <li class="flex items-start gap-1.5">
+                            <span class="text-alajarvi-500 font-bold">•</span>
+                            <span>{line.replace(/^[-•*]\s*/, '')}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p class="text-xs text-slate-600 leading-relaxed whitespace-pre-line">{feat.description}</p>
+                    )}
                   </div>
                 </div>
               ))}

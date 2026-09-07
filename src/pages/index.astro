@@ -97,6 +97,10 @@ const features = (homepage.features && homepage.features.length > 0)
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               {features.map((feat: any) => {
                 const featImgUrl = feat.image ? urlFor(feat.image)?.width(600).quality(90).url() : null;
+                const activeListItems = feat.listItems
+                  ?.map((i: any) => (typeof i === 'string' ? i.trim() : ''))
+                  .filter((i: string) => i.length > 0) || [];
+
                 return (
                   <div class="group flex flex-col rounded-2xl bg-slate-50/90 border border-slate-200/80 shadow-2xs hover:shadow-md hover:border-alajarvi-300 transition-all overflow-hidden">
                     {featImgUrl && (
@@ -117,9 +121,9 @@ const features = (homepage.features && homepage.features.length > 0)
                           <h4 class="font-bold text-sm sm:text-base text-slate-900 leading-snug">{feat.title}</h4>
                         </div>
 
-                        {feat.listItems && feat.listItems.length > 0 ? (
+                        {activeListItems.length > 0 ? (
                           <ul class="space-y-1 text-xs text-slate-700 pt-1 pl-1">
-                            {feat.listItems.map((item: string) => (
+                            {activeListItems.map((item: string) => (
                               <li class="flex items-start gap-1.5 font-medium">
                                 <span class="text-alajarvi-500 font-bold shrink-0">•</span>
                                 <span>{item}</span>

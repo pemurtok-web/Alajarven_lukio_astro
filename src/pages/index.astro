@@ -161,7 +161,7 @@ const gridColsClass =
                       </div>
 
                       {activeListItems.length > 0 ? (
-                        <ul class="space-y-1.5 text-xs text-slate-700 pt-1 pl-1">
+                        <ul class="space-y-1.5 text-base text-slate-700 pt-1 pl-1">
                           {activeListItems.map((item: string) => (
                             <li class="flex items-start gap-1.5 font-medium">
                               <span class="text-alajarvi-500 font-bold shrink-0">•</span>
@@ -170,7 +170,7 @@ const gridColsClass =
                           ))}
                         </ul>
                       ) : feat.description && feat.description.includes('\n') ? (
-                        <div class="space-y-1.5 text-xs text-slate-700 pt-1 pl-1">
+                        <div class="space-y-1.5 text-base text-slate-700 pt-1 pl-1">
                           {feat.description.split('\n').map((line: string, idx: number) => {
                             const trimmed = line.trim();
                             if (!trimmed) return null;
@@ -187,7 +187,7 @@ const gridColsClass =
                           })}
                         </div>
                       ) : (
-                        <p class="text-xs text-slate-700 leading-relaxed font-medium whitespace-pre-line pl-1">{feat.description}</p>
+                        <p class="text-base text-slate-700 leading-relaxed font-medium whitespace-pre-line pl-1">{feat.description}</p>
                       )}
                     </div>
                   </div>

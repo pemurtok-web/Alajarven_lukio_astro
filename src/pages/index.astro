@@ -19,6 +19,15 @@ const features = (homepage.features && homepage.features.length > 0)
       { title: 'Monipuolinen yhdistelmä tutkintoja', description: 'Mahdollisuus yhdistää lukio-opintoja ammatilliseen tutkintoon.' },
       { title: 'Korkeakouluyhteistyö', description: 'Väyläopintoja ja kurssikurkkauksia yliopistoihin ja amk:eihin.' }
     ];
+
+const gridColsClass =
+  features.length >= 4
+    ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
+    : features.length === 3
+    ? 'grid-cols-1 md:grid-cols-3 lg:grid-cols-3'
+    : features.length === 2
+    ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2'
+    : 'grid-cols-1 max-w-md mx-auto';
 ---
 
 <Layout title="Alajärven lukio | Etusivu">
@@ -116,7 +125,7 @@ const features = (homepage.features && homepage.features.length > 0)
           </div>
 
           <!-- Dynamic grid adapting smoothly to card counts -->
-          <div class={`grid grid-cols-1 md:grid-cols-2 ${features.length >= 4 ? 'lg:grid-cols-4' : features.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'} gap-6 items-stretch`}>
+          <div class={`grid ${gridColsClass} gap-6 items-stretch`}>
             {features.map((feat: any) => {
               const featImgUrl = feat.image ? urlFor(feat.image)?.width(700).quality(90).url() : null;
               const activeListItems = feat.listItems

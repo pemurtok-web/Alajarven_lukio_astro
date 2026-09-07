@@ -37,139 +37,149 @@ const features = (homepage.features && homepage.features.length > 0)
     <!-- Dynamic Quicklinks -->
     <QuickLinks />
 
-    <!-- Esittelyosio (Kuva + Teksti rinnakkain) -->
-    <section class="py-20 bg-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          <!-- Image Column (5 cols) -->
-          <div class="lg:col-span-5">
-            <div class="relative">
+    <!-- Esittelyosio & Valttikortit -->
+    <section class="py-16 sm:py-20 bg-slate-50/70 border-y border-slate-200/60">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 space-y-12">
+
+        <!-- Top Header & Intro Image Box -->
+        <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-slate-200/80">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            <!-- Text Column -->
+            <div class="lg:col-span-7 space-y-5">
+              <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-alajarvi-100 text-alajarvi-700 text-xs font-bold uppercase tracking-wider">
+                <Compass class="w-4 h-4 text-alajarvi-600" />
+                <span>{homepage.introBadge || 'Miksi valita Alajärven lukio?'}</span>
+              </div>
+
+              <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-alajarvi-900 tracking-tight leading-snug">
+                {homepage.introTitle || 'Moderni lukio, jossa sinun tavoitteesi ovat keskiössä'}
+              </h2>
+
+              <p class="text-slate-600 text-base leading-relaxed">
+                {homepage.introDescription || 'Alajärven lukio tarjoaa erinomaiset puitteet yleissivistävälle lukio-opiskelulle. Meillä yhdistyvät monipuolinen opintotarjotin, joustavat opintopolut sekä innostavat oppimisympäristöt.'}
+              </p>
+
+              <div class="pt-2">
+                <a
+                  href="/hakijalle"
+                  class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-alajarvi-500 hover:bg-alajarvi-600 text-white font-semibold text-sm shadow-md transition-all hover:translate-x-0.5"
+                >
+                  <span>Lue lisää hakemisesta ja opiskelusta</span>
+                  <ArrowRight class="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+
+            <!-- Image Column -->
+            <div class="lg:col-span-5">
               {introImgUrl ? (
-                <img src={introImgUrl} alt="Esittelykuva" class="w-full aspect-[4/5] object-cover rounded-3xl shadow-2xl relative z-10" />
-              ) : (
-                <div class="aspect-[4/5] rounded-3xl overflow-hidden bg-gradient-to-br from-alajarvi-700 to-alajarvi-900 p-8 text-white flex flex-col justify-between shadow-2xl relative z-10">
-                  <div class="space-y-2">
-                    <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-xs font-semibold backdrop-blur-md">
+                <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200">
+                  <img
+                    src={introImgUrl}
+                    alt="Esittelykuva Alajärven lukiolta"
+                    class="w-full aspect-[16/10] lg:aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
+                  <div class="absolute bottom-4 left-4 right-4 text-white space-y-1">
+                    <span class="inline-block px-2.5 py-0.5 rounded-full bg-white/20 text-[11px] font-semibold backdrop-blur-md border border-white/20">
                       Alvar Aallon kaupunki
                     </span>
-                    <h3 class="font-display font-extrabold text-2xl text-white">
+                    <p class="font-bold text-sm text-white drop-shadow">Inspiroiva ympäristö oppimiselle ja kasvulle</p>
+                  </div>
+                </div>
+              ) : (
+                <div class="aspect-[16/10] lg:aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-alajarvi-700 to-alajarvi-900 p-6 text-white flex flex-col justify-between shadow-md">
+                  <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-xs font-semibold backdrop-blur-md w-max border border-white/20">
+                    Alvar Aallon kaupunki
+                  </span>
+                  <div class="space-y-1">
+                    <h3 class="font-display font-extrabold text-xl text-white">
                       Inspiroiva ympäristö oppimiselle ja kasvulle
                     </h3>
-                  </div>
-
-                  <div class="space-y-4">
-                    <div class="p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-xs space-y-1">
-                      <p class="font-bold text-sky-200">Korkeat tulokset yo-kirjoituksissa</p>
-                      <p class="text-slate-200">Alajärven lukiosta valmistuu vuosittain monipuolisia ja laaja-alaisia osaajia jatko-opintoihin.</p>
-                    </div>
-                    <div class="p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-xs space-y-1">
-                      <p class="font-bold text-amber-200">Vahva yhteisöhenki</p>
-                      <p class="text-slate-200">Pienet ryhmäkoot takaavat sen, että jokainen opiskelija tunnetaan ja tukea on aina saatavilla.</p>
-                    </div>
+                    <p class="text-xs text-slate-200">Pienet ryhmäkoot ja korkea laatu takaavat parhaan tuen jokaiselle opiskelijalle.</p>
                   </div>
                 </div>
               )}
+            </div>
 
+          </div>
+        </div>
 
-              <!-- Decorative Backdrop Blur Elements -->
-              <div class="absolute -bottom-6 -right-6 w-full h-full rounded-3xl bg-alajarvi-100 -z-10"></div>
+        <!-- Feature Cards Section (Valttikortit) -->
+        <div class="space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
+            <div>
+              <h3 class="font-display font-bold text-2xl text-slate-900">Lukion valttikortit</h3>
+              <p class="text-slate-500 text-xs sm:text-sm">Tutustu opiskelun etuihin ja monipuolisiin mahdollisuuksiin Alajärvellä</p>
             </div>
           </div>
 
-          <!-- Text Column (7 cols) -->
-          <div class="lg:col-span-7 space-y-6">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-alajarvi-100 text-alajarvi-700 text-xs font-bold uppercase tracking-wider">
-              <Compass class="w-3.5 h-3.5" />
-              <span>{homepage.introBadge || 'Miksi valita Alajärven lukio?'}</span>
-            </div>
+          <!-- Dynamic grid adapting smoothly to card counts -->
+          <div class={`grid grid-cols-1 md:grid-cols-2 ${features.length >= 4 ? 'lg:grid-cols-4' : features.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'} gap-6 items-stretch`}>
+            {features.map((feat: any) => {
+              const featImgUrl = feat.image ? urlFor(feat.image)?.width(700).quality(90).url() : null;
+              const activeListItems = feat.listItems
+                ?.map((i: any) => (typeof i === 'string' ? i.trim() : ''))
+                .filter((i: string) => i.length > 0) || [];
 
-            <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-alajarvi-900 tracking-tight leading-snug">
-              {homepage.introTitle || 'Moderni lukio, jossa sinun tavoitteesi ovat keskiössä'}
-            </h2>
+              return (
+                <div class="group flex flex-col rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-alajarvi-300 transition-all duration-300 overflow-hidden h-full">
+                  {featImgUrl && (
+                    <div class="relative w-full aspect-[16/10] overflow-hidden bg-slate-100 shrink-0 border-b border-slate-100">
+                      <img
+                        src={featImgUrl}
+                        alt={feat.image?.alt || feat.title || 'Valttikortin kuva'}
+                        loading="lazy"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  )}
 
-            <p class="text-slate-600 text-base leading-relaxed">
-              {homepage.introDescription || 'Alajärven lukio tarjoaa erinomaiset puitteet yleissivistävälle lukio-opiskelulle. Meillä yhdistyvät monipuolinen opintotarjotin, joustavat opintopolut sekä innostavat oppimisympäristöt.'}
-            </p>
-
-
-            <!-- Feature Points -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              {features.map((feat: any) => {
-                const featImgUrl = feat.image ? urlFor(feat.image)?.width(600).quality(90).url() : null;
-                const activeListItems = feat.listItems
-                  ?.map((i: any) => (typeof i === 'string' ? i.trim() : ''))
-                  .filter((i: string) => i.length > 0) || [];
-
-                return (
-                  <div class="group flex flex-col rounded-2xl bg-slate-50/90 border border-slate-200/80 shadow-2xs hover:shadow-md hover:border-alajarvi-300 transition-all overflow-hidden">
-                    {featImgUrl && (
-                      <div class="relative w-full aspect-[16/9] overflow-hidden bg-slate-100 shrink-0">
-                        <img
-                          src={featImgUrl}
-                          alt={feat.image?.alt || feat.title || 'Valttikortin kuva'}
-                          loading="lazy"
-                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
+                  <div class="p-5 flex-grow flex flex-col justify-between space-y-3">
+                    <div class="space-y-2.5">
+                      <div class="flex items-start gap-2.5">
+                        <CheckCircle2 class="w-5 h-5 text-alajarvi-500 shrink-0 mt-0.5" />
+                        <h4 class="font-bold text-base text-slate-900 leading-snug">{feat.title}</h4>
                       </div>
-                    )}
 
-                    <div class="p-4 space-y-2 flex-grow flex flex-col justify-between">
-                      <div class="space-y-1.5">
-                        <div class="flex items-start gap-2.5">
-                          <CheckCircle2 class="w-5 h-5 text-alajarvi-500 shrink-0 mt-0.5" />
-                          <h4 class="font-bold text-sm sm:text-base text-slate-900 leading-snug">{feat.title}</h4>
-                        </div>
-
-                        {activeListItems.length > 0 ? (
-                          <ul class="space-y-1 text-xs text-slate-700 pt-1 pl-1">
-                            {activeListItems.map((item: string) => (
-                              <li class="flex items-start gap-1.5 font-medium">
+                      {activeListItems.length > 0 ? (
+                        <ul class="space-y-1.5 text-xs text-slate-700 pt-1 pl-1">
+                          {activeListItems.map((item: string) => (
+                            <li class="flex items-start gap-1.5 font-medium">
+                              <span class="text-alajarvi-500 font-bold shrink-0">•</span>
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : feat.description && feat.description.includes('\n') ? (
+                        <div class="space-y-1.5 text-xs text-slate-700 pt-1 pl-1">
+                          {feat.description.split('\n').map((line: string, idx: number) => {
+                            const trimmed = line.trim();
+                            if (!trimmed) return null;
+                            const isLead = idx === 0 && !/^[-•*]/.test(trimmed);
+                            if (isLead) {
+                              return <p class="font-semibold text-slate-800 pb-1 leading-snug">{trimmed}</p>;
+                            }
+                            return (
+                              <div class="flex items-start gap-1.5 font-medium text-slate-700">
                                 <span class="text-alajarvi-500 font-bold shrink-0">•</span>
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : feat.description && feat.description.includes('\n') ? (
-                          <div class="space-y-1 text-xs text-slate-700 pt-1 pl-1">
-                            {feat.description.split('\n').map((line: string, idx: number) => {
-                              const trimmed = line.trim();
-                              if (!trimmed) return null;
-                              const isLead = idx === 0 && !/^[-•*]/.test(trimmed);
-                              if (isLead) {
-                                return <p class="font-semibold text-slate-800 pb-1 leading-snug">{trimmed}</p>;
-                              }
-                              return (
-                                <div class="flex items-start gap-1.5 font-medium text-slate-700">
-                                  <span class="text-alajarvi-500 font-bold shrink-0">•</span>
-                                  <span>{trimmed.replace(/^[-•*]\s*/, '')}</span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          <p class="text-xs text-slate-700 leading-relaxed font-medium whitespace-pre-line pl-1">{feat.description}</p>
-                        )}
-                      </div>
+                                <span>{trimmed.replace(/^[-•*]\s*/, '')}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium whitespace-pre-line pl-1">{feat.description}</p>
+                      )}
                     </div>
                   </div>
-                );
-              })}
-            </div>
-
-            <div class="pt-4">
-              <a
-                href="/hakijalle"
-                class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-alajarvi-500 hover:bg-alajarvi-600 text-white font-semibold text-sm shadow-md transition-all"
-              >
-                <span>Lue lisää hakemisesta ja opiskelusta</span>
-                <ArrowRight class="w-4 h-4" />
-              </a>
-            </div>
-
+                </div>
+              );
+            })}
           </div>
-
         </div>
+
       </div>
     </section>
 

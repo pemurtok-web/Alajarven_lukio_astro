@@ -12,7 +12,7 @@ interface Props {
 const { anchors, title = 'Sivun osiot' } = Astro.props;
 ---
 
-<nav class="sticky top-16 sm:top-20 z-40 bg-white/95 backdrop-blur-md rounded-2xl shadow-md border border-slate-200/80 p-3 sm:p-4 mb-8">
+<nav id="long-page-nav" class="sticky z-30 bg-white/95 backdrop-blur-md rounded-2xl shadow-md border border-slate-200/80 p-3 sm:p-4 mb-8" style="top: var(--header-h, 132px)">
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
     <span class="text-xs font-bold uppercase tracking-wider text-alajarvi-700 flex items-center gap-2 shrink-0">
       <span class="w-2 h-2 rounded-full bg-alajarvi-500 animate-pulse"></span>
@@ -30,3 +30,21 @@ const { anchors, title = 'Sivun osiot' } = Astro.props;
     </div>
   </div>
 </nav>
+
+<script>
+  function positionLongPageNav() {
+    const el = document.getElementById('long-page-nav');
+    if (!el) return;
+    const header = document.querySelector('header');
+    const breadcrumb = document.querySelector('[data-page-breadcrumb]');
+    let top = header ? header.getBoundingClientRect().height : 0;
+    if (breadcrumb) top += breadcrumb.getBoundingClientRect().height;
+    el.style.top = `${top}px`;
+  }
+  positionLongPageNav();
+  window.addEventListener('resize', positionLongPageNav);
+  const headerEl = document.querySelector('header');
+  const breadcrumbEl = document.querySelector('[data-page-breadcrumb]');
+  if (headerEl) new ResizeObserver(positionLongPageNav).observe(headerEl);
+  if (breadcrumbEl) new ResizeObserver(positionLongPageNav).observe(breadcrumbEl);
+</script>

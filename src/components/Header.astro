@@ -212,6 +212,15 @@ const kansainvalisyysPages = [
 </header>
 
 <script>
+  const headerEl = document.querySelector('header');
+  if (headerEl) {
+    const setHeaderHeightVar = () => {
+      document.documentElement.style.setProperty('--header-h', `${headerEl.getBoundingClientRect().height}px`);
+    };
+    setHeaderHeightVar();
+    new ResizeObserver(setHeaderHeightVar).observe(headerEl);
+  }
+
   const menuBtn = document.getElementById('mobile-menu-btn');
   const menu = document.getElementById('mobile-menu');
   const iconOpen = document.getElementById('icon-open');

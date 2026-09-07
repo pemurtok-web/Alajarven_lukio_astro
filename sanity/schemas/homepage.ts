@@ -87,6 +87,13 @@ export const homepageSchema = defineType({
           title: 'Kortti',
           fields: [
             { name: 'title', type: 'string', title: 'Otsikko' },
+            {
+              name: 'image',
+              type: 'image',
+              title: 'Kortin kuva (Näkyy kortin yläosassa)',
+              options: { hotspot: true },
+              fields: [{ name: 'alt', type: 'string', title: 'Alt-teksti' }]
+            },
             { name: 'description', type: 'text', rows: 4, title: 'Kuvaus / Lista (Kirjoita rivinvaihdoilla tai - luetteloviivoilla)' },
             {
               name: 'listItems',

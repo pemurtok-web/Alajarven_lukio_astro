@@ -46,6 +46,7 @@ import { MapPin, Phone, Mail, ExternalLink, Heart } from 'lucide-astro';
           <li><a href="/kansainvalisyys/jiyu-gakuen" class="hover:text-alajarvi-300 transition-colors">Kansainvälisyystoiminta</a></li>
           <li><a href="/ajankohtaista" class="hover:text-alajarvi-300 transition-colors">Ajankohtaista & Uutiset</a></li>
           <li><a href="/yhteystiedot" class="hover:text-alajarvi-300 transition-colors">Henkilökunta & Yhteystiedot</a></li>
+          <li><a href="/tietosuoja" class="hover:text-alajarvi-300 transition-colors">Tietosuoja ja evästeet</a></li>
         </ul>
       </div>
 
@@ -108,6 +109,13 @@ import { MapPin, Phone, Mail, ExternalLink, Heart } from 'lucide-astro';
       <div class="space-y-1 text-center sm:text-left">
         <p>© {new Date().getFullYear()} Alajärven lukio | Alajärven kaupunki. Kaikki oikeudet pidätetään.</p>
         <p class="text-[11px] text-slate-400">Sivusto noudattaa julkisen sektorin saavutettavuusvaatimuksia (WCAG 2.1 AA -taso, Digipalvelulaki 306/2019).</p>
+        <button
+          type="button"
+          onclick="window.openCookieSettings && window.openCookieSettings()"
+          class="text-[11px] text-alajarvi-300 hover:text-white underline underline-offset-2 transition-colors"
+        >
+          Evästeasetukset
+        </button>
       </div>
       <div class="flex items-center gap-1 text-slate-400">
         <span>Toteutettu saavutettavalla</span>

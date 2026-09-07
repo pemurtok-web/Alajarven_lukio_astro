@@ -16,6 +16,7 @@ const pageTemplates = [
   { id: 'page-mukawa', title: 'Mukawa (Japani)', slug: 'mukawa' },
   { id: 'page-kansainvalisyys', title: 'Kansainvälisyys (Yleiskatsaus)', slug: 'kansainvalisyys' },
   { id: 'page-muu', title: 'Muu kansainvälinen toiminta', slug: 'muu' },
+  { id: 'page-tietosuoja', title: 'Tietosuoja ja evästeet', slug: 'tietosuoja' },
 ];
 
 export default defineConfig({
@@ -96,6 +97,13 @@ export default defineConfig({
                     S.listItem()
                       .title('🇪🇺 Muu kansainvälinen toiminta')
                       .child(S.document().schemaType('page').documentId('page-muu').initialValueTemplate('tpl-page-muu')),
+
+                    S.divider(),
+
+                    // Muut sivut
+                    S.listItem()
+                      .title('🔒 Tietosuoja ja evästeet')
+                      .child(S.document().schemaType('page').documentId('page-tietosuoja').initialValueTemplate('tpl-page-tietosuoja')),
 
                     S.divider(),
 

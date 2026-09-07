@@ -1,0 +1,152 @@
+---
+---
+
+<div
+  id="cookie-consent-banner"
+  class="hidden fixed inset-x-0 bottom-0 z-[100] px-4 pb-4 sm:px-6 sm:pb-6"
+  role="dialog"
+  aria-live="polite"
+  aria-label="Evästeasetukset"
+>
+  <div class="mx-auto max-w-2xl rounded-2xl bg-white shadow-2xl border border-slate-200 p-5 sm:p-6">
+    <div id="cookie-consent-summary">
+      <p class="text-sm text-slate-700 leading-relaxed">
+        Käytämme evästeitä sivuston toiminnan varmistamiseen ja kävijätilastojen keräämiseen. Voit hyväksyä kaikki evästeet, hylätä valinnaiset tai mukauttaa asetuksia erikseen. Lue lisää
+        <a href="/tietosuoja" class="text-alajarvi-600 hover:text-alajarvi-800 font-semibold underline">tietosuojaselosteestamme</a>.
+      </p>
+      <div class="mt-4 flex flex-col sm:flex-row gap-2.5">
+        <button id="cookie-accept-all" class="px-5 py-2.5 rounded-xl bg-alajarvi-500 hover:bg-alajarvi-600 text-white text-sm font-semibold transition-colors">
+          Hyväksy kaikki
+        </button>
+        <button id="cookie-reject-all" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold transition-colors">
+          Hylkää valinnaiset
+        </button>
+        <button id="cookie-customize" class="px-5 py-2.5 rounded-xl border border-slate-300 hover:border-alajarvi-400 text-slate-700 text-sm font-semibold transition-colors sm:ml-auto">
+          Mukauta asetuksia
+        </button>
+      </div>
+    </div>
+
+    <div id="cookie-consent-details" class="hidden space-y-4">
+      <div class="flex items-start justify-between gap-4 py-2 border-b border-slate-100">
+        <div>
+          <p class="font-semibold text-slate-900 text-sm">Välttämättömät evästeet</p>
+          <p class="text-xs text-slate-500 mt-0.5">Tarpeen sivuston perustoiminnoille. Ei voi kytkeä pois.</p>
+        </div>
+        <span class="shrink-0 text-xs font-bold text-alajarvi-600 bg-alajarvi-50 px-2.5 py-1 rounded-full">
+          Aina käytössä
+        </span>
+      </div>
+
+      <div class="flex items-start justify-between gap-4 py-2 border-b border-slate-100">
+        <div>
+          <p class="font-semibold text-slate-900 text-sm">Analytiikka</p>
+          <p class="text-xs text-slate-500 mt-0.5">Auttaa ymmärtämään sivuston käyttöä (esim. Google Analytics).</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+          <input type="checkbox" id="cookie-toggle-analytics" class="sr-only peer" />
+          <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-alajarvi-500 transition-colors"></div>
+          <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+        </label>
+      </div>
+
+      <div class="flex items-start justify-between gap-4 py-2">
+        <div>
+          <p class="font-semibold text-slate-900 text-sm">Markkinointi</p>
+          <p class="text-xs text-slate-500 mt-0.5">Mainonnan kohdentaminen ja mittaaminen (esim. Google Ads).</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+          <input type="checkbox" id="cookie-toggle-marketing" class="sr-only peer" />
+          <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-alajarvi-500 transition-colors"></div>
+          <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+        </label>
+      </div>
+
+      <div class="flex gap-2.5 pt-1">
+        <button id="cookie-save-preferences" class="px-5 py-2.5 rounded-xl bg-alajarvi-500 hover:bg-alajarvi-600 text-white text-sm font-semibold transition-colors">
+          Tallenna asetukset
+        </button>
+        <button id="cookie-back" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold transition-colors">
+          Takaisin
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var STORAGE_KEY = 'cookie-consent-v1';
+    var banner = document.getElementById('cookie-consent-banner');
+    var summary = document.getElementById('cookie-consent-summary');
+    var details = document.getElementById('cookie-consent-details');
+    var analyticsToggle = document.getElementById('cookie-toggle-analytics');
+    var marketingToggle = document.getElementById('cookie-toggle-marketing');
+    if (!banner) return;
+
+    function readSaved() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function applyConsent(analytics, marketing) {
+      var consent = {
+        analytics_storage: analytics ? 'granted' : 'denied',
+        ad_storage: marketing ? 'granted' : 'denied',
+        ad_user_data: marketing ? 'granted' : 'denied',
+        ad_personalization: marketing ? 'granted' : 'denied',
+      };
+      if (window.gtag) window.gtag('consent', 'update', consent);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(consent));
+      } catch (e) {}
+      hideBanner();
+    }
+
+    function hideBanner() {
+      banner.classList.add('hidden');
+    }
+    function showBanner() {
+      banner.classList.remove('hidden');
+      summary.classList.remove('hidden');
+      details.classList.add('hidden');
+    }
+
+    if (!readSaved()) {
+      showBanner();
+    }
+
+    document.getElementById('cookie-accept-all').addEventListener('click', function () {
+      applyConsent(true, true);
+    });
+    document.getElementById('cookie-reject-all').addEventListener('click', function () {
+      applyConsent(false, false);
+    });
+    document.getElementById('cookie-customize').addEventListener('click', function () {
+      summary.classList.add('hidden');
+      details.classList.remove('hidden');
+    });
+    document.getElementById('cookie-back').addEventListener('click', function () {
+      details.classList.add('hidden');
+      summary.classList.remove('hidden');
+    });
+    document.getElementById('cookie-save-preferences').addEventListener('click', function () {
+      applyConsent(analyticsToggle.checked, marketingToggle.checked);
+    });
+
+    // Reopened from the footer's "Evästeasetukset" link
+    window.openCookieSettings = function () {
+      var saved = readSaved();
+      if (saved) {
+        analyticsToggle.checked = saved.analytics_storage === 'granted';
+        marketingToggle.checked = saved.ad_storage === 'granted';
+      }
+      showBanner();
+      summary.classList.add('hidden');
+      details.classList.remove('hidden');
+    };
+  })();
+</script>

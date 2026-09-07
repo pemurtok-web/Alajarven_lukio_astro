@@ -5,8 +5,8 @@ import Footer from '../../components/Footer.astro';
 import LongPageNav from '../../components/LongPageNav.astro';
 import PortableText from '../../components/PortableText.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
-import { getPageBySlug, getAllPages, urlFor, extractPageAnchors, splitBodyIntoCards } from '../../lib/sanity';
-import { Globe, ChevronRight, Compass, Heart, Users, Image as ImageIcon, ExternalLink, FileText, CheckCircle, Star, BookOpen, Award } from 'lucide-astro';
+import { getPageBySlug, getAllPages, urlFor, extractPageAnchors } from '../../lib/sanity';
+import { Globe, ChevronRight, Image as ImageIcon, ExternalLink, FileText, CheckCircle, Star, BookOpen, Award } from 'lucide-astro';
 
 export async function getStaticPaths() {
   const defaultSlugs = ['jiyu-gakuen', 'mukawa', 'muu'];
@@ -20,134 +20,15 @@ const { slug } = Astro.params;
 const page = await getPageBySlug(slug as string);
 
 const anchors = extractPageAnchors(page);
-const isCardsLayout = page?.layoutStyle ? page.layoutStyle === 'cards' : (slug === 'jiyu-gakuen' || slug === 'mukawa');
-const bodyCards = page?.body ? splitBodyIntoCards(page.body) : [];
+const isCardsLayout = page?.layoutStyle === 'cards';
 
-const defaultDetails: Record<string, { title: string; subtitle: string; lead?: string; contentHTML?: string; sections?: any[]; gallery?: any[]; cards?: any[] }> = {
-  'jiyu-gakuen': {
-    title: 'Jiyu Gakuen (Tokio)',
-    subtitle: 'Alajärven ja Vimpelin lukioiden opiskelijavaihto tokiolaisen Jiyu Gakuen -yhteistyökoulun kanssa.',
-    lead: 'Jiyu Gakuenin opiskelijat tutustumassa Alvar Aallon arkkitehtuuriin Alajärvellä elokuussa 2024. Kierroksella olivat mukana kansainvälisyyskerhon opiskelijat.',
-    cards: [
-      {
-        type: 'section',
-        title: 'Opiskelijavaihtoa vuodesta 2016',
-        contentHTML: `<p class="text-slate-700 leading-relaxed">Kansainväliset kohtaamiset ovat osa Alajärven lukion arkea. Alajärven ja Vimpelin lukiot ovat toteuttaneet opiskelijavaihtoa tokiolaisen yhteistyökoulun, Jiyu Gakuenin, kanssa jo vuodesta 2016. Joka kevätlukukausi kaksi Alajärven ja kaksi Vimpelin opiskelijaa lähtevät kahdeksi viikoksi vaihtoon Tokioon, jossa he majoittuvat isäntäperheissä ja osallistuvat koulun arkeen päivittäin. Vastaavasti Jiyu Gakuenista saapuu vuorovuosin Alajärven ja Vimpelin lukioon neljä vaihto-opiskelijaa kahdeksi viikoksi elokuussa. Yhteistyö on saanut alkunsa Silta Japaniin -hankkeesta, jonka toteutti Alajärven sivistystoimi yhdessä FJCE:n (Finland Japan Culture and Education ry) kanssa.</p>`
-      },
-      {
-        type: 'image',
-        src: '/images/jiyu-exact-1.jpg',
-        caption: 'Helmiina Kuoppa-Aho englannin keskustelutunnilla Jiyu Gakuenissa huhtikuussa 2023.',
-        alt: 'Helmiina Kuoppa-Aho Jiyu Gakuenissa'
-      },
-      {
-        type: 'section',
-        title: 'Vaihtoon?',
-        contentHTML: `<p class="text-slate-700 leading-relaxed">Vaihto on opiskelijalle maksuton. Se sisältää lennot Japaniin, majoituksen ja ruokailut isäntäperheessä, kouluun liittyvät kustannukset sekä matkavakuutuksen. Vaihdon aikana opiskelijat tutustuvat japanilaisen koulun arkeen ja myös esittelevät Suomea oppitunneilla ja luennoilla. Vaihdon hakuaika on yleensä tammi-helmikuussa, ja siitä ilmoitetaan Wilman kautta. Vaihtoon valitaan ensisijaisesti toisen vuoden opiskelijoita, joiden toivotaan toimivan isäntäperheenä seuraavana syksynä tuleville vaihto-opiskelijoille.</p>`
-      },
-      {
-        type: 'image',
-        src: '/images/jiyu-exact-2.jpg',
-        caption: 'Isäntäperheiden opiskelijat hyvästelemässä vaihto-opiskelijoita ennen kotimatkaa elokuussa 2023.',
-        alt: 'Isäntäperheiden opiskelijat hyvästelemässä vaihto-opiskelijoita'
-      },
-      {
-        type: 'section',
-        title: 'Isäntäperheeksi?',
-        contentHTML: `<p class="text-slate-700 leading-relaxed">Haluatteko ripauksen kansainvälisyyttä kotiin? Joka toinen vuosi etsimme yhteensä neljää isäntäperhettä Alajärvelle saapuville Jiyu Gakuenin opiskelijoille. Vaihto ajoittuu yleensä elokuun loppuun ja kestää kaksi viikkoa. Seuraavan kerran isäntäperheitä tarvitaan elokuussa 2025. Mikäli olet kiinnostunut, ota yhteyttä Wilmassa Emmi Seppälään.</p>`
-      },
-      {
-        type: 'image',
-        src: '/images/jiyu-exact-3.jpg',
-        caption: 'Jiyu Gakuenin opiskelijat tutustumassa Alvar Aallon arkkitehtuuriin Alajärvellä elokuussa 2024. Kierroksella olivat mukana kansainvälisyyskerhon opiskelijat.',
-        alt: 'Jiyu Gakuenin opiskelijat Alajärvellä elokuussa 2024'
-      },
-      {
-        type: 'section',
-        title: 'Alajärven lukion tervehdys Jiyu Gakuenille',
-        contentHTML: `<p class="text-slate-700 leading-relaxed">Yhteistyön myötä Alajärven ja Vimpelin lukioissa on aloitettu japanin opetus. Videolla japanin opiskelijat esittelevät lukiota japaniksi. Videotervehdys on tehty Jiyu Gakuenille, joka täytti 100 vuotta vuonna 2021.</p>`
-      },
-      {
-        type: 'video',
-        url: 'https://youtu.be/0hdWwFgWyBI?si=0KhzaLItPgUjRUFe',
-        caption: 'Alajärven lukion tervehdys 100-vuotiaalle Jiyu Gakuenille (YouTube-video)'
-      }
-    ]
-  },
-  'mukawa': {
-    title: 'Mukawa -yhteistyö',
-    subtitle: 'Mukawan lukio ja yhteistyö Hokkaidolla.',
-    lead: 'Mukawan lukio on Alajärven lukion kokoinen koulu Japanin pohjoisella saarella, Hokkaidolla. Koulu sijaitsee maaseudulla ja se on erityisesti tunnettu hyvästä baseball-joukkueestaan.',
-    cards: [
-      {
-        type: 'section',
-        title: 'Mukawan lukio',
-        contentHTML: `<p class="text-slate-700 leading-relaxed">Mukawan lukio on Alajärven lukion kokoinen koulu Japanin pohjoisella saarella, Hokkaidolla. Koulu sijaitsee maaseudulla ja se on erityisesti tunnettu hyvästä baseball-joukkueestaan.</p>`
-      },
-      {
-        type: 'image',
-        src: '/images/mukawa-exact-1.jpg',
-        caption: 'Mukawan lukio Hokkaidolla.',
-        alt: 'Mukawan lukio'
-      },
-      {
-        type: 'section',
-        title: 'Kansainvälisyyskerho',
-        contentHTML: `<p class="text-slate-700 leading-relaxed">Kansainvälisyyskerho mahdollistaa kansainvälisen kokemuksen kartuttamisen ja englannin harjoittelun matalalla kynnyksellä. Toteutamme yhteistyössä Mukawan lukion kanssa kansainvälisyyskerhoa, jossa opiskelijat keskustelevat toisilleen englanniksi Discord-sovelluksen kautta. Vapaan keskustelun ohella opiskelijat tekevät pieniä video-, kuva- ja tekstitehtäviä eri aiheista, esimerkiksi juhlapyhistä, kouluruokailusta ja harrastuksista. Samalla tutustumme opiskelijoihin toisella puolella maailmaa ja opimme heidän kulttuuristaan.</p><p class="text-slate-700 leading-relaxed mt-3">Kerhon toimintaan kuuluu snack exchange eli herkkujen vaihto kerran vuodessa, jolloin pääsemme maistelemaan makeisia suoraan Japanista. Kansainvälisyyskerhon jäsenet ovat toimineet myös vaihto-opiskelijoiden tukioppilaina ja olleet mukana ohjelmassa, kun koululla vierailevat esimerkiksi Tokion yhteistyökoulun opiskelijat.</p>`
-      },
-      {
-        type: 'image',
-        src: '/images/mukawa-exact-2.jpg',
-        caption: 'Mukavasta vieraili kaksi opettajaa ja kaksi opiskelijaa Alajärvellä marraskuussa 2023.',
-        alt: 'Mukavan vieraat Alajärvellä'
-      },
-      {
-        type: 'section',
-        title: 'Vaihto',
-        contentHTML: `<p class="text-slate-700 leading-relaxed">Myös Mukawan kanssa on tehty vaihto-opiskelua molempiin suuntiin Scandinavia-Japan Sasakawa Foundationin avustuksella. Mukawasta vieraili kaksi opettajaa ja kaksi opiskelijaa Alajärvellä marraskuussa 2023. Alajärveltä puolestaan vieraili Mukawassa yksi opettaja ja neljä opiskelijaa kesä-heinäkuussa 2024.</p>`
-      },
-      {
-        type: 'image',
-        src: '/images/mukawa-exact-3.jpg',
-        caption: 'Alajärveltä vieraili Mukawassa yksi opettaja ja neljä opiskelijaa kesä-heinäkuussa 2024.',
-        alt: 'Alajärven opiskelijoita Mukawassa'
-      }
-    ]
-  },
-  'muu': {
-    title: 'Muu kansainvälinen toiminta',
-    subtitle: 'Erasmus+ -hankkeet, kielimatkat ja kansainväliset vierailut.',
-    contentHTML: `
-      <p class="text-slate-700 leading-relaxed mb-4">
-        Japanin-yhteistyön lisäksi Alajärven lukio osallistuu eurooppalaisiin opiskelijahankkeisiin ja kielimatkoihin. Kannustamme opiskelijoitamme avartamaan maailmankuvaansa!
-      </p>
-    `
-  }
-};
-
-const details = defaultDetails[slug as string] || {
-  title: page?.title || 'Kansainvälisyys',
-  subtitle: 'Kansainvälistä toimintaa Alajärven lukiossa.',
-  contentHTML: '<p class="text-slate-700">Lisätietoja tulossa pian.</p>'
-};
-
-const pageSections = page?.sections && page.sections.length > 0 ? page.sections : (details.sections || []);
-const pageGallery = page?.gallery && page.gallery.length > 0 ? page.gallery : (details.gallery || []);
-const pageLead = page?.lead || details.lead;
-
-const cardsList = (page?.sections?.length || page?.gallery?.length || bodyCards.length)
-  ? [
-      ...bodyCards.map(c => ({ type: 'body', data: c })),
-      ...pageSections.map(s => ({ type: 'section', data: s })),
-      ...pageGallery.map(g => ({ type: 'image', data: g })),
-      ...(page?.youtubeUrl ? [{ type: 'video', data: { url: page.youtubeUrl, caption: 'Sivun YouTube-video' } }] : [])
-    ]
-  : (details.cards || []);
-
-const hasCards = cardsList.length > 0;
+const pageTitle = page?.title || 'Kansainvälisyys';
+const pageLead = page?.lead || 'Kansainvälistä toimintaa Alajärven lukiossa.';
+const pageSections = page?.sections && page.sections.length > 0 ? page.sections : [];
+const pageGallery = page?.gallery && page.gallery.length > 0 ? page.gallery : [];
 ---
 
-<Layout title={`${details.title} | Alajärven lukio`}>
+<Layout title={`${pageTitle} | Alajärven lukio`}>
   <Header />
 
   <main id="main-content" tabindex="-1" class="py-12 bg-transparent min-h-[70vh] focus:outline-none">
@@ -159,7 +40,7 @@ const hasCards = cardsList.length > 0;
         <ChevronRight class="w-3.5 h-3.5" />
         <a href="/kansainvalisyys" class="text-alajarvi-600 hover:text-alajarvi-800">Kansainvälisyys</a>
         <ChevronRight class="w-3.5 h-3.5" />
-        <span class="text-slate-800">{details.title}</span>
+        <span class="text-slate-800">{pageTitle}</span>
       </nav>
 
       <!-- Page Header Card -->
@@ -180,10 +61,10 @@ const hasCards = cardsList.length > 0;
             <Globe class="w-6 h-6" />
           </div>
           <h1 class="font-display font-extrabold text-2xl sm:text-4xl text-white">
-            {page?.title || details.title}
+            {pageTitle}
           </h1>
           <p class="text-sm sm:text-base text-slate-200 max-w-2xl">
-            {pageLead || details.subtitle}
+            {pageLead}
           </p>
         </div>
       </div>
@@ -293,12 +174,12 @@ const hasCards = cardsList.length > 0;
             <div class="space-y-8">
               {pageSections.map((sec: any, idx: number) => {
                 const secId = sec.anchorId || `aihe-${idx + 1}`;
-                
-                // Find matching image (from section.image or pageGallery[idx] or details.cards)
-                const secImage = sec.image || (pageGallery && pageGallery[idx]) || (details.cards && details.cards.filter((c: any) => c.type === 'image')[idx]);
-                const imageUrl = secImage?.src || (secImage?.asset ? urlFor(secImage)?.width(1600).quality(95).url() : null);
+
+                // Find matching image (from section.image, falling back to pageGallery by position)
+                const secImage = sec.image || (pageGallery && pageGallery[idx]);
+                const imageUrl = secImage?.asset ? urlFor(secImage)?.width(1600).quality(95).url() : null;
                 const imageCaption = secImage?.caption || secImage?.alt;
-                const secVideoUrl = sec.videoUrl || (slug === 'jiyu-gakuen' && idx === pageSections.length - 1 ? 'https://youtu.be/0hdWwFgWyBI' : page?.youtubeUrl);
+                const secVideoUrl = sec.videoUrl || page?.youtubeUrl;
 
                 return (
                   <section
@@ -319,11 +200,7 @@ const hasCards = cardsList.length > 0;
                         </div>
 
                         <div class="text-slate-700 leading-relaxed text-base space-y-3">
-                          {sec.content ? (
-                            <PortableText value={sec.content} />
-                          ) : sec.contentHTML ? (
-                            <div set:html={sec.contentHTML} />
-                          ) : null}
+                          {sec.content && <PortableText value={sec.content} />}
                         </div>
                       </div>
 
@@ -361,7 +238,9 @@ const hasCards = cardsList.length > 0;
               })}
             </div>
           ) : (
-            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 prose prose-slate max-w-3xl" set:html={details.contentHTML} />
+            <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200/80 text-center text-slate-500 text-sm">
+              Sisältöä päivitetään pian.
+            </div>
           )}
 
           <!-- PDF files in cards mode -->
@@ -405,7 +284,7 @@ const hasCards = cardsList.length > 0;
           {page?.body && page.body.length > 0 ? (
             <PortableText value={page.body} />
           ) : !page?.lead && !page?.pdfFiles?.length && !page?.gallery?.length && !page?.sections?.length ? (
-            <div class="prose prose-slate max-w-3xl" set:html={details.contentHTML} />
+            <p class="text-center text-slate-500 text-sm py-8">Sisältöä päivitetään pian.</p>
           ) : null}
 
           {page?.sections && page.sections.length > 0 && (

@@ -268,6 +268,7 @@ export interface HomepageData {
   heroTitle?: string;
   heroDescription?: string;
   heroBgImage?: any;
+  heroBgImageMobile?: any;
   heroImage?: any;
   introBadge?: string;
   introTitle?: string;
@@ -296,7 +297,7 @@ export async function getHomepage(): Promise<HomepageData> {
   try {
     const data = await sanityClient.fetch<HomepageData>(
       `*[_type == "homepage"] | order(_updatedAt desc)[0]{
-        heroBadge, heroTitle, heroDescription, heroBgImage, heroImage, introBadge, introTitle, introDescription, introImage, features
+        heroBadge, heroTitle, heroDescription, heroBgImage, heroBgImageMobile, heroImage, introBadge, introTitle, introDescription, introImage, features
       }`
     );
     return data || MOCK_HOMEPAGE;

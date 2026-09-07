@@ -1,6 +1,9 @@
 ---
 import '../styles/global.css';
 import LightboxModal from '../components/LightboxModal.astro';
+import CookieConsent from '../components/CookieConsent.astro';
+
+const gtmId = import.meta.env.PUBLIC_GTM_ID;
 
 interface Props {
   title?: string;
@@ -16,6 +19,40 @@ const {
 <!DOCTYPE html>
 <html lang="fi">
   <head>
+    <!-- Consent Mode v2: default state, set before any Google tag can load -->
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      window.gtag = gtag;
+
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        functionality_storage: 'granted',
+        security_storage: 'granted',
+        wait_for_update: 500,
+      });
+
+      try {
+        var saved = JSON.parse(localStorage.getItem('cookie-consent-v1') || 'null');
+        if (saved) gtag('consent', 'update', saved);
+      } catch (e) {}
+    </script>
+    {gtmId && (
+      <script is:inline define:vars={{ gtmId }}>
+        (function (w, d, s, l, i) {
+          w[l] = w[l] || [];
+          w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+          var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+          j.async = true;
+          j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+          f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', gtmId);
+      </script>
+    )}
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -39,7 +76,17 @@ const {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body class="min-h-screen flex flex-col bg-[#F6FAFE] text-slate-800 antialiased selection:bg-alajarvi-500 selection:text-white overflow-x-clip w-full max-w-full relative">
-    
+    {gtmId && (
+      <noscript>
+        <iframe
+          src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+          height="0"
+          width="0"
+          style="display:none;visibility:hidden"
+        ></iframe>
+      </noscript>
+    )}
+
     <!-- Alvar Aalto Wave Background Overlay (Visible in page margins as soft gentle blue gradients) -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
       <!-- Top-Right Soft Blue Aalto Wave Flow (Visible in right margin) -->
@@ -94,6 +141,7 @@ const {
       </a>
       <slot />
       <LightboxModal />
+      <CookieConsent />
     </div>
   </body>
 </html>

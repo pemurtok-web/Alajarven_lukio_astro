@@ -7,6 +7,7 @@ interface Props {
   title?: string;
   description?: string;
   heroBgImage?: any;
+  heroBgImageMobile?: any;
   heroImage?: any;
 }
 
@@ -15,10 +16,15 @@ const {
   title = 'Rakenna tulevaisuutesi Alajärven lukiossa',
   description = 'Tarjoamme turvallisen, yhteisöllisen ja nykyaikaisen oppimisympäristön. Meillä saat yksilöllistä ohjausta, vahvat valmiudet jatko-opintoihin sekä ainutlaatuisia kansainvälisyyskokemuksia muun muassa Japanin vaihto-ohjelmissa.',
   heroBgImage,
+  heroBgImageMobile,
   heroImage,
 } = Astro.props;
 
-const bgUrlMobile = heroBgImage ? urlFor(heroBgImage)?.width(800).quality(85).url() : null;
+const bgUrlMobile = heroBgImageMobile
+  ? urlFor(heroBgImageMobile)?.width(800).quality(85).url()
+  : heroBgImage
+  ? urlFor(heroBgImage)?.width(800).quality(85).url()
+  : null;
 const bgUrlDesktop = heroBgImage ? urlFor(heroBgImage)?.width(1920).quality(85).url() : null;
 const mainImgUrl = heroImage ? urlFor(heroImage)?.width(800).url() : null;
 ---

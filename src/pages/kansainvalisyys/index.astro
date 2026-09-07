@@ -5,27 +5,20 @@ import Footer from '../../components/Footer.astro';
 import LongPageNav from '../../components/LongPageNav.astro';
 import PortableText from '../../components/PortableText.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
-import { getPageBySlug, urlFor, extractPageAnchors, splitBodyIntoCards } from '../../lib/sanity';
+import { getPageBySlug, urlFor, extractPageAnchors } from '../../lib/sanity';
 import { Globe, ChevronRight, ExternalLink, FileText, CheckCircle, Star, BookOpen, Award } from 'lucide-astro';
 
 const page = await getPageBySlug('kansainvalisyys');
 
 const anchors = extractPageAnchors(page);
-const isCardsLayout = page?.layoutStyle ? page.layoutStyle === 'cards' : true;
-const bodyCards = page?.body ? splitBodyIntoCards(page.body) : [];
-
-const details = {
-  title: page?.title || 'Kansainvälisyys',
-  subtitle: 'Kansainvälistä toimintaa Alajärven lukiossa.',
-  contentHTML: '<p class="text-slate-700">Lisätietoja tulossa pian.</p>',
-};
-
+const isCardsLayout = page?.layoutStyle === 'cards';
+const pageTitle = page?.title || 'Kansainvälisyys';
+const pageLead = page?.lead || 'Kansainvälistä toimintaa Alajärven lukiossa.';
 const pageSections = page?.sections && page.sections.length > 0 ? page.sections : [];
 const pageGallery = page?.gallery && page.gallery.length > 0 ? page.gallery : [];
-const pageLead = page?.lead || details.subtitle;
 ---
 
-<Layout title={`${details.title} | Alajärven lukio`}>
+<Layout title={`${pageTitle} | Alajärven lukio`}>
   <Header />
 
   <main id="main-content" tabindex="-1" class="py-12 bg-transparent min-h-[70vh] focus:outline-none">
@@ -56,7 +49,7 @@ const pageLead = page?.lead || details.subtitle;
             <Globe class="w-6 h-6" />
           </div>
           <h1 class="font-display font-extrabold text-2xl sm:text-4xl text-white">
-            {page?.title || details.title}
+            {pageTitle}
           </h1>
           <p class="text-sm sm:text-base text-slate-200 max-w-2xl">
             {pageLead}
@@ -233,7 +226,9 @@ const pageLead = page?.lead || details.subtitle;
               })}
             </div>
           ) : (
-            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 prose prose-slate max-w-3xl" set:html={details.contentHTML} />
+            <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200/80 text-center text-slate-500 text-sm">
+              Sisältöä päivitetään pian.
+            </div>
           )}
 
           <!-- PDF files in cards mode -->
@@ -271,7 +266,7 @@ const pageLead = page?.lead || details.subtitle;
           {page?.body && page.body.length > 0 ? (
             <PortableText value={page.body} />
           ) : (
-            <div class="prose prose-slate max-w-3xl" set:html={details.contentHTML} />
+            <p class="text-center text-slate-500 text-sm py-8">Sisältöä päivitetään pian.</p>
           )}
         </div>
       )}

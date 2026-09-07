@@ -35,8 +35,16 @@ export const homepageSchema = defineType({
     // --- HERO KUVAT ---
     defineField({
       name: 'heroBgImage',
-      title: 'Hero - Taustakuva (Valinnainen)',
-      description: '💡 Kuvavinkki: pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa – järjestelmä optimoi koon automaattisesti.',
+      title: 'Hero - Taustakuva (Vaakakuva, työpöytä)',
+      description: '💡 Kuvavinkki: pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa – järjestelmä optimoi koon automaattisesti. Näkyy työpöytänäytöillä (ja mobiilissa jos erillistä mobiilikuvaa ei ole valittu alla).',
+      type: 'image',
+      options: { hotspot: true },
+      fields: [{ name: 'alt', type: 'string', title: 'Alt-teksti' }],
+    }),
+    defineField({
+      name: 'heroBgImageMobile',
+      title: 'Hero - Taustakuva mobiilille (Valinnainen, pystykuva)',
+      description: '💡 Isoa maisemakuvaa on vaikea rajata kapealle mobiilinäytölle onnistuneesti. Voit ladata tähän erillisen, mobiiliin paremmin sopivan (esim. pystysuuntaisen tai lähempää rajatun) kuvan. Jos jätät tyhjäksi, mobiilissa käytetään yllä olevaa työpöytäkuvaa rajattuna.',
       type: 'image',
       options: { hotspot: true },
       fields: [{ name: 'alt', type: 'string', title: 'Alt-teksti' }],

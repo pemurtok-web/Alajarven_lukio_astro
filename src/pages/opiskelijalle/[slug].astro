@@ -32,132 +32,26 @@ const anchors = extractPageAnchors(page);
 const isCardsLayout = page?.layoutStyle === 'cards';
 const bodyCards = page?.body ? splitBodyIntoCards(page.body) : [];
 
-// Pre-defined static fallback content for smooth display if Sanity page isn't edited yet
-const defaultDetails: Record<string, { title: string; subtitle: string; icon: any; contentHTML: string }> = {
-  'opinto-opas': {
-    title: 'Opinto-opas 2026–2027',
-    subtitle: 'Kattava opas lukio-opintojen suorittamiseen, opintojaksoihin ja lukiokäytänteisiin.',
-    icon: BookOpen,
-    contentHTML: `
-      <p class="text-slate-700 leading-relaxed mb-4">
-        Alajärven lukion opinto-opas on tarkoitettu jokaisen opiskelijan ja huoltajan hakuteokseksi. Oppaasta löydät tiedot lukion opintorakenteesta, arvioinnista, koeviikoista sekä uusintakuulusteluista.
-      </p>
-      <h3 class="text-xl font-bold text-alajarvi-800 mt-6 mb-3">Opintojen rakenne</h3>
-      <p class="text-slate-700 leading-relaxed mb-4">
-        Lukion oppimäärä käsittää vähintään 150 opintopistettä. Opintoihin kuuluu pakollisia ja valinnaisia opintojaksoja. Ryhmänohjaaja ja opinto-ohjaaja tukevat sinua oman opintosuunnitelmasi laadinnassa.
-      </p>
-      <div class="my-6 p-6 rounded-2xl bg-alajarvi-50 border border-alajarvi-100">
-        <h4 class="font-bold text-alajarvi-900 mb-2">Lataa virallinen opinto-opas PDF-muodossa</h4>
-        <p class="text-xs text-slate-600 mb-4">Päivitetty lukuvuodelle 2026–2027.</p>
-        <a href="https://eperusteet.opintopolku.fi" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-alajarvi-500 text-white font-semibold text-xs hover:bg-alajarvi-600 transition-colors">
-          <span>Avaa ePerusteet / Opinto-opas</span>
-        </a>
-      </div>
-    `
-  },
-  'opintotarjotin': {
-    title: 'Opintotarjotin 2026–2027',
-    subtitle: 'Tutustu tarjolla oleviin valinnaisaineisiin, syventäviin jaksoihin ja teemaopintoihin.',
-    icon: FileText,
-    contentHTML: `
-      <p class="text-slate-700 leading-relaxed mb-4">
-        Opintotarjotin kokoaa yhteen Alajärven lukion tarjoamat kurssit ja opintojaksot eri periodeille. Voit valita reaaliaineita, kieliä, taito- ja taideaineita sekä korkeakouluväyläopintoja.
-      </p>
-      <h3 class="text-xl font-bold text-alajarvi-800 mt-6 mb-3">Valintojen tekeminen Wilmassa</h3>
-      <p class="text-slate-700 leading-relaxed mb-4">
-        Opintojaksovalinnat tehdään Wilman kurssitarjottimen kautta opinto-ohjaajan ja ryhmänohjaajan opastuksella.
-      </p>
-    `
-  },
-  'tyoaika': {
-    title: 'Työajat ja jaksotus',
-    subtitle: 'Lukuvuoden 2026–2027 jaksot, loma-ajat ja koeviikot.',
-    icon: Calendar,
-    contentHTML: `
-      <p class="text-slate-700 leading-relaxed mb-4">
-        Lukuvuosi on jaettu viiteen (5) periodiin. Jokaisen periodin päätteeksi järjestetään päättöviikko / koeviikko.
-      </p>
-      <h3 class="text-xl font-bold text-alajarvi-800 mt-6 mb-3">Loma-ajat</h3>
-      <ul class="list-disc pl-5 space-y-2 text-slate-700 mb-4">
-        <li><strong>Syysloma:</strong> Viikko 42</li>
-        <li><strong>Joululoma:</strong> 21.12.2026 – 6.1.2027</li>
-        <li><strong>Talviloma:</strong> Viikko 9</li>
-      </ul>
-    `
-  },
-  'opinto-ohjaus': {
-    title: 'Opinto-ohjaus (OPO)',
-    subtitle: 'Henkilökohtaista tukea opintopolun suunnitteluun ja jatko-opintohakuun.',
-    icon: HeartHandshake,
-    contentHTML: `
-      <p class="text-slate-700 leading-relaxed mb-4">
-        Opinto-ohjauksen tavoitteena on tukea opiskelijaa lukio-opinnoissa, jatko-opintojen valinnassa sekä elämänsuunnittelussa.
-      </p>
-      <div class="p-6 rounded-2xl bg-slate-100 border border-slate-200 my-4">
-        <h4 class="font-bold text-slate-900 mb-1">Opinto-ohjaajan yhteystiedot</h4>
-        <p class="text-sm text-slate-700">Tapaamiset ja jatko-opintoneuvonta sovitaan Wilman kautta tai suoraan opolle.</p>
-      </div>
-    `
-  },
-  'opiskeluhuolto': {
-    title: 'Opiskeluhuolto',
-    subtitle: 'Opiskelijaterveydenhuolto, kuraattori- ja psykologipalvelut.',
-    icon: ShieldCheck,
-    contentHTML: `
-      <p class="text-slate-700 leading-relaxed mb-4">
-        Opiskeluhuolto edistää opiskelijoiden fyysistä, psyykkistä ja sosiaalista hyvinvointia. Lukiossamme toimivat terveydenhoitaja, kuraattori ja psykologi.
-      </p>
-    `
-  },
-  'yo-kirjoitukset': {
-    title: 'Ylioppilaskirjoitukset',
-    subtitle: 'Tietoa ylioppilastutkinnosta, koepäivistä ja valmistautumisesta.',
-    icon: Award,
-    contentHTML: `
-      <p class="text-slate-700 leading-relaxed mb-4">
-        Ylioppilastutkinto järjestetään kaksi kertaa vuodessa (syksyllä ja keväällä). Tutkintoon kuuluu vähintään viisi (5) koetta.
-      </p>
-      <a href="https://www.ylioppilastutkinto.fi" target="_blank" class="text-alajarvi-600 hover:text-alajarvi-800 font-bold underline">
-        Siirry Ylioppilastutkintolautakunnan (YTL) sivuille →
-      </a>
-    `
-  },
-  'lomakkeet': {
-    title: 'Lomakkeet & Ohjeet',
-    subtitle: 'Ladattavat opiskelijalomakkeet, poissaolohakemukset ja hakukaavakkeet.',
-    icon: FileText,
-    contentHTML: `
-      <p class="text-slate-700 leading-relaxed mb-4">
-        Täältä löydät keskitetysti opiskeluun liittyvät hakemukset. Poissaolohakemukset ja suoritusten hyväksiluvut toimitetaan rehtorille tai opolle.
-      </p>
-    `
-  },
-  'kodin-ja-koulun-yhteistyo': {
-    title: 'Kodin ja koulun yhteistyö',
-    subtitle: 'Tietoa huoltajille, vanhempainillat ja Wilma-viestintä.',
-    icon: HeartHandshake,
-    contentHTML: `
-      <p class="text-slate-700 leading-relaxed mb-4">
-        Kodin ja lukion saumaton yhteistyö tukee nuoren oppimista ja hyvinvointia. Järjestämme vuosittain vanhempainiltoja ja viestimme aktiivisesti Wilman kautta.
-      </p>
-    `
-  }
+// Purely visual icon per page type — not editorial content, so kept in code rather than Sanity
+const iconMap: Record<string, any> = {
+  'opinto-opas': BookOpen,
+  'opintotarjotin': FileText,
+  'tyoaika': Calendar,
+  'opinto-ohjaus': HeartHandshake,
+  'opiskeluhuolto': ShieldCheck,
+  'yo-kirjoitukset': Award,
+  'lomakkeet': FileText,
+  'kodin-ja-koulun-yhteistyo': HeartHandshake,
 };
-
-const details = defaultDetails[slug as string] || {
-  title: page?.title || 'Opiskelijalle',
-  subtitle: 'Tietoa lukio-opiskelusta Alajärven lukiossa.',
-  icon: BookOpen,
-  contentHTML: '<p class="text-slate-700">Lisätietoja tulossa pian.</p>'
-};
-
-const IconComponent = details.icon;
+const IconComponent = iconMap[slug as string] || BookOpen;
+const pageTitle = page?.title || 'Opiskelijalle';
+const pageLead = page?.lead || 'Tietoa lukio-opiskelusta Alajärven lukiossa.';
 const hasSections = page?.sections && page.sections.length > 0;
 const hasGallery = page?.gallery && page.gallery.length > 0;
 const hasBodyCards = bodyCards.length > 0;
 ---
 
-<Layout title={`${details.title} | Alajärven lukio`}>
+<Layout title={`${pageTitle} | Alajärven lukio`}>
   <Header />
 
   <main class="py-12 bg-transparent min-h-[70vh]">
@@ -169,7 +63,7 @@ const hasBodyCards = bodyCards.length > 0;
         <ChevronRight class="w-3.5 h-3.5" />
         <span class="text-alajarvi-600">Opiskelijalle</span>
         <ChevronRight class="w-3.5 h-3.5" />
-        <span class="text-slate-800">{details.title}</span>
+        <span class="text-slate-800">{pageTitle}</span>
       </nav>
 
       <!-- Page Header Card -->
@@ -190,10 +84,10 @@ const hasBodyCards = bodyCards.length > 0;
             <IconComponent class="w-6 h-6" />
           </div>
           <h1 class="font-display font-extrabold text-2xl sm:text-4xl text-white">
-            {page?.title || details.title}
+            {pageTitle}
           </h1>
           <p class="text-sm sm:text-base text-slate-200 max-w-2xl">
-            {page?.lead || details.subtitle}
+            {pageLead}
           </p>
         </div>
       </div>
@@ -407,7 +301,9 @@ const hasBodyCards = bodyCards.length > 0;
 
             </div>
           ) : !page?.lead && !page?.pdfFiles?.length ? (
-            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 prose prose-slate max-w-3xl" set:html={details.contentHTML} />
+            <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200/80 text-center text-slate-500 text-sm">
+              Sisältöä päivitetään pian.
+            </div>
           ) : null}
 
           <!-- PDF files in cards mode -->
@@ -489,7 +385,7 @@ const hasBodyCards = bodyCards.length > 0;
           {page?.body && page.body.length > 0 ? (
             <PortableText value={page.body} />
           ) : !page?.lead && !page?.pdfFiles?.length && !page?.gallery?.length && !page?.sections?.length ? (
-            <div class="prose prose-slate max-w-3xl" set:html={details.contentHTML} />
+            <p class="text-center text-slate-500 text-sm py-8">Sisältöä päivitetään pian.</p>
           ) : null}
 
           {page?.sections && page.sections.length > 0 && (

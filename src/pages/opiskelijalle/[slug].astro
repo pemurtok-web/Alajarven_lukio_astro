@@ -4,20 +4,24 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import LongPageNav from '../../components/LongPageNav.astro';
 import PortableText from '../../components/PortableText.astro';
-import { getPageBySlug, urlFor, extractPageAnchors, splitBodyIntoCards } from '../../lib/sanity';
+import { getPageBySlug, getAllPages, urlFor, extractPageAnchors, splitBodyIntoCards } from '../../lib/sanity';
 import { BookOpen, ChevronRight, FileText, Calendar, ShieldCheck, HeartHandshake, Award, Image as ImageIcon, ExternalLink } from 'lucide-astro';
 
-export function getStaticPaths() {
-  return [
-    { params: { slug: 'opinto-opas' } },
-    { params: { slug: 'opintotarjotin' } },
-    { params: { slug: 'tyoaika' } },
-    { params: { slug: 'opinto-ohjaus' } },
-    { params: { slug: 'opiskeluhuolto' } },
-    { params: { slug: 'yo-kirjoitukset' } },
-    { params: { slug: 'lomakkeet' } },
-    { params: { slug: 'kodin-ja-koulun-yhteistyo' } },
+export async function getStaticPaths() {
+  const defaultSlugs = [
+    'opinto-opas',
+    'opintotarjotin',
+    'tyoaika',
+    'opinto-ohjaus',
+    'opiskeluhuolto',
+    'yo-kirjoitukset',
+    'lomakkeet',
+    'kodin-ja-koulun-yhteistyo',
   ];
+  const pages = await getAllPages();
+  const sanitySlugs = pages.map(p => p.slug?.current).filter(Boolean);
+  const allSlugs = Array.from(new Set([...defaultSlugs, ...sanitySlugs]));
+  return allSlugs.map(slug => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;

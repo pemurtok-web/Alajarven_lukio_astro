@@ -274,7 +274,7 @@ export async function getHomepage(): Promise<HomepageData> {
   if (!sanityClient) return MOCK_HOMEPAGE;
   try {
     const data = await sanityClient.fetch<HomepageData>(
-      `*[_type == "homepage"][0]{
+      `*[_type == "homepage"] | order(_updatedAt desc)[0]{
         heroBadge, heroTitle, heroDescription, heroBgImage, heroImage, introBadge, introTitle, introDescription, introImage, features
       }`
     );
@@ -295,7 +295,7 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
   }
   try {
     const page = await sanityClient.fetch<PageContent>(
-      `*[_type == "page" && (_id == $slug || _id == "page-" + $slug || _id == "drafts.page-" + $slug || slug.current == $slug || slug.current == "lukion-" + $slug)] | order(_updatedAt desc)[0]{
+      `*[_type == "page" && (_id == $slug || _id == "page-" + $slug || _id == "drafts.page-" + $slug || slug.current == $slug || slug.current == "lukion-" + $slug || slug.current match $slug + "*")] | order(_updatedAt desc)[0]{
         _id, title, slug, lead, layoutStyle, externalLink, externalLinkTitle,
         body[]{
           ...,
@@ -310,7 +310,7 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
           "fileUrl": asset->url
         },
         gallery,
-        sections, mainImage, stats, features
+        sections, mainImage, stats, features, youtubeUrl
       }`,
       { slug }
     );
@@ -362,7 +362,7 @@ export async function getAllPages(): Promise<PageContent[]> {
   if (!sanityClient) return [];
   try {
     const pages = await sanityClient.fetch<PageContent[]>(
-      `*[_type == "page"]{
+      `*[_type == "page"] | order(_updatedAt desc){
         _id, title, slug
       }`
     );

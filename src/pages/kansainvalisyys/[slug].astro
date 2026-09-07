@@ -5,15 +5,15 @@ import Footer from '../../components/Footer.astro';
 import LongPageNav from '../../components/LongPageNav.astro';
 import PortableText from '../../components/PortableText.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
-import { getPageBySlug, urlFor, extractPageAnchors, splitBodyIntoCards } from '../../lib/sanity';
+import { getPageBySlug, getAllPages, urlFor, extractPageAnchors, splitBodyIntoCards } from '../../lib/sanity';
 import { Globe, ChevronRight, Compass, Heart, Users, Image as ImageIcon, ExternalLink, FileText } from 'lucide-astro';
 
-export function getStaticPaths() {
-  return [
-    { params: { slug: 'jiyu-gakuen' } },
-    { params: { slug: 'mukawa' } },
-    { params: { slug: 'muu' } },
-  ];
+export async function getStaticPaths() {
+  const defaultSlugs = ['jiyu-gakuen', 'mukawa', 'muu'];
+  const pages = await getAllPages();
+  const sanitySlugs = pages.map(p => p.slug?.current).filter(Boolean);
+  const allSlugs = Array.from(new Set([...defaultSlugs, ...sanitySlugs]));
+  return allSlugs.map(slug => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;

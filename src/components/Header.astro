@@ -29,13 +29,29 @@ const kansainvalisyysPages = [
   <!-- Top Quicklinks Bar -->
   <div class="bg-alajarvi-800 text-white text-xs py-2 px-4 sm:px-8 w-full">
     <div class="max-w-7xl mx-auto flex justify-between items-center gap-2">
-      <div class="flex items-center space-x-4 text-slate-300 shrink-0">
+      <div class="flex items-center space-x-3 text-slate-300 shrink-0">
         <span class="font-medium text-white flex items-center gap-1.5">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           {siteSettings.title || 'Alajärven lukio'}
         </span>
-        <span class="hidden md:inline">|</span>
+        <span class="hidden md:inline text-slate-500">|</span>
         <span class="hidden md:inline text-slate-300">{siteSettings.address || 'Koulutie 1, 62900 Alajärvi'}</span>
+        {siteSettings.phone && (
+          <>
+            <span class="hidden lg:inline text-slate-500">|</span>
+            <a href={`tel:${siteSettings.phone.replace(/\s+/g, '')}`} class="hidden lg:inline text-slate-300 hover:text-white transition-colors">
+              📞 {siteSettings.phone}
+            </a>
+          </>
+        )}
+        {siteSettings.email && (
+          <>
+            <span class="hidden xl:inline text-slate-500">|</span>
+            <a href={`mailto:${siteSettings.email}`} class="hidden xl:inline text-slate-300 hover:text-white transition-colors">
+              ✉️ {siteSettings.email}
+            </a>
+          </>
+        )}
       </div>
 
       <!-- Quicklinks Badges -->

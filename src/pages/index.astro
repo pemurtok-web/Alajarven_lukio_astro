@@ -48,8 +48,14 @@ const gridColsClass =
     <!-- Dynamic Quicklinks -->
     <QuickLinks />
 
+    <!-- News Highlights Section -->
+    <NewsHighlights />
+
+    <!-- Event Calendar Section -->
+    <EventCalendar />
+
     <!-- Esittelyosio & Valttikortit -->
-    <section class="py-16 sm:py-20 bg-slate-50/70 border-y border-slate-200/60">
+    <section class="py-16 sm:py-20 bg-transparent border-y border-slate-200/40">
       <div class="max-w-7xl mx-auto px-4 sm:px-8 space-y-12">
 
         <!-- Top Header & Intro Image Box -->
@@ -89,7 +95,7 @@ const gridColsClass =
                   <img
                     src={introImgUrl}
                     alt="Esittelykuva Alajärven lukiolta"
-                    class="w-full aspect-[16/10] lg:aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-500"
+                    class="w-full aspect-[16/10] lg:aspect-[4/3] max-h-[38vh] lg:max-h-[480px] object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
                   <div class="absolute bottom-4 left-4 right-4 text-white space-y-1">
@@ -193,12 +199,6 @@ const gridColsClass =
 
       </div>
     </section>
-
-    <!-- News Highlights Section -->
-    <NewsHighlights />
-
-    <!-- Event Calendar Section -->
-    <EventCalendar />
   </main>
 
   <Footer />

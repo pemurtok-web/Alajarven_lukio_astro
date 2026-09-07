@@ -20,6 +20,7 @@ export const siteSettingsSchema = defineType({
     defineField({
       name: 'logoImage',
       title: 'Oma Logo (Kuva PNG / SVG / WebP)',
+      description: '💡 Logo kannattaa olla läpinäkyvällä taustalla, riittää n. 500–800 px leveä kuva.',
       type: 'image',
       options: { hotspot: true },
       fields: [{ name: 'alt', type: 'string', title: 'Alt-teksti' }],

@@ -36,6 +36,7 @@ export const homepageSchema = defineType({
     defineField({
       name: 'heroBgImage',
       title: 'Hero - Taustakuva (Valinnainen)',
+      description: '💡 Kuvavinkki: pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa – järjestelmä optimoi koon automaattisesti.',
       type: 'image',
       options: { hotspot: true },
       fields: [{ name: 'alt', type: 'string', title: 'Alt-teksti' }],
@@ -43,6 +44,7 @@ export const homepageSchema = defineType({
     defineField({
       name: 'heroImage',
       title: 'Hero - Pääkuva / Kuva-alue oikealla',
+      description: '💡 Kuvavinkki: pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa – järjestelmä optimoi koon automaattisesti.',
       type: 'image',
       options: { hotspot: true },
       fields: [{ name: 'alt', type: 'string', title: 'Alt-teksti' }],
@@ -71,6 +73,7 @@ export const homepageSchema = defineType({
     defineField({
       name: 'introImage',
       title: 'Esittely - Kuva (Kuva ja teksti rinnakkain)',
+      description: '💡 Kuvavinkki: pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa – järjestelmä optimoi koon automaattisesti.',
       type: 'image',
       options: { hotspot: true },
       fields: [{ name: 'alt', type: 'string', title: 'Alt-teksti' }],
@@ -91,6 +94,7 @@ export const homepageSchema = defineType({
               name: 'image',
               type: 'image',
               title: 'Kortin kuva (Näkyy kortin yläosassa)',
+              description: '💡 Pidempi sivu n. 1920–2500 px riittää hyvin.',
               options: { hotspot: true },
               fields: [{ name: 'alt', type: 'string', title: 'Alt-teksti' }]
             },

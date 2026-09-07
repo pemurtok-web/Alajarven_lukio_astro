@@ -18,13 +18,25 @@ const {
   heroImage,
 } = Astro.props;
 
-const bgUrl = heroBgImage ? urlFor(heroBgImage)?.width(1920).url() : null;
+const bgUrlMobile = heroBgImage ? urlFor(heroBgImage)?.width(800).quality(85).url() : null;
+const bgUrlDesktop = heroBgImage ? urlFor(heroBgImage)?.width(1920).quality(85).url() : null;
 const mainImgUrl = heroImage ? urlFor(heroImage)?.width(800).url() : null;
 ---
 
 <section class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-alajarvi-700 text-white py-16 sm:py-24">
-  {bgUrl && (
-    <img src={bgUrl} alt="" class="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none" />
+  {heroBgImage && (
+    <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
+      <picture class="w-full h-full">
+        {bgUrlMobile && <source media="(max-width: 640px)" srcset={bgUrlMobile} />}
+        <img
+          src={bgUrlDesktop || ''}
+          alt={heroBgImage.alt || title}
+          class="w-full h-full object-cover object-center"
+          loading="eager"
+        />
+      </picture>
+      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/65 to-slate-950/50 lg:bg-gradient-to-r lg:from-slate-950/88 lg:from-0% lg:via-slate-950/80 lg:via-58% lg:to-transparent lg:to-90%"></div>
+    </div>
   )}
   <!-- Subtle Background Pattern -->
 
@@ -92,7 +104,7 @@ const mainImgUrl = heroImage ? urlFor(heroImage)?.width(800).url() : null;
         <!-- Main Featured Image Container -->
         <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 group">
           {mainImgUrl ? (
-            <img src={mainImgUrl} alt="Alajärven lukio" class="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-500" />
+            <img src={mainImgUrl} alt="Alajärven lukio" class="w-full aspect-[4/3] max-h-[42vh] lg:max-h-[520px] object-cover group-hover:scale-105 transition-transform duration-500" />
           ) : (
             <div class="aspect-[4/3] bg-gradient-to-br from-alajarvi-600 to-alajarvi-800 flex items-center justify-center p-6 sm:p-8 text-center">
               <!-- Stylized School Visual Mockup -->

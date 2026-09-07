@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity';
+import { commonBlock } from './commonBlock';
 
 export const pageSchema = defineType({
   name: 'page',
@@ -21,6 +22,18 @@ export const pageSchema = defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
+
+    // --- YLÄBANNERI (HERO) ---
+    defineField({
+      name: 'heroBgImage',
+      title: '🌄 Yläbannerin taustakuva (Hero-osion taustakuva)',
+      description: 'Valinnainen taustakuva sivun ylimpään laatikkoon (Hero header). Kuvan päälle tulee automaattisesti tumma liukuväri lukukelpoisuuden takaamiseksi. 💡 Pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa.',
+      type: 'image',
+      options: { hotspot: true },
+      fields: [
+        { name: 'alt', type: 'string', title: 'Alt-teksti' }
+      ]
+    }),
     defineField({
       name: 'lead',
       title: 'Ingressi / Johdantoteksti',
@@ -42,6 +55,48 @@ export const pageSchema = defineType({
       },
       initialValue: 'cards',
     }),
+
+    // --- LINKKIBANNERI & PÄÄKUVA (Näkyvät heti Hero-osion jälkeen) ---
+    defineField({
+      name: 'externalLink',
+      title: 'Google Drive -linkki / Verkkolinkki (esim. https://drive.google.com/...)',
+      description: 'Liitä tähän suora Google Drive -osoite tai verkkolinkki opinto-oppaaseen',
+      type: 'url',
+    }),
+    defineField({
+      name: 'externalLinkTitle',
+      title: 'Linkkipainikkeen teksti (esim. Avaa Opinto-opas Google Drivessa)',
+      type: 'string',
+    }),
+    defineField({
+      name: 'mainImage',
+      title: 'Sivun pääkuva / Bannerikuva',
+      description: '💡 Kuvavinkki: pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa – järjestelmä optimoi koon automaattisesti.',
+      type: 'image',
+      options: { hotspot: true },
+      fields: [
+        { name: 'caption', type: 'string', title: 'Kuvateksti / Selite kuvan alle' },
+        { name: 'alt', type: 'string', title: 'Alt-teksti' }
+      ]
+    }),
+    defineField({
+      name: 'youtubeUrl',
+      title: 'Video- / YouTube- / Google Drive -videolinkki (Sivun video)',
+      description: 'Voit syöttää tähän YouTube-, Google Drive- tai Vimeo-videolinkin (esim. https://youtu.be/... tai https://drive.google.com/file/d/...)',
+      type: 'url',
+    }),
+    defineField({
+      name: 'youtubeTitle',
+      title: 'Videon otsikko (esim. Katso lukion esittelyvideo)',
+      type: 'string',
+    }),
+    defineField({
+      name: 'youtubeCaption',
+      title: 'Videon selite / Kuvateksti videon alle',
+      type: 'string',
+    }),
+
+    // --- KOROSTUSKORTIT (Näkyvät pääkuvan/videon jälkeen, ennen leipätekstiä) ---
     defineField({
       name: 'stats',
       title: '📊 Tilasto- / Numerokortit (esim. Keskiarvoraja 7,00, Aloituspaikat 60–70)',
@@ -52,8 +107,8 @@ export const pageSchema = defineType({
           type: 'object',
           title: 'Numerokortti',
           fields: [
-            { name: 'number', type: 'string', title: 'Suuri numero / tieto (esim. 7,00 tai 100 %)', validation: (Rule) => Rule.required() },
-            { name: 'label', type: 'string', title: 'Otsikko / Selite (esim. YLEISLINJAN KESKIARVORAJA)', validation: (Rule) => Rule.required() },
+            { name: 'number', type: 'string', title: 'Suuri numero / tieto (esim. 7,00 tai 100 %)' },
+            { name: 'label', type: 'string', title: 'Otsikko / Selite (esim. YLEISLINJAN KESKIARVORAJA)' },
             { name: 'description', type: 'string', title: 'Lisätieto (esim. Peruskoulun lukuaineiden keskiarvo)' },
           ],
           preview: {
@@ -72,8 +127,8 @@ export const pageSchema = defineType({
           type: 'object',
           title: 'Infokortti',
           fields: [
-            { name: 'title', type: 'string', title: 'Kortin otsikko (esim. Maksuton 2. asteen koulutus)', validation: (Rule) => Rule.required() },
-            { name: 'description', type: 'text', rows: 2, title: 'Kortin teksti', validation: (Rule) => Rule.required() },
+            { name: 'title', type: 'string', title: 'Kortin otsikko (esim. Maksuton 2. asteen koulutus)' },
+            { name: 'description', type: 'text', rows: 2, title: 'Kortin teksti' },
             {
               name: 'icon',
               type: 'string',
@@ -96,42 +151,18 @@ export const pageSchema = defineType({
         }
       ]
     }),
-    defineField({
-      name: 'externalLink',
-      title: 'Google Drive -linkki / Verkkolinkki (esim. https://drive.google.com/...)',
-      description: 'Liitä tähän suora Google Drive -osoite tai verkkolinkki opinto-oppaaseen',
-      type: 'url',
-    }),
-    defineField({
-      name: 'externalLinkTitle',
-      title: 'Linkkipainikkeen teksti (esim. Avaa Opinto-opas Google Drivessa)',
-      type: 'string',
-    }),
-    defineField({
-      name: 'mainImage',
-      title: 'Sivun pääkuva / Bannerikuva',
-      type: 'image',
-      options: { hotspot: true },
-      fields: [
-        { name: 'caption', type: 'string', title: 'Kuvateksti / Selite kuvan alle' },
-        { name: 'alt', type: 'string', title: 'Alt-teksti' }
-      ]
-    }),
-    defineField({
-      name: 'youtubeUrl',
-      title: 'YouTube -videolinkki (Sivun video / soitin)',
-      description: 'Voit syöttää tähän minkä tahansa YouTube-videolinkin (esim. https://youtu.be/0hdWwFgWyBI tai https://www.youtube.com/watch?v=...)',
-      type: 'url',
-    }),
+
+    // --- PÄÄSISÄLTÖ (Leipäteksti, osiot, galleria, liitteet) ---
     defineField({
       name: 'body',
       title: 'Päätekstisisältö (Block content)',
       type: 'array',
       of: [
-        { type: 'block' },
+        commonBlock,
         {
           type: 'image',
           title: 'Kuva tekstin sekaan (Rinnakkain tai sovitetusti)',
+          description: '💡 Pidempi sivu n. 1920–2500 px riittää hyvin.',
           options: { hotspot: true },
           fields: [
             { name: 'caption', type: 'string', title: 'Kuvateksti (Näkyy kuvan alla)' },
@@ -172,39 +203,6 @@ export const pageSchema = defineType({
       ],
     }),
     defineField({
-      name: 'gallery',
-      title: 'Kuvagalleria / Lisäkuvat sivulle',
-      description: 'Voit ladata tähän useita kuvia kuvateksteineen',
-      type: 'array',
-      of: [
-        {
-          type: 'image',
-          title: 'Kuva',
-          options: { hotspot: true },
-          fields: [
-            { name: 'caption', type: 'string', title: 'Kuvateksti / Otsikko kuvan alle' },
-            { name: 'alt', type: 'string', title: 'Alt-teksti' }
-          ]
-        }
-      ]
-    }),
-    defineField({
-      name: 'pdfFiles',
-      title: 'Ladattavat PDF-tiedostot / Liitteet sivun alalaitaan',
-      type: 'array',
-      of: [
-        {
-          type: 'file',
-          title: 'PDF-tiedosto / Liite',
-          options: { accept: '.pdf,.doc,.docx,.xlsx' },
-          fields: [
-            { name: 'title', type: 'string', title: 'Tiedoston nimi (esim. Opinto-opas 2026–2027.pdf)' },
-            { name: 'description', type: 'string', title: 'Lyhyt kuvaus' }
-          ]
-        }
-      ]
-    }),
-    defineField({
       name: 'sections',
       title: '🖼️ Rinnakkaiset Osio-kortit (Teksti 1 + Kuva 1, Teksti 2 + Kuva 2...)',
       description: 'Lisää tähän osioita klikkaamalla "+ Lisää Osio". Jokaisessa osiossa Teksti ja Kuva asettuvat automaattisesti rinnakkain.',
@@ -219,13 +217,12 @@ export const pageSchema = defineType({
               type: 'string',
               title: '1. Osion otsikko',
               description: 'Kirjoita tähän osion otsikko (esim. Opiskelijavaihtoa vuodesta 2016)',
-              validation: (Rule) => Rule.required(),
             },
             {
               name: 'image',
               type: 'image',
               title: '2. Laita tähän Kuva (Näkyy tekstin rinnalla)',
-              description: 'Valitse tai lataa kuva, joka asettuu tämän osion tekstin viereen',
+              description: 'Valitse tai lataa kuva, joka asettuu tämän osion tekstin viereen. 💡 Pidempi sivu n. 1920–2500 px riittää hyvin.',
               options: { hotspot: true },
               fields: [
                 {
@@ -247,7 +244,7 @@ export const pageSchema = defineType({
               title: '3. Kirjoita tähän Teksti',
               description: 'Kirjoita tähän osion leipäteksti ja kappaleet',
               of: [
-                { type: 'block' },
+                commonBlock,
                 {
                   type: 'file',
                   title: 'Ladattava PDF / Tiedosto osion sekaan',
@@ -284,6 +281,40 @@ export const pageSchema = defineType({
               };
             },
           },
+        }
+      ]
+    }),
+    defineField({
+      name: 'gallery',
+      title: 'Kuvagalleria / Lisäkuvat sivulle',
+      description: 'Voit ladata tähän useita kuvia kuvateksteineen',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          title: 'Kuva',
+          description: '💡 Pidempi sivu n. 1920–2500 px riittää hyvin.',
+          options: { hotspot: true },
+          fields: [
+            { name: 'caption', type: 'string', title: 'Kuvateksti / Otsikko kuvan alle' },
+            { name: 'alt', type: 'string', title: 'Alt-teksti' }
+          ]
+        }
+      ]
+    }),
+    defineField({
+      name: 'pdfFiles',
+      title: 'Ladattavat PDF-tiedostot / Liitteet sivun alalaitaan',
+      type: 'array',
+      of: [
+        {
+          type: 'file',
+          title: 'PDF-tiedosto / Liite',
+          options: { accept: '.pdf,.doc,.docx,.xlsx' },
+          fields: [
+            { name: 'title', type: 'string', title: 'Tiedoston nimi (esim. Opinto-opas 2026–2027.pdf)' },
+            { name: 'description', type: 'string', title: 'Lyhyt kuvaus' }
+          ]
         }
       ]
     })

@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity';
+import { commonBlock } from './commonBlock';
 
 export const postSchema = defineType({
   name: 'post',
@@ -30,6 +31,7 @@ export const postSchema = defineType({
     defineField({
       name: 'mainImage',
       title: 'Kansikuva',
+      description: '💡 Kuvavinkki: pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa – järjestelmä optimoi koon automaattisesti.',
       type: 'image',
       options: {
         hotspot: true,
@@ -54,9 +56,11 @@ export const postSchema = defineType({
       title: 'Tekstisisältö (Block Content)',
       type: 'array',
       of: [
-        { type: 'block' },
+        commonBlock,
         {
           type: 'image',
+          title: 'Kuva',
+          description: '💡 Pidempi sivu n. 1920–2500 px riittää hyvin.',
           options: { hotspot: true },
           fields: [{ name: 'alt', type: 'string', title: 'Alt-teksti' }]
         }

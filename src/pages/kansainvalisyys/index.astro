@@ -1,0 +1,283 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import LongPageNav from '../../components/LongPageNav.astro';
+import PortableText from '../../components/PortableText.astro';
+import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
+import { getPageBySlug, urlFor, extractPageAnchors, splitBodyIntoCards } from '../../lib/sanity';
+import { Globe, ChevronRight, ExternalLink, FileText, CheckCircle, Star, BookOpen, Award } from 'lucide-astro';
+
+const page = await getPageBySlug('kansainvalisyys');
+
+const anchors = extractPageAnchors(page);
+const isCardsLayout = page?.layoutStyle ? page.layoutStyle === 'cards' : true;
+const bodyCards = page?.body ? splitBodyIntoCards(page.body) : [];
+
+const details = {
+  title: page?.title || 'Kansainvälisyys',
+  subtitle: 'Kansainvälistä toimintaa Alajärven lukiossa.',
+  contentHTML: '<p class="text-slate-700">Lisätietoja tulossa pian.</p>',
+};
+
+const pageSections = page?.sections && page.sections.length > 0 ? page.sections : [];
+const pageGallery = page?.gallery && page.gallery.length > 0 ? page.gallery : [];
+const pageLead = page?.lead || details.subtitle;
+---
+
+<Layout title={`${details.title} | Alajärven lukio`}>
+  <Header />
+
+  <main id="main-content" tabindex="-1" class="py-12 bg-transparent min-h-[70vh] focus:outline-none">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 space-y-6">
+
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-2">
+        <a href="/" class="hover:text-alajarvi-600">Etusivu</a>
+        <ChevronRight class="w-3.5 h-3.5" />
+        <span class="text-slate-800">Kansainvälisyys</span>
+      </nav>
+
+      <!-- Page Header Card -->
+      <div class="p-6 sm:p-8 md:p-10 rounded-3xl bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-alajarvi-700 text-white shadow-xl relative overflow-hidden">
+        {page?.heroBgImage && urlFor(page.heroBgImage) && (
+          <div class="absolute inset-0 z-0 pointer-events-none">
+            <img
+              src={urlFor(page.heroBgImage)?.width(1920).quality(90).url()}
+              alt={page.heroBgImage.alt || page?.title || 'Hero taustakuva'}
+              class="w-full h-full object-cover object-center"
+              loading="eager"
+            />
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/55 to-slate-950/15"></div>
+          </div>
+        )}
+        <div class="relative z-10 space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center justify-center text-amber-300">
+            <Globe class="w-6 h-6" />
+          </div>
+          <h1 class="font-display font-extrabold text-2xl sm:text-4xl text-white">
+            {page?.title || details.title}
+          </h1>
+          <p class="text-sm sm:text-base text-slate-200 max-w-2xl">
+            {pageLead}
+          </p>
+        </div>
+      </div>
+
+      <!-- Jump Navigation for Sections or PortableText Headings -->
+      {anchors.length > 0 && (
+        <LongPageNav anchors={anchors} title="Sisällysluettelo" />
+      )}
+
+      {page?.externalLink && (
+        <div class="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-alajarvi-800 to-alajarvi-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
+          <div class="space-y-1">
+            <span class="text-xs font-bold uppercase tracking-wider text-sky-300">Verkkolinkki / Google Drive</span>
+            <h4 class="font-bold text-white text-base sm:text-lg">{page.externalLinkTitle || 'Avaa verkkolinkki / dokumentti'}</h4>
+          </div>
+          <a
+            href={page.externalLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-alajarvi-50 text-alajarvi-900 text-sm font-extrabold transition-all shadow-md active:scale-95 shrink-0"
+          >
+            <span>{page.externalLinkTitle || 'Avaa linkki'}</span>
+            <ExternalLink class="w-4 h-4 text-alajarvi-600" />
+          </a>
+        </div>
+      )}
+
+      {/* Main Banner Image if uploaded in Sanity */}
+      {page?.mainImage && (
+        <div class="group relative rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white hover:shadow-xl transition-all">
+          <a href={urlFor(page.mainImage)?.width(1920).quality(95).url()} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden bg-slate-50 flex flex-col justify-center">
+            <img
+              src={urlFor(page.mainImage)?.width(1920).quality(95).url()}
+              alt={page.mainImage.alt || page.mainImage.caption || page?.title || 'Sivun kuva'}
+              loading="eager"
+              class="w-full h-auto object-contain rounded-t-3xl group-hover:scale-[1.01] transition-transform duration-300 max-h-[42vh] lg:max-h-[600px]"
+            />
+            <div class="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-slate-900/85 text-white text-xs font-semibold backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 shadow-md">
+              <span>Avaa kuva täysikokoisena / Suurenna 🔍</span>
+            </div>
+          </a>
+          {page.mainImage.caption && (
+            <div class="p-4 bg-white border-t border-slate-100 text-sm text-slate-700 font-semibold text-center">
+              {page.mainImage.caption}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Page YouTube Video if added in Sanity */}
+      {page?.youtubeUrl && (
+        <div class="my-6">
+          <YouTubeEmbed url={page.youtubeUrl} title={page?.youtubeTitle || page?.title || 'Sivun video'} caption={page?.youtubeCaption} />
+        </div>
+      )}
+
+      <!-- CARDS GRID LAYOUT: Unified side-by-side 2-column sections (Text on Left, Image/Video on Right) -->
+      {isCardsLayout ? (
+        <div class="space-y-8">
+
+          {pageLead && (
+            <div class="p-6 sm:p-8 rounded-3xl bg-white shadow-sm border border-alajarvi-100 text-alajarvi-900 font-medium text-base sm:text-lg leading-relaxed">
+              {pageLead}
+            </div>
+          )}
+
+          {/* Tilasto- / Numerokortit (Stats) */}
+          {page?.stats && page.stats.length > 0 && (
+            <div class="p-6 rounded-3xl bg-white shadow-sm border border-slate-200/90 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 my-6">
+              {page.stats.map((st: any) => (
+                <div class="p-4 rounded-2xl bg-alajarvi-50/50 border border-alajarvi-100 space-y-1">
+                  <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">{st.label}</span>
+                  <span class="text-3xl font-extrabold font-display text-alajarvi-700">{st.number}</span>
+                  {st.description && <p class="text-xs text-slate-600 mt-1">{st.description}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Info- / Korostuskortit (Features) */}
+          {page?.features && page.features.length > 0 && (
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 my-6">
+              {page.features.map((feat: any) => (
+                <div class="p-5 sm:p-6 rounded-3xl bg-white shadow-sm border border-slate-200/90 hover:border-alajarvi-300 transition-all space-y-2">
+                  <div class="flex items-center gap-2.5 font-bold text-slate-900 text-base">
+                    {feat.icon === 'globe' ? (
+                      <Globe class="w-5 h-5 text-amber-500 shrink-0" />
+                    ) : feat.icon === 'star' ? (
+                      <Star class="w-5 h-5 text-amber-400 shrink-0" />
+                    ) : feat.icon === 'book' ? (
+                      <BookOpen class="w-5 h-5 text-sky-500 shrink-0" />
+                    ) : feat.icon === 'award' ? (
+                      <Award class="w-5 h-5 text-emerald-500 shrink-0" />
+                    ) : (
+                      <CheckCircle class="w-5 h-5 text-alajarvi-500 shrink-0" />
+                    )}
+                    <span>{feat.title}</span>
+                  </div>
+                  <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">{feat.description}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Unified Paired Sections (Text + Image/Video side-by-side) */}
+          {pageSections && pageSections.length > 0 ? (
+            <div class="space-y-8">
+              {pageSections.map((sec: any, idx: number) => {
+                const secId = sec.anchorId || `aihe-${idx + 1}`;
+
+                // Find matching image (from section.image or pageGallery[idx])
+                const secImage = sec.image || (pageGallery && pageGallery[idx]);
+                const imageUrl = secImage?.asset ? urlFor(secImage)?.width(1600).quality(95).url() : null;
+                const imageCaption = secImage?.caption || secImage?.alt;
+                const secVideoUrl = sec.videoUrl || page?.youtubeUrl;
+
+                return (
+                  <section
+                    id={secId}
+                    class="scroll-mt-28 p-6 sm:p-8 md:p-10 rounded-3xl bg-white shadow-md border border-slate-200/90 hover:border-alajarvi-300 transition-all"
+                  >
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+
+                      <!-- Section Text Column (Alternates side on desktop) -->
+                      <div class={`space-y-4 flex flex-col justify-center ${idx % 2 === 1 ? 'lg:order-2' : 'lg:order-1'}`}>
+                        <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+                          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-alajarvi-600 to-alajarvi-800 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
+                            {idx + 1}
+                          </div>
+                          <h2 class="font-display font-bold text-xl sm:text-2xl text-alajarvi-900">
+                            {sec.title}
+                          </h2>
+                        </div>
+
+                        <div class="text-slate-700 leading-relaxed text-base space-y-3">
+                          {sec.content && <PortableText value={sec.content} />}
+                        </div>
+                      </div>
+
+                      <!-- Section Image or Video Column (Alternates side on desktop) -->
+                      <div class={`w-full flex flex-col justify-center ${idx % 2 === 1 ? 'lg:order-1' : 'lg:order-2'}`}>
+                        {imageUrl ? (
+                          <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-slate-50">
+                            <a href={imageUrl} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden">
+                              <img
+                                src={imageUrl}
+                                alt={secImage?.alt || imageCaption || sec.title}
+                                loading="lazy"
+                                class="w-full h-auto max-h-[380px] object-cover rounded-t-2xl group-hover:scale-[1.02] transition-transform duration-300"
+                              />
+                              <div class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-900/85 text-white text-xs font-semibold backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 shadow-md">
+                                <span>Avaa kuva 🔍</span>
+                              </div>
+                            </a>
+                            {imageCaption && (
+                              <div class="p-3.5 bg-slate-50 border-t border-slate-100 text-xs text-slate-600 font-medium italic text-center">
+                                {imageCaption}
+                              </div>
+                            )}
+                          </div>
+                        ) : secVideoUrl ? (
+                          <div class="rounded-2xl overflow-hidden shadow-md border border-slate-200">
+                            <YouTubeEmbed url={secVideoUrl} caption={sec.title} />
+                          </div>
+                        ) : null}
+                      </div>
+
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
+          ) : (
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 prose prose-slate max-w-3xl" set:html={details.contentHTML} />
+          )}
+
+          <!-- PDF files in cards mode -->
+          {page?.pdfFiles && page.pdfFiles.length > 0 && (
+            <div class="space-y-4 pt-4">
+              <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                <FileText class="w-5 h-5 text-alajarvi-600" />
+                <span>Ladattavat liitedokumentit & PDF-tiedostot</span>
+              </h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {page.pdfFiles.map((file: any) => (
+                  file.fileUrl && (
+                    <a
+                      href={file.fileUrl}
+                      target="_blank"
+                      download
+                      class="p-5 rounded-2xl bg-white border border-slate-200 hover:border-alajarvi-300 shadow-sm hover:shadow-md flex items-center justify-between gap-3 group transition-all"
+                    >
+                      <div>
+                        <h4 class="font-bold text-slate-900 text-sm group-hover:text-alajarvi-600 transition-colors">{file.title || 'Ladattava PDF'}</h4>
+                        {file.description && <p class="text-xs text-slate-500 mt-0.5">{file.description}</p>}
+                      </div>
+                      <FileText class="w-5 h-5 text-alajarvi-500 shrink-0 group-hover:scale-110 transition-transform" />
+                    </a>
+                  )
+                ))}
+              </div>
+            </div>
+          )}
+
+        </div>
+      ) : (
+        /* STANDARD ARTICLE LAYOUT (fallback) */
+        <div class="bg-white rounded-3xl p-5 sm:p-8 md:p-10 shadow-sm border border-slate-200/80 space-y-8">
+          {page?.body && page.body.length > 0 ? (
+            <PortableText value={page.body} />
+          ) : (
+            <div class="prose prose-slate max-w-3xl" set:html={details.contentHTML} />
+          )}
+        </div>
+      )}
+
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

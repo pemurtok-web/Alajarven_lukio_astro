@@ -4,8 +4,9 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import LongPageNav from '../../components/LongPageNav.astro';
 import PortableText from '../../components/PortableText.astro';
+import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 import { getPageBySlug, urlFor, extractPageAnchors } from '../../lib/sanity';
-import { GraduationCap, CheckCircle, Sparkles, BookOpen, Globe, Award, HelpCircle, ArrowRight, FileText } from 'lucide-astro';
+import { GraduationCap, CheckCircle, Sparkles, BookOpen, Globe, Award, HelpCircle, ArrowRight, FileText, Image as ImageIcon } from 'lucide-astro';
 
 const page = await getPageBySlug('hakijalle');
 
@@ -25,44 +26,83 @@ const hasDynamicSections = page?.sections && page.sections.length > 0;
 <Layout title={`${page?.title || 'Hakijalle'} | Alajärven lukio`}>
   <Header />
 
-  <main class="py-12 bg-slate-50">
-    <div class="max-w-6xl mx-auto px-4 sm:px-8 space-y-8">
+  <main class="py-12 bg-transparent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 space-y-8">
       
       <!-- Page Hero Header -->
-      <div class="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-alajarvi-700 text-white shadow-2xl relative overflow-hidden">
+      <div class="p-8 sm:p-14 md:p-16 rounded-3xl bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-alajarvi-700 text-white shadow-2xl overflow-hidden relative border border-alajarvi-800">
+        {page?.heroBgImage && urlFor(page.heroBgImage) && (
+          <div class="absolute inset-0 z-0 pointer-events-none">
+            <img
+              src={urlFor(page.heroBgImage)?.width(1920).quality(90).url()}
+              alt={page.heroBgImage.alt || page?.title || 'Hero taustakuva'}
+              class="w-full h-full object-cover object-center"
+              loading="eager"
+            />
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/55 to-slate-950/15"></div>
+          </div>
+        )}
+        <div class="absolute -right-20 -top-20 w-80 h-80 bg-alajarvi-500/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+        
         <div class="relative z-10 space-y-4 max-w-3xl">
-          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-xs font-semibold text-sky-200 border border-white/20">
-            <GraduationCap class="w-4 h-4 text-amber-300" />
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold text-sky-200 border border-white/10 shadow-sm">
+            <GraduationCap class="w-4 h-4 text-amber-400" />
             <span>Tule opiskelemaan meille</span>
           </div>
-          <h1 class="font-display font-extrabold text-4xl sm:text-5xl text-white tracking-tight">
+          <h1 class="font-display font-extrabold text-4xl sm:text-5xl text-white tracking-tight drop-shadow-sm">
             {page?.title || 'Tervetuloa Alajärven lukioon!'}
           </h1>
-          <p class="text-lg text-slate-200 leading-relaxed font-normal">
+          <p class="text-lg text-slate-200 leading-relaxed font-normal max-w-2xl">
             {page?.lead || 'Alajärven lukio on turvallinen, kannustava ja korkeatasoinen lukio Etelä-Pohjanmaalla. Tältä sivulta löydät kaiken tarvittavan tiedon yhteishakuun ja opintojen aloittamiseen.'}
           </p>
         </div>
       </div>
 
-      <!-- Main Banner Image if uploaded in Sanity -->
-      {page?.mainImage && (
-        <div class="group relative rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white hover:shadow-xl transition-all">
-          <a href={urlFor(page.mainImage)?.width(1920).quality(95).url()} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden bg-slate-50 flex flex-col justify-center">
+      <!-- Main Page Image (Full Resolution Sharp View) -->
+      {page?.mainImage && urlFor(page.mainImage) && (
+        <div class="overflow-hidden rounded-3xl bg-white border border-slate-200/80 shadow-xl group">
+          <div class="relative overflow-hidden">
             <img
               src={urlFor(page.mainImage)?.width(1920).quality(95).url()}
-              alt={page.mainImage.alt || page.mainImage.caption || page?.title || 'Hakijalle sivun kuva'}
+              alt={page.mainImage.alt || page?.title || 'Alajärven lukion ilmakuva'}
+              class="w-full h-auto object-cover max-h-[42vh] lg:max-h-[520px] w-full"
               loading="eager"
-              class="w-full h-auto object-contain rounded-t-3xl group-hover:scale-[1.01] transition-transform duration-300 max-h-[700px]"
             />
-            <div class="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-slate-900/85 text-white text-xs font-semibold backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 shadow-md">
-              <span>Avaa kuva täysikokoisena / Suurenna 🔍</span>
+            {page.mainImage.caption && (
+              <div class="p-4 bg-slate-900/90 text-white text-xs sm:text-sm backdrop-blur-md border-t border-white/10">
+                {page.mainImage.caption}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      <!-- External Google Drive / Document Link Banner -->
+      {page?.externalLink && (
+        <div class="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-alajarvi-800 to-alajarvi-900 text-white shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-6 border border-alajarvi-700">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 text-xs font-bold text-amber-300 uppercase tracking-wider">
+              <Sparkles class="w-4 h-4" />
+              <span>Tärkeä verkkolinkki / Materiaali</span>
             </div>
+            <h4 class="font-bold text-white text-base sm:text-lg">{page.externalLinkTitle || 'Avaa Opinto-opas Google Drivessa'}</h4>
+            <p class="text-xs text-slate-300">Siirry tarkastelemaan suoraa Google Drive -opasta tai verkkodokumenttia.</p>
+          </div>
+          <a
+            href={page.externalLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-alajarvi-900 font-extrabold text-sm transition-all shadow-md active:scale-95 shrink-0"
+          >
+            <span>{page.externalLinkTitle || 'Avaa linkki'}</span>
+            <ArrowRight class="w-4 h-4 text-alajarvi-600" />
           </a>
-          {page.mainImage.caption && (
-            <div class="p-4 bg-white border-t border-slate-100 text-sm text-slate-700 font-semibold text-center">
-              {page.mainImage.caption}
-            </div>
-          )}
+        </div>
+      )}
+
+      {page?.youtubeUrl && (
+        <div class="my-6">
+          <YouTubeEmbed url={page.youtubeUrl} title={page?.youtubeTitle || 'Katso lukion esittelyvideo'} caption={page?.youtubeCaption} />
         </div>
       )}
 
@@ -97,8 +137,8 @@ const hasDynamicSections = page?.sections && page.sections.length > 0;
                   </h2>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-[1fr,auto] gap-8 items-center">
-                  <div class="text-slate-700 leading-relaxed text-base space-y-4">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                  <div class={`text-slate-700 leading-relaxed text-base space-y-4 ${imageUrl && idx % 2 === 1 ? 'lg:order-2' : 'lg:order-1'}`}>
                     {sec.content ? (
                       <PortableText value={sec.content} />
                     ) : (
@@ -139,7 +179,7 @@ const hasDynamicSections = page?.sections && page.sections.length > 0;
                   </div>
 
                   {imageUrl && (
-                    <div class="w-full lg:max-w-md shrink-0">
+                    <div class={`w-full flex flex-col justify-center ${idx % 2 === 1 ? 'lg:order-1' : 'lg:order-2'}`}>
                       <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-slate-50">
                         <a href={imageUrl} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden">
                           <img
@@ -307,6 +347,42 @@ const hasDynamicSections = page?.sections && page.sections.length > 0;
               Alajärven lukiossa voit syventää osaamistasi matemaattis-luonnontieteellisissä aineissa, vieraissa kielissä, humanistisissa aineissa sekä liikunnassa ja taiteissa.
             </p>
           </section>
+        </div>
+      )}
+
+      {/* Gallery images section if added in Sanity */}
+      {page?.gallery && page.gallery.length > 0 && (
+        <div class="space-y-4 pt-4">
+          <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+            <ImageIcon class="w-5 h-5 text-alajarvi-600" />
+            <span>Kuvagalleria & Lisäkuvat ({page.gallery.length})</span>
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {page.gallery.map((img: any) => {
+              const galleryImgUrl = urlFor(img)?.width(1920).quality(95).url();
+              if (!galleryImgUrl) return null;
+              return (
+                <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-white flex flex-col justify-between hover:shadow-lg transition-all">
+                  <a href={galleryImgUrl} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden bg-slate-50">
+                    <img
+                      src={galleryImgUrl}
+                      alt={img.alt || img.caption || 'Kuva'}
+                      loading="lazy"
+                      class="w-full h-auto object-contain rounded-t-2xl group-hover:scale-[1.01] transition-transform duration-300 max-h-[400px]"
+                    />
+                    <div class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-900/85 text-white text-xs font-semibold backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 shadow-md">
+                      <span>Suurenna 🔍</span>
+                    </div>
+                  </a>
+                  {img.caption && (
+                    <div class="p-3.5 bg-white border-t border-slate-100 text-xs text-slate-700 font-semibold text-center">
+                      {img.caption}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 

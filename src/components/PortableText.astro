@@ -24,7 +24,7 @@ function renderChildren(block: any) {
     let text = child.text || '';
     if (!text) return '';
 
-    // Process marks (links, bold, italic)
+    // Process marks (links, bold, italic, underline, strikethrough, indent)
     if (child.marks && Array.isArray(child.marks) && child.marks.length > 0) {
       child.marks.forEach((markKey: string) => {
         const def = markDefsMap[markKey];
@@ -36,6 +36,12 @@ function renderChildren(block: any) {
           text = `<strong class="font-bold text-slate-900">${text}</strong>`;
         } else if (markKey === 'em' || markKey === 'italic') {
           text = `<em class="italic text-slate-800">${text}</em>`;
+        } else if (markKey === 'underline') {
+          text = `<u class="underline decoration-slate-400">${text}</u>`;
+        } else if (markKey === 'strike-through' || markKey === 'strikethrough') {
+          text = `<del class="line-through text-slate-400">${text}</del>`;
+        } else if (markKey === 'indent') {
+          text = `<span class="inline-block pl-4 sm:pl-6 border-l-2 border-alajarvi-400 my-0.5 ml-1 mr-1 text-slate-800 font-medium">${text}</span>`;
         }
       });
     }
@@ -45,11 +51,22 @@ function renderChildren(block: any) {
 ---
 
 {value && Array.isArray(value) ? (
-  <div class="prose prose-slate max-w-none prose-headings:font-display prose-headings:text-alajarvi-800 prose-a:text-alajarvi-600 hover:prose-a:text-alajarvi-800 prose-img:rounded-2xl overflow-x-auto break-words space-y-4">
+  <div class="prose prose-slate max-w-3xl prose-headings:font-display prose-headings:text-alajarvi-800 prose-a:text-alajarvi-600 hover:prose-a:text-alajarvi-800 prose-img:rounded-2xl overflow-x-auto break-words space-y-4">
     {value.map((block: any, idx: number) => {
       if (block._type === 'block') {
         const htmlContent = renderChildren(block);
         if (!htmlContent) return null;
+
+        if (block.listItem) {
+          const indentClass = block.level > 2 ? 'ml-12' : block.level === 2 ? 'ml-6' : '';
+          if (block.listItem === 'bullet') {
+            return <li key={idx} class={`list-disc list-inside text-slate-700 mb-1 ${indentClass}`} set:html={htmlContent} />;
+          }
+          if (block.listItem === 'number') {
+            return <li key={idx} class={`list-decimal list-inside text-slate-700 mb-1 ${indentClass}`} set:html={htmlContent} />;
+          }
+        }
+
         if (block.style === 'h2') {
           const headingId = `heading-${idx}`;
           return <h2 id={headingId} key={idx} class="text-2xl font-bold text-alajarvi-800 mt-8 mb-4 scroll-mt-28" set:html={htmlContent} />;
@@ -60,6 +77,15 @@ function renderChildren(block: any) {
         }
         if (block.style === 'blockquote') {
           return <blockquote key={idx} class="border-l-4 border-alajarvi-500 pl-4 italic text-slate-600 my-4" set:html={htmlContent} />;
+        }
+        if (block.style === 'indent-1' || block.style === 'indent') {
+          return <div key={idx} class="pl-6 sm:pl-8 border-l-2 border-alajarvi-400 my-3 text-slate-700 leading-relaxed font-medium bg-alajarvi-50/40 p-3 rounded-r-xl" set:html={htmlContent} />;
+        }
+        if (block.style === 'indent-2') {
+          return <div key={idx} class="pl-10 sm:pl-12 border-l-4 border-alajarvi-500 my-3 text-slate-700 leading-relaxed font-medium bg-alajarvi-50/70 p-3 rounded-r-xl" set:html={htmlContent} />;
+        }
+        if (block.style === 'indent-3') {
+          return <div key={idx} class="pl-14 sm:pl-16 border-l-4 border-alajarvi-600 my-3 text-slate-700 leading-relaxed font-medium bg-alajarvi-100/70 p-3.5 rounded-r-xl" set:html={htmlContent} />;
         }
         return <p key={idx} class="text-slate-700 leading-relaxed mb-4" set:html={htmlContent} />;
       }

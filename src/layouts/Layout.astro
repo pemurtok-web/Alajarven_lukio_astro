@@ -38,15 +38,62 @@ const {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
   </head>
-  <body class="min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased selection:bg-alajarvi-500 selection:text-white overflow-x-hidden w-full max-w-full">
-    <!-- Skip to content link for screen readers and keyboard accessibility -->
-    <a
-      href="#main-content"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-5 focus:py-3 focus:bg-alajarvi-900 focus:text-white focus:font-bold focus:rounded-xl focus:shadow-2xl focus:outline-none focus:ring-4 focus:ring-amber-400"
-    >
-      Siirry suoraan pääsisältöön (Skip to content)
-    </a>
-    <slot />
-    <LightboxModal />
+  <body class="min-h-screen flex flex-col bg-[#F6FAFE] text-slate-800 antialiased selection:bg-alajarvi-500 selection:text-white overflow-x-hidden w-full max-w-full relative">
+    
+    <!-- Alvar Aalto Wave Background Overlay (Visible in page margins as soft gentle blue gradients) -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      <!-- Top-Right Soft Blue Aalto Wave Flow (Visible in right margin) -->
+      <div class="absolute top-0 -right-20 w-[600px] sm:w-[900px] h-[750px] opacity-85">
+        <svg class="w-full h-full" viewBox="0 0 900 750" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M900 0C720 140 560 80 400 240C240 400 120 320 0 500V0H900Z" fill="url(#aalto-grad-1)"/>
+          <defs>
+            <linearGradient id="aalto-grad-1" x1="450" y1="0" x2="450" y2="500" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#38BDF8" stop-opacity="0.32"/>
+              <stop offset="0.6" stop-color="#7CC2FA" stop-opacity="0.16"/>
+              <stop offset="1" stop-color="#E0EEFB" stop-opacity="0.0"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <!-- Middle-Left Soft Aalto Wave Flow (Visible in left margin) -->
+      <div class="absolute top-[25%] -left-36 w-[650px] sm:w-[950px] h-[800px] opacity-80">
+        <svg class="w-full h-full" viewBox="0 0 950 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 200C200 140 360 320 560 250C760 180 850 340 950 270V800H0V200Z" fill="url(#aalto-grad-2)"/>
+          <defs>
+            <linearGradient id="aalto-grad-2" x1="475" y1="140" x2="475" y2="800" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#0055A5" stop-opacity="0.20"/>
+              <stop offset="0.7" stop-color="#BAFAF9" stop-opacity="0.08"/>
+              <stop offset="1" stop-color="#E0EEFB" stop-opacity="0.0"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <!-- Bottom-Right Soft Aalto Wave Flow (Visible near footer right margin) -->
+      <div class="absolute bottom-0 -right-20 w-[700px] sm:w-[1000px] h-[650px] opacity-80">
+        <svg class="w-full h-full" viewBox="0 0 1000 650" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1000 650H0C220 540 420 600 600 500C780 400 920 480 1000 380V650Z" fill="url(#aalto-grad-3)"/>
+          <defs>
+            <linearGradient id="aalto-grad-3" x1="500" y1="380" x2="500" y2="650" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#7CC2FA" stop-opacity="0.28"/>
+              <stop offset="1" stop-color="#E0EEFB" stop-opacity="0.05"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+
+    <div class="relative z-10 flex flex-col min-h-screen">
+      <!-- Skip to content link for screen readers and keyboard accessibility -->
+      <a
+        href="#main-content"
+        class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-5 focus:py-3 focus:bg-alajarvi-900 focus:text-white focus:font-bold focus:rounded-xl focus:shadow-2xl focus:outline-none focus:ring-4 focus:ring-amber-400"
+      >
+        Siirry suoraan pääsisältöön (Skip to content)
+      </a>
+      <slot />
+      <LightboxModal />
+    </div>
   </body>
 </html>

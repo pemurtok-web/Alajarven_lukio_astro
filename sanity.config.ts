@@ -14,6 +14,7 @@ const pageTemplates = [
   { id: 'page-hakijalle', title: 'Hakijalle (Tule opiskelemaan)', slug: 'hakijalle' },
   { id: 'page-jiyu-gakuen', title: 'Jiyu Gakuen (Japani)', slug: 'jiyu-gakuen' },
   { id: 'page-mukawa', title: 'Mukawa (Japani)', slug: 'mukawa' },
+  { id: 'page-kansainvalisyys', title: 'Kansainvälisyys (Yleiskatsaus)', slug: 'kansainvalisyys' },
   { id: 'page-muu', title: 'Muu kansainvälinen toiminta', slug: 'muu' },
 ];
 
@@ -83,6 +84,9 @@ export default defineConfig({
                     S.divider(),
 
                     // Kansainvälisyys sivut
+                    S.listItem()
+                      .title('🌍 Kansainvälisyys (Yleiskatsaus)')
+                      .child(S.document().schemaType('page').documentId('page-kansainvalisyys').initialValueTemplate('tpl-page-kansainvalisyys')),
                     S.listItem()
                       .title('🌏 Jiyu Gakuen (Japani)')
                       .child(S.document().schemaType('page').documentId('page-jiyu-gakuen').initialValueTemplate('tpl-page-jiyu-gakuen')),

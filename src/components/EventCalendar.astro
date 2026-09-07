@@ -1,6 +1,7 @@
 ---
-import { getUpcomingEvents } from '../lib/sanity';
-import { Calendar as CalendarIcon, Clock, MapPin, ChevronRight, Sparkles } from 'lucide-astro';
+import { getUpcomingEvents, urlFor } from '../lib/sanity';
+import { Calendar as CalendarIcon, Clock, MapPin, ChevronRight, Sparkles, X, Info } from 'lucide-astro';
+import PortableText from './PortableText.astro';
 
 const events = await getUpcomingEvents();
 
@@ -9,11 +10,12 @@ function formatDateBadge(dateStr: string) {
   const day = d.getDate();
   const monthNames = ['TAM', 'HEL', 'MAA', 'HUB', 'TOU', 'KES', 'HEI', 'ELO', 'SYY', 'LOK', 'MAR', 'JOUL'];
   const month = monthNames[d.getMonth()] || 'SYY';
-  return { day, month };
+  const fullDate = `${day}.${d.getMonth() + 1}.${d.getFullYear()}`;
+  return { day, month, fullDate };
 }
 ---
 
-<section class="py-20 bg-white border-t border-slate-100">
+<section class="py-20 bg-transparent border-t border-slate-200/40">
   <div class="max-w-7xl mx-auto px-4 sm:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
       
@@ -27,7 +29,7 @@ function formatDateBadge(dateStr: string) {
           Tulevat tapahtumat & lukuvuoden tärkeät päivämäärät
         </h2>
         <p class="text-slate-600 text-base leading-relaxed">
-          Pysy ajan tasalla lukion tapahtumista, kokeista, vanhempainilloista ja loma-ajoista.
+          Pysy ajan tasalla lukion tapahtumista, kokeista, vanhempainilloista ja loma-ajoista. Klikkaa tapahtumaa lukeaksesi lisätiedot!
         </p>
 
         <div class="pt-4 p-5 rounded-2xl bg-alajarvi-50 border border-alajarvi-100 space-y-2">
@@ -52,50 +54,190 @@ function formatDateBadge(dateStr: string) {
       <div class="lg:col-span-8 space-y-4">
         {events.map((evt) => {
           const { day, month } = formatDateBadge(evt.date);
+          const imgUrl = evt.image ? urlFor(evt.image)?.width(400).height(300).fit('crop').url() : null;
+          const modalId = `event-modal-${evt._id}`;
           return (
-            <div class="group p-5 rounded-2xl bg-slate-50 hover:bg-white border border-slate-200/80 hover:border-alajarvi-300 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-5">
-              
-              <!-- Date Badge -->
-              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-alajarvi-500 to-alajarvi-700 text-white flex flex-col items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
-                <span class="text-xs font-bold tracking-widest text-alajarvi-200 uppercase leading-none">{month}</span>
-                <span class="text-2xl font-extrabold font-display leading-none mt-0.5">{day}</span>
-              </div>
-
-              <!-- Event Details -->
-              <div class="flex-1 space-y-1.5">
-                <h3 class="font-display font-bold text-lg text-slate-900 group-hover:text-alajarvi-600 transition-colors">
-                  {evt.title}
-                </h3>
+            <>
+              <!-- Event Card -->
+              <button
+                type="button"
+                data-modal-target={modalId}
+                class="event-modal-trigger w-full text-left group p-5 rounded-2xl bg-slate-50 hover:bg-white border border-slate-200/80 hover:border-alajarvi-300 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-alajarvi-500"
+              >
                 
-                {evt.description && (
-                  <p class="text-sm text-slate-600 line-clamp-2">
-                    {evt.description}
-                  </p>
+                <!-- Date Badge -->
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-alajarvi-500 to-alajarvi-700 text-white flex flex-col items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                  <span class="text-xs font-bold tracking-widest text-alajarvi-200 uppercase leading-none">{month}</span>
+                  <span class="text-2xl font-extrabold font-display leading-none mt-0.5">{day}</span>
+                </div>
+
+                {imgUrl && (
+                  <div class="w-full sm:w-28 h-36 sm:h-24 rounded-xl overflow-hidden shrink-0 border border-slate-200/80 shadow-xs">
+                    <img
+                      src={imgUrl}
+                      alt={evt.title}
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                  </div>
                 )}
 
-                <div class="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500 pt-1">
-                  {evt.time && (
-                    <span class="inline-flex items-center gap-1">
-                      <Clock class="w-3.5 h-3.5 text-alajarvi-500" />
-                      {evt.time}
-                    </span>
+                <!-- Event Details -->
+                <div class="flex-1 space-y-1.5">
+                  <h3 class="font-display font-bold text-lg text-slate-900 group-hover:text-alajarvi-600 transition-colors flex items-center gap-2">
+                    <span>{evt.title}</span>
+                  </h3>
+                  
+                  {evt.description && (
+                    <p class="text-sm text-slate-600 line-clamp-2">
+                      {evt.description}
+                    </p>
                   )}
-                  {evt.location && (
-                    <span class="inline-flex items-center gap-1">
-                      <MapPin class="w-3.5 h-3.5 text-alajarvi-500" />
-                      {evt.location}
+
+                  <div class="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500 pt-1">
+                    {evt.time && (
+                      <span class="inline-flex items-center gap-1">
+                        <Clock class="w-3.5 h-3.5 text-alajarvi-500" />
+                        {evt.time}
+                      </span>
+                    )}
+                    {evt.location && (
+                      <span class="inline-flex items-center gap-1">
+                        <MapPin class="w-3.5 h-3.5 text-alajarvi-500" />
+                        {evt.location}
+                      </span>
+                    )}
+                    <span class="inline-flex items-center gap-1 text-alajarvi-600 font-semibold group-hover:underline">
+                      <span>Lue lisää & ohjelma</span>
                     </span>
+                  </div>
+                </div>
+
+                <div class="self-end sm:self-center">
+                  <div class="w-8 h-8 rounded-full bg-white group-hover:bg-alajarvi-100 text-slate-400 group-hover:text-alajarvi-600 flex items-center justify-center transition-colors shadow-xs">
+                    <ChevronRight class="w-4 h-4" />
+                  </div>
+                </div>
+
+              </button>
+
+              <!-- Event Details Modal -->
+              <div
+                id={modalId}
+                class="event-modal-overlay fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md hidden items-center justify-center p-4 sm:p-6 overflow-y-auto"
+                aria-modal="true"
+                role="dialog"
+              >
+                <div class="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col my-auto animate-in fade-in zoom-in-95 duration-200">
+                  
+                  <!-- Modal Header / Image -->
+                  {evt.image ? (
+                    <div class="relative w-full h-56 sm:h-72 shrink-0 bg-slate-900">
+                      <img
+                        src={urlFor(evt.image)?.width(1200).height(600).fit('crop').url()}
+                        alt={evt.title}
+                        class="w-full h-full object-cover"
+                      />
+                      <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+                      <button
+                        type="button"
+                        data-modal-close={modalId}
+                        class="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-900/80 text-white hover:bg-slate-900 flex items-center justify-center backdrop-blur-md transition-all shadow-lg hover:scale-105 cursor-pointer"
+                        aria-label="Sulje"
+                      >
+                        <X class="w-5 h-5" />
+                      </button>
+                      <div class="absolute bottom-4 left-6 right-6 text-white space-y-1">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-white">
+                          <CalendarIcon class="w-3.5 h-3.5" />
+                          <span>{formatDateBadge(evt.date).fullDate}</span>
+                        </div>
+                        <h3 class="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-tight drop-shadow-md">
+                          {evt.title}
+                        </h3>
+                      </div>
+                    </div>
+                  ) : (
+                    <div class="relative p-6 sm:p-8 bg-gradient-to-br from-alajarvi-900 to-alajarvi-950 text-white shrink-0">
+                      <button
+                        type="button"
+                        data-modal-close={modalId}
+                        class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center backdrop-blur-md transition-all shadow-md cursor-pointer"
+                        aria-label="Sulje"
+                      >
+                        <X class="w-5 h-5" />
+                      </button>
+                      <div class="space-y-2 pr-8">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-white">
+                          <CalendarIcon class="w-3.5 h-3.5" />
+                          <span>{formatDateBadge(evt.date).fullDate}</span>
+                        </div>
+                        <h3 class="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-tight">
+                          {evt.title}
+                        </h3>
+                      </div>
+                    </div>
                   )}
+
+                  <!-- Modal Body -->
+                  <div class="p-6 sm:p-8 overflow-y-auto space-y-6 flex-1">
+                    
+                    <!-- Time & Location Badges -->
+                    <div class="flex flex-wrap items-center gap-3 text-sm font-semibold text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+                      {evt.time && (
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                          <Clock class="w-4 h-4 text-alajarvi-600" />
+                          <span>{evt.time}</span>
+                        </div>
+                      )}
+                      {evt.location && (
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                          <MapPin class="w-4 h-4 text-alajarvi-600" />
+                          <span>{evt.location}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <!-- Short Description Callout -->
+                    {evt.description && (
+                      <div class="p-4 rounded-2xl bg-alajarvi-50 border border-alajarvi-100 text-alajarvi-950 font-medium text-base leading-relaxed">
+                        {evt.description}
+                      </div>
+                    )}
+
+                    <!-- Extended Body (PortableText) -->
+                    {evt.body && (
+                      <div class="space-y-3 pt-2">
+                        <h4 class="font-display font-bold text-lg text-slate-900 flex items-center gap-2">
+                          <Info class="w-5 h-5 text-alajarvi-600" />
+                          <span>Tapahtuman lisätiedot & ohjelma</span>
+                        </h4>
+                        <div class="prose prose-slate max-w-none">
+                          <PortableText value={evt.body} />
+                        </div>
+                      </div>
+                    )}
+
+                  </div>
+
+                  <!-- Modal Footer -->
+                  <div class="p-4 sm:px-8 bg-slate-50 border-t border-slate-200/80 flex items-center justify-between gap-4 shrink-0">
+                    <span class="text-xs text-slate-500 flex items-center gap-1">
+                      <Sparkles class="w-3.5 h-3.5 text-alajarvi-500" />
+                      <span>Alajärven lukion tapahtumakalenteri</span>
+                    </span>
+                    <button
+                      type="button"
+                      data-modal-close={modalId}
+                      class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
+                    >
+                      Sulje ikkuna
+                    </button>
+                  </div>
+
                 </div>
               </div>
-
-              <div class="self-end sm:self-center">
-                <div class="w-8 h-8 rounded-full bg-white group-hover:bg-alajarvi-100 text-slate-400 group-hover:text-alajarvi-600 flex items-center justify-center transition-colors">
-                  <ChevronRight class="w-4 h-4" />
-                </div>
-              </div>
-
-            </div>
+            </>
           );
         })}
       </div>
@@ -103,3 +245,67 @@ function formatDateBadge(dateStr: string) {
     </div>
   </div>
 </section>
+
+<!-- Client Script for Modal Dialogs -->
+<script>
+  function setupModals() {
+    const triggers = document.querySelectorAll<HTMLButtonElement>('.event-modal-trigger');
+    const closeButtons = document.querySelectorAll<HTMLButtonElement>('[data-modal-close]');
+    const overlays = document.querySelectorAll<HTMLDivElement>('.event-modal-overlay');
+
+    function openModal(modalId: string) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeModal(modalId: string) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+    }
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        const modalId = trigger.getAttribute('data-modal-target');
+        if (modalId) openModal(modalId);
+      });
+    });
+
+    closeButtons.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const modalId = btn.getAttribute('data-modal-close');
+        if (modalId) closeModal(modalId);
+      });
+    });
+
+    overlays.forEach((overlay) => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          const modalId = overlay.id;
+          if (modalId) closeModal(modalId);
+        }
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        overlays.forEach((overlay) => {
+          if (!overlay.classList.contains('hidden')) {
+            closeModal(overlay.id);
+          }
+        });
+      }
+    });
+  }
+
+  setupModals();
+  document.addEventListener('astro:page-load', setupModals);
+</script>

@@ -15,6 +15,7 @@ export default {
           700: '#003B73', // Dark primary blue
           800: '#0A2540', // Deep navy
           900: '#07182B',
+          950: '#030D18',
         },
       },
       fontFamily: {

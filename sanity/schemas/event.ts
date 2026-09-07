@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity';
+import { commonBlock } from './commonBlock';
 
 export const eventSchema = defineType({
   name: 'event',
@@ -32,13 +33,36 @@ export const eventSchema = defineType({
     }),
     defineField({
       name: 'description',
-      title: 'Lyhyt kuvaus',
+      title: 'Lyhyt kuvaus (näkyy etusivun kortissa)',
       type: 'text',
       rows: 3,
     }),
     defineField({
+      name: 'body',
+      title: 'Tapahtuman lisätiedot & ohjelma (näkyy kun tapahtuma avataan)',
+      type: 'array',
+      of: [
+        commonBlock,
+        {
+          type: 'image',
+          title: 'Kuva',
+          description: '💡 Pidempi sivu n. 1920–2500 px riittää hyvin.',
+          options: { hotspot: true },
+          fields: [{ name: 'alt', type: 'string', title: 'Alt-teksti' }]
+        },
+        {
+          type: 'file',
+          title: 'PDF / Ladattava tiedosto',
+          fields: [
+            { name: 'description', type: 'string', title: 'Kuvaus / Tiedoston nimi' }
+          ]
+        }
+      ],
+    }),
+    defineField({
       name: 'image',
       title: 'Tapahtuman kuva',
+      description: '💡 Kuvavinkki: pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa – järjestelmä optimoi koon automaattisesti.',
       type: 'image',
       options: { hotspot: true },
     }),

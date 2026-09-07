@@ -1,27 +1,53 @@
 ---
+import { Video as VideoIcon } from 'lucide-astro';
+
 interface Props {
   url: string;
   caption?: string;
   title?: string;
 }
 
-const { url, caption, title } = Astro.props;
+const { url, caption, title = 'Katso lukion esittelyvideo' } = Astro.props;
 
-function getEmbedUrl(rawUrl: string): string | null {
+function getEmbedUrl(rawUrl: string): { type: 'youtube' | 'drive' | 'vimeo' | 'generic'; embedUrl: string } | null {
   if (!rawUrl) return null;
-  const match = rawUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-  return match ? `https://www.youtube-nocookie.com/embed/${match[1]}?rel=0&autoplay=0` : null;
+
+  // 1. YouTube
+  const ytMatch = rawUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  if (ytMatch) {
+    return { type: 'youtube', embedUrl: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?rel=0&autoplay=0` };
+  }
+
+  // 2. Google Drive Video
+  const driveMatch = rawUrl.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
+  if (driveMatch) {
+    return { type: 'drive', embedUrl: `https://drive.google.com/file/d/${driveMatch[1]}/preview` };
+  }
+
+  // 3. Vimeo
+  const vimeoMatch = rawUrl.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vimeoMatch) {
+    return { type: 'vimeo', embedUrl: `https://player.vimeo.com/video/${vimeoMatch[1]}` };
+  }
+
+  return null;
 }
 
-const embedUrl = getEmbedUrl(url);
+const res = getEmbedUrl(url);
 ---
 
-{embedUrl ? (
-  <div class="space-y-2 group">
-    <div class="relative w-full aspect-video rounded-3xl overflow-hidden shadow-lg border border-slate-200/90 bg-slate-900 group-hover:border-alajarvi-300 transition-all">
+{res ? (
+  <div class="space-y-3 group my-6">
+    {title && (
+      <h3 class="font-display font-extrabold text-xl sm:text-2xl text-alajarvi-900 tracking-tight flex items-center gap-2.5">
+        <VideoIcon class="w-6 h-6 text-alajarvi-600" />
+        <span>{title}</span>
+      </h3>
+    )}
+    <div class="relative w-full aspect-video rounded-3xl overflow-hidden shadow-xl border border-slate-200/90 bg-slate-900 group-hover:border-alajarvi-300 transition-all">
       <iframe
-        src={embedUrl}
-        title={title || caption || 'YouTube video player'}
+        src={res.embedUrl}
+        title={title || caption || 'Videosoitin'}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen
         class="absolute top-0 left-0 w-full h-full border-0"

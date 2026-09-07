@@ -17,8 +17,21 @@ export const sanityClient = projectId
 const builder = sanityClient ? imageUrlBuilder(sanityClient) : null;
 
 export function urlFor(source: any) {
-  if (!builder || !source) return null;
-  return builder.image(source).auto('format').quality(80);
+  if (!builder || !source || !source.asset) return null;
+  try {
+    return builder.image(source).auto('format').fit('max').width(1920).quality(85);
+  } catch (e) {
+    return null;
+  }
+}
+
+export function urlForLogo(source: any) {
+  if (!builder || !source || !source.asset) return null;
+  try {
+    return builder.image(source).auto('format').height(96).quality(95);
+  } catch (e) {
+    return null;
+  }
 }
 
 
@@ -41,6 +54,7 @@ export interface EventItem {
   location?: string;
   description?: string;
   image?: any;
+  body?: any;
 }
 
 export interface QuickLink {
@@ -61,10 +75,17 @@ export interface PageContent {
   layoutStyle?: string;
   externalLink?: string;
   externalLinkTitle?: string;
+  heroBgImage?: any;
+  mainImage?: any;
   body?: any;
   gallery?: { caption?: string; alt?: string; asset?: any }[];
   pdfFiles?: { title?: string; description?: string; fileUrl?: string }[];
   sections?: { title: string; anchorId: string; content?: any }[];
+  stats?: any[];
+  features?: any[];
+  youtubeUrl?: string;
+  youtubeTitle?: string;
+  youtubeCaption?: string;
 }
 
 // Fallback Mock Data
@@ -218,7 +239,7 @@ export async function getUpcomingEvents(): Promise<EventItem[]> {
   try {
     const events = await sanityClient.fetch<EventItem[]>(
       `*[_type == "event"] | order(date asc){
-        _id, title, date, time, location, description, image
+        _id, title, date, time, location, description, image, body
       }`
     );
     return events && events.length > 0 ? events : MOCK_EVENTS;
@@ -310,7 +331,16 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
           "fileUrl": asset->url
         },
         gallery,
-        sections, mainImage, stats, features, youtubeUrl
+        sections[]{
+          ...,
+          content[]{
+            ...,
+            _type == "file" => {
+              "fileUrl": asset->url,
+              description
+            }
+          }
+        }, heroBgImage, mainImage, stats, features, youtubeUrl, youtubeTitle, youtubeCaption
       }`,
       { slug }
     );

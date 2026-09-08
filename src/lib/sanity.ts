@@ -389,6 +389,71 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 }
 
 
+export interface ContactPerson {
+  name?: string;
+  role?: string;
+  icon?: string;
+  phone?: string;
+  email?: string;
+}
+
+export interface ContactCoach {
+  name?: string;
+  sport?: string;
+  club?: string;
+}
+
+export interface ContactInfo {
+  leadership?: ContactPerson[];
+  studentSupport?: ContactPerson[];
+  teacherOfficePhone?: string;
+  teacherEmailFormat?: string;
+  teachers?: { name?: string; subjects?: string }[];
+  coaches?: ContactCoach[];
+  schoolName?: string;
+  visitingAddress?: string;
+  officePhone?: string;
+  officeHours?: string;
+  mapsUrl?: string;
+}
+
+const MOCK_CONTACT_INFO: ContactInfo = {
+  leadership: [
+    { name: 'Anne Luodeslampi', role: 'Rehtori', phone: '040 673 9091', email: 'anne.luodeslampi@alajarvi.fi' },
+    { name: 'Sari Mäkelä', role: 'Apulaisrehtori', phone: '040 568 8322', email: 'sari.makela@alajarvi.fi' },
+    { name: 'Satu Mäkelä', role: 'Koulusihteeri / Kanslia', phone: '040 662 0717', email: 'satu.makela@alajarvi.fi' },
+  ],
+  studentSupport: [
+    { name: 'Anne Yli-Sissala', role: 'Opinto-ohjaaja (OPO)', icon: 'graduationCap', phone: '044 297 0314', email: 'anne.yli-sissala@alajarvi.fi' },
+    { name: 'Antti Latvala', role: 'Kuraattori', icon: 'heartHandshake', phone: '040 534 9442', email: 'antti.latvala@hyvaep.fi' },
+    { name: 'Noora Myllymäki', role: 'Terveydenhoitaja', icon: 'shieldCheck', phone: '044 465 9532', email: 'noora.myllymaki@hyvaep.fi' },
+  ],
+  teacherOfficePhone: '040 685 1154',
+  teacherEmailFormat: 'etunimi.sukunimi@alajarvi.fi',
+  teachers: [],
+  coaches: [],
+  schoolName: 'Alajärven lukio',
+  visitingAddress: 'Kaupintie 7, 62900 Alajärvi',
+  officePhone: '040 6620 717',
+  officeHours: 'Ma–Pe klo 08:00 – 15:00',
+  mapsUrl: 'https://maps.google.com/?q=Alajärven+lukio+Kaupintie+7+Alajärvi',
+};
+
+export async function getContactInfo(): Promise<ContactInfo> {
+  if (!sanityClient) return MOCK_CONTACT_INFO;
+  try {
+    const info = await sanityClient.fetch<ContactInfo>(
+      `*[_type == "contactInfo"] | order(_updatedAt desc)[0]{
+        leadership, studentSupport, teacherOfficePhone, teacherEmailFormat,
+        teachers, coaches, schoolName, visitingAddress, officePhone, officeHours, mapsUrl
+      }`
+    );
+    return info || MOCK_CONTACT_INFO;
+  } catch (e) {
+    return MOCK_CONTACT_INFO;
+  }
+}
+
 export async function getAllPages(): Promise<PageContent[]> {
   if (!sanityClient) return [];
   try {

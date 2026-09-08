@@ -4,6 +4,7 @@ import { postSchema } from './post';
 import { eventSchema } from './event';
 import { pageSchema } from './page';
 import { quicklinkSchema } from './quicklink';
+import { contactInfoSchema } from './contactInfo';
 
 export const schemaTypes = [
   siteSettingsSchema,
@@ -12,6 +13,7 @@ export const schemaTypes = [
   eventSchema,
   pageSchema,
   quicklinkSchema,
+  contactInfoSchema,
 ];
 
 

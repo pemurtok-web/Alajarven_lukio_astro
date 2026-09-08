@@ -17,6 +17,7 @@ const pageTemplates = [
   { id: 'page-kansainvalisyys', title: 'Kansainvälisyys (Yleiskatsaus)', slug: 'kansainvalisyys' },
   { id: 'page-muu', title: 'Muu kansainvälinen toiminta', slug: 'muu' },
   { id: 'page-tietosuoja', title: 'Tietosuoja ja evästeet', slug: 'tietosuoja' },
+  { id: 'page-yhteystiedot', title: 'Yhteystiedot', slug: 'yhteystiedot' },
 ];
 
 export default defineConfig({
@@ -49,54 +50,70 @@ export default defineConfig({
                 S.list()
                   .title('Valitse muokattava sivu')
                   .items([
-                    // Opiskelijalle sivut
+                    // Opiskelijalle (päävalikkokohta sivustolla) - avautuu omaksi alasivulistaksi
                     S.listItem()
-                      .title('📘 Opinto-opas')
-                      .child(S.document().schemaType('page').documentId('page-opinto-opas').initialValueTemplate('tpl-page-opinto-opas')),
-                    S.listItem()
-                      .title('📋 Opintotarjotin')
-                      .child(S.document().schemaType('page').documentId('page-opintotarjotin').initialValueTemplate('tpl-page-opintotarjotin')),
-                    S.listItem()
-                      .title('📅 Työaika & Jaksot')
-                      .child(S.document().schemaType('page').documentId('page-tyoaika').initialValueTemplate('tpl-page-tyoaika')),
-                    S.listItem()
-                      .title('🤝 Opinto-ohjaus (OPO)')
-                      .child(S.document().schemaType('page').documentId('page-opinto-ohjaus').initialValueTemplate('tpl-page-opinto-ohjaus')),
-                    S.listItem()
-                      .title('🛡️ Opiskeluhuolto')
-                      .child(S.document().schemaType('page').documentId('page-opiskeluhuolto').initialValueTemplate('tpl-page-opiskeluhuolto')),
-                    S.listItem()
-                      .title('🎓 YO-kirjoitukset')
-                      .child(S.document().schemaType('page').documentId('page-yo-kirjoitukset').initialValueTemplate('tpl-page-yo-kirjoitukset')),
-                    S.listItem()
-                      .title('📑 Lomakkeet & Ohjeet')
-                      .child(S.document().schemaType('page').documentId('page-lomakkeet').initialValueTemplate('tpl-page-lomakkeet')),
-                    S.listItem()
-                      .title('🏡 Kodin ja koulun yhteistyö')
-                      .child(S.document().schemaType('page').documentId('page-kodin-ja-koulun-yhteistyo').initialValueTemplate('tpl-page-kodin-ja-koulun-yhteistyo')),
+                      .title('🎓 Opiskelijalle')
+                      .child(
+                        S.list()
+                          .title('Opiskelijalle - alasivut')
+                          .items([
+                            S.listItem()
+                              .title('📘 Opinto-opas')
+                              .child(S.document().schemaType('page').documentId('page-opinto-opas').initialValueTemplate('tpl-page-opinto-opas')),
+                            S.listItem()
+                              .title('📋 Opintotarjotin')
+                              .child(S.document().schemaType('page').documentId('page-opintotarjotin').initialValueTemplate('tpl-page-opintotarjotin')),
+                            S.listItem()
+                              .title('📅 Työaika & Jaksot')
+                              .child(S.document().schemaType('page').documentId('page-tyoaika').initialValueTemplate('tpl-page-tyoaika')),
+                            S.listItem()
+                              .title('🤝 Opinto-ohjaus (OPO)')
+                              .child(S.document().schemaType('page').documentId('page-opinto-ohjaus').initialValueTemplate('tpl-page-opinto-ohjaus')),
+                            S.listItem()
+                              .title('🛡️ Opiskeluhuolto')
+                              .child(S.document().schemaType('page').documentId('page-opiskeluhuolto').initialValueTemplate('tpl-page-opiskeluhuolto')),
+                            S.listItem()
+                              .title('🎓 YO-kirjoitukset')
+                              .child(S.document().schemaType('page').documentId('page-yo-kirjoitukset').initialValueTemplate('tpl-page-yo-kirjoitukset')),
+                            S.listItem()
+                              .title('📑 Lomakkeet & Ohjeet')
+                              .child(S.document().schemaType('page').documentId('page-lomakkeet').initialValueTemplate('tpl-page-lomakkeet')),
+                            S.listItem()
+                              .title('🏡 Kodin ja koulun yhteistyö')
+                              .child(S.document().schemaType('page').documentId('page-kodin-ja-koulun-yhteistyo').initialValueTemplate('tpl-page-kodin-ja-koulun-yhteistyo')),
+                          ])
+                      ),
 
                     S.divider(),
 
-                    // Hakijalle sivu
+                    // Hakijalle sivu (ei alasivuja - yksittäinen pitkä sivu)
                     S.listItem()
                       .title('🎯 Hakijalle (Tule opiskelemaan)')
                       .child(S.document().schemaType('page').documentId('page-hakijalle').initialValueTemplate('tpl-page-hakijalle')),
 
                     S.divider(),
 
-                    // Kansainvälisyys sivut
+                    // Kansainvälisyys (päävalikkokohta sivustolla) - avautuu omaksi alasivulistaksi
                     S.listItem()
-                      .title('🌍 Kansainvälisyys (Yleiskatsaus)')
-                      .child(S.document().schemaType('page').documentId('page-kansainvalisyys').initialValueTemplate('tpl-page-kansainvalisyys')),
-                    S.listItem()
-                      .title('🌏 Jiyu Gakuen (Japani)')
-                      .child(S.document().schemaType('page').documentId('page-jiyu-gakuen').initialValueTemplate('tpl-page-jiyu-gakuen')),
-                    S.listItem()
-                      .title('🌸 Mukawa (Japani)')
-                      .child(S.document().schemaType('page').documentId('page-mukawa').initialValueTemplate('tpl-page-mukawa')),
-                    S.listItem()
-                      .title('🇪🇺 Muu kansainvälinen toiminta')
-                      .child(S.document().schemaType('page').documentId('page-muu').initialValueTemplate('tpl-page-muu')),
+                      .title('🌍 Kansainvälisyys')
+                      .child(
+                        S.list()
+                          .title('Kansainvälisyys - alasivut')
+                          .items([
+                            S.listItem()
+                              .title('🌍 Yleiskatsaus')
+                              .child(S.document().schemaType('page').documentId('page-kansainvalisyys').initialValueTemplate('tpl-page-kansainvalisyys')),
+                            S.listItem()
+                              .title('🌏 Jiyu Gakuen (Japani)')
+                              .child(S.document().schemaType('page').documentId('page-jiyu-gakuen').initialValueTemplate('tpl-page-jiyu-gakuen')),
+                            S.listItem()
+                              .title('🌸 Mukawa (Japani)')
+                              .child(S.document().schemaType('page').documentId('page-mukawa').initialValueTemplate('tpl-page-mukawa')),
+                            S.listItem()
+                              .title('🇪🇺 Muu kansainvälinen toiminta')
+                              .child(S.document().schemaType('page').documentId('page-muu').initialValueTemplate('tpl-page-muu')),
+                          ])
+                      ),
 
                     S.divider(),
 
@@ -116,10 +133,27 @@ export default defineConfig({
 
             S.divider(),
 
-            // 4. Uutiset & Tapahtumat & Pikalinkit
+            // 4. Uutiset & Tapahtumat & Yhteystiedot & Pikalinkit
             S.listItem()
               .title('📰 Ajankohtaista (Uutiset)')
               .child(S.documentTypeList('post').title('Uutiset')),
+
+            // 5. Yhteystiedot (viimeinen kohta päävalikossa sivustolla)
+            S.listItem()
+              .title('📞 Yhteystiedot')
+              .child(
+                S.list()
+                  .title('Yhteystiedot')
+                  .items([
+                    S.listItem()
+                      .title('🖼️ Sivun ylätiedot (otsikko, kuva, ingressi)')
+                      .child(S.document().schemaType('page').documentId('page-yhteystiedot').initialValueTemplate('tpl-page-yhteystiedot')),
+                    S.listItem()
+                      .title('👥 Henkilökunta, opettajat & osoite')
+                      .child(S.document().schemaType('contactInfo').documentId('contactInfo')),
+                  ])
+              ),
+
             S.listItem()
               .title('📆 Tapahtumakalenteri')
               .child(S.documentTypeList('event').title('Tapahtumat')),

@@ -9,7 +9,10 @@ import { ChevronRight, AlertTriangle } from 'lucide-astro';
 const page = await getPageBySlug('tietosuoja');
 ---
 
-<Layout title={`${page?.title || 'Tietosuoja ja evästeet'} | Alajärven lukio`}>
+<Layout
+  title={`${page?.title || 'Tietosuoja ja evästeet'} | Alajärven lukio`}
+  description={page?.lead || 'Alajärven lukion tietosuojaseloste ja evästekäytännöt.'}
+>
   <Header />
 
   <main id="main-content" tabindex="-1" class="py-12 bg-transparent min-h-[70vh] focus:outline-none">

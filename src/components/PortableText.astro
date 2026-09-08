@@ -1,5 +1,5 @@
 ---
-import { urlFor } from '../lib/sanity';
+import { responsiveImage } from '../lib/sanity';
 import { FileText, Download } from 'lucide-astro';
 import YouTubeEmbed from './YouTubeEmbed.astro';
 
@@ -97,9 +97,10 @@ function renderChildren(block: any) {
         );
       }
       if (block._type === 'image') {
-        const imgUrl = urlFor(block)?.width(1920).quality(95).url();
-        if (!imgUrl) return null;
         const layoutStyle = block.layout || 'right';
+        const isFloated = layoutStyle === 'left' || layoutStyle === 'right';
+        const img = responsiveImage(block, isFloated ? [400, 600, 900] : [640, 960, 1280, 1600, 1920]);
+        if (!img) return null;
         const floatClass = layoutStyle === 'left'
           ? 'float-none sm:float-left sm:mr-6 mb-6 w-full sm:w-1/2 max-w-md'
           : layoutStyle === 'right'
@@ -108,9 +109,13 @@ function renderChildren(block: any) {
 
         return (
           <figure key={idx} class={`not-prose ${floatClass} group`}>
-            <a href={imgUrl} target="_blank" rel="noopener noreferrer" class="block relative overflow-hidden rounded-2xl border border-slate-200 shadow-md bg-slate-50 cursor-zoom-in">
+            <a href={img.src} target="_blank" rel="noopener noreferrer" class="block relative overflow-hidden rounded-2xl border border-slate-200 shadow-md bg-slate-50 cursor-zoom-in">
               <img
-                src={imgUrl}
+                src={img.src}
+                srcset={img.srcset}
+                sizes={isFloated ? '(min-width: 640px) 448px, 100vw' : '100vw'}
+                width={img.width}
+                height={img.height}
                 alt={block.alt || block.caption || 'Kuva'}
                 loading="lazy"
                 decoding="async"

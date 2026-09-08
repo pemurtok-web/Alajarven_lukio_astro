@@ -1,5 +1,5 @@
 ---
-import { getTopNews, urlFor } from '../lib/sanity';
+import { getTopNews, urlFor, retinaSrcSet } from '../lib/sanity';
 import { Calendar, ArrowRight, Newspaper } from 'lucide-astro';
 
 const newsItems = await getTopNews(3);
@@ -40,8 +40,13 @@ const newsItems = await getTopNews(3);
           <div class="relative h-48 bg-gradient-to-br from-alajarvi-600 to-alajarvi-800 overflow-hidden">
             {item.mainImage ? (
               <img
-                src={urlFor(item.mainImage)?.width(600).height(400).url() || ''}
+                src={urlFor(item.mainImage)?.width(600).height(400).fit('crop').url() || ''}
+                srcset={retinaSrcSet(item.mainImage, 600, 400)}
+                width={600}
+                height={400}
                 alt={item.title}
+                loading="lazy"
+                decoding="async"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
             ) : (

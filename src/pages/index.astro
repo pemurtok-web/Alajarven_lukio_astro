@@ -7,10 +7,10 @@ import QuickLinks from '../components/QuickLinks.astro';
 import NewsHighlights from '../components/NewsHighlights.astro';
 import EventCalendar from '../components/EventCalendar.astro';
 import { Award, BookOpen, Compass, CheckCircle2, ArrowRight } from 'lucide-astro';
-import { getHomepage, urlFor } from '../lib/sanity';
+import { getHomepage, responsiveImage } from '../lib/sanity';
 
 const homepage = await getHomepage();
-const introImgUrl = homepage.introImage ? urlFor(homepage.introImage)?.width(800).url() : null;
+const introImg = homepage.introImage ? responsiveImage(homepage.introImage, [400, 600, 800, 1000]) : null;
 const features = (homepage.features && homepage.features.length > 0)
   ? homepage.features
   : [
@@ -32,7 +32,11 @@ const gridColsClass =
     : 'grid-cols-1 max-w-md mx-auto';
 ---
 
-<Layout title="Alajärven lukio | Etusivu">
+<Layout
+  title="Alajärven lukio | Etusivu"
+  description={homepage.introDescription || homepage.heroDescription || 'Alajärven lukio tarjoaa laadukasta ja monipuolista yleislukio-opetusta, vahvaa opinto-ohjausta ja laajoja kansainvälisyysmahdollisuuksia Alajärvellä.'}
+  image={introImg?.src}
+>
   <Header />
 
   <main id="main-content" tabindex="-1" class="focus:outline-none">
@@ -91,11 +95,17 @@ const gridColsClass =
 
             <!-- Image Column -->
             <div class="lg:col-span-5">
-              {introImgUrl ? (
+              {introImg ? (
                 <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200">
                   <img
-                    src={introImgUrl}
+                    src={introImg.src}
+                    srcset={introImg.srcset}
+                    sizes="(min-width: 1024px) 40vw, 90vw"
+                    width={introImg.width}
+                    height={introImg.height}
                     alt="Esittelykuva Alajärven lukiolta"
+                    loading="lazy"
+                    decoding="async"
                     class="w-full aspect-[16/10] lg:aspect-[4/3] max-h-[38vh] lg:max-h-[480px] object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
@@ -136,19 +146,24 @@ const gridColsClass =
           <!-- Dynamic grid adapting smoothly to card counts -->
           <div class={`grid ${gridColsClass} gap-6 items-stretch`}>
             {features.map((feat: any) => {
-              const featImgUrl = feat.image ? urlFor(feat.image)?.width(700).quality(90).url() : null;
+              const featImg = feat.image ? responsiveImage(feat.image, [300, 500, 700]) : null;
               const activeListItems = feat.listItems
                 ?.map((i: any) => (typeof i === 'string' ? i.trim() : ''))
                 .filter((i: string) => i.length > 0) || [];
 
               return (
                 <div class="group flex flex-col rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-alajarvi-300 transition-all duration-300 overflow-hidden h-full">
-                  {featImgUrl && (
+                  {featImg && (
                     <div class="relative w-full aspect-[16/10] overflow-hidden bg-slate-100 shrink-0 border-b border-slate-100">
                       <img
-                        src={featImgUrl}
+                        src={featImg.src}
+                        srcset={featImg.srcset}
+                        sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+                        width={featImg.width}
+                        height={featImg.height}
                         alt={feat.image?.alt || feat.title || 'Valttikortin kuva'}
                         loading="lazy"
+                        decoding="async"
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>

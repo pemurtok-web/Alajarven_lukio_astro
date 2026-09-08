@@ -1,6 +1,6 @@
 ---
 import { ArrowRight, Sparkles, Globe, Compass, GraduationCap, Users } from 'lucide-astro';
-import { urlFor } from '../lib/sanity';
+import { urlFor, responsiveImage } from '../lib/sanity';
 
 interface Props {
   badge?: string;
@@ -20,25 +20,26 @@ const {
   heroImage,
 } = Astro.props;
 
-const bgUrlMobile = heroBgImageMobile
-  ? urlFor(heroBgImageMobile)?.width(800).quality(85).url()
-  : heroBgImage
-  ? urlFor(heroBgImage)?.width(800).quality(85).url()
-  : null;
-const bgUrlDesktop = heroBgImage ? urlFor(heroBgImage)?.width(1920).quality(85).url() : null;
-const mainImgUrl = heroImage ? urlFor(heroImage)?.width(800).url() : null;
+const bgImgMobile = responsiveImage(heroBgImageMobile || heroBgImage, [480, 640, 800]);
+const bgImgDesktop = responsiveImage(heroBgImage, [640, 960, 1280, 1600, 1920]);
+const mainImg = responsiveImage(heroImage, [400, 600, 800]);
 ---
 
 <section class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-alajarvi-700 text-white py-16 sm:py-24">
   {heroBgImage && (
     <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
       <picture class="w-full h-full">
-        {bgUrlMobile && <source media="(max-width: 640px)" srcset={bgUrlMobile} />}
+        {bgImgMobile && <source media="(max-width: 640px)" srcset={bgImgMobile.srcset} sizes="100vw" />}
         <img
-          src={bgUrlDesktop || ''}
+          src={bgImgDesktop?.src || ''}
+          srcset={bgImgDesktop?.srcset}
+          sizes="100vw"
+          width={bgImgDesktop?.width}
+          height={bgImgDesktop?.height}
           alt={heroBgImage.alt || title}
           class="w-full h-full object-cover object-center"
           loading="eager"
+          fetchpriority="high"
         />
       </picture>
       <div class="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/65 to-slate-950/50 lg:bg-gradient-to-r lg:from-slate-950/88 lg:from-0% lg:via-slate-950/80 lg:via-58% lg:to-transparent lg:to-90%"></div>
@@ -109,8 +110,17 @@ const mainImgUrl = heroImage ? urlFor(heroImage)?.width(800).url() : null;
       <div class="lg:col-span-5 relative">
         <!-- Main Featured Image Container -->
         <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 group">
-          {mainImgUrl ? (
-            <img src={mainImgUrl} alt="Alajärven lukio" class="w-full aspect-[4/3] max-h-[42vh] lg:max-h-[520px] object-cover group-hover:scale-105 transition-transform duration-500" />
+          {mainImg ? (
+            <img
+              src={mainImg.src}
+              srcset={mainImg.srcset}
+              sizes="(min-width: 1024px) 40vw, 90vw"
+              width={mainImg.width}
+              height={mainImg.height}
+              alt="Alajärven lukio"
+              loading="eager"
+              class="w-full aspect-[4/3] max-h-[42vh] lg:max-h-[520px] object-cover group-hover:scale-105 transition-transform duration-500"
+            />
           ) : (
             <div class="aspect-[4/3] bg-gradient-to-br from-alajarvi-600 to-alajarvi-800 flex items-center justify-center p-6 sm:p-8 text-center">
               <!-- Stylized School Visual Mockup -->

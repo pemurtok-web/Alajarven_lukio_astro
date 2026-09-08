@@ -5,7 +5,7 @@ import Footer from '../../components/Footer.astro';
 import LongPageNav from '../../components/LongPageNav.astro';
 import PortableText from '../../components/PortableText.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
-import { getPageBySlug, urlFor, extractPageAnchors } from '../../lib/sanity';
+import { getPageBySlug, urlFor, responsiveImage, extractPageAnchors } from '../../lib/sanity';
 import { GraduationCap, CheckCircle, Sparkles, BookOpen, Globe, Award, HelpCircle, ArrowRight, FileText, Image as ImageIcon } from 'lucide-astro';
 
 const page = await getPageBySlug('hakijalle');
@@ -21,9 +21,15 @@ const defaultAnchors = [
 
 const anchors = dynamicAnchors.length > 0 ? dynamicAnchors : defaultAnchors;
 const hasDynamicSections = page?.sections && page.sections.length > 0;
+const heroImg = page?.heroBgImage ? responsiveImage(page.heroBgImage, [640, 960, 1280, 1600, 1920]) : null;
+const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 1280, 1600, 1920]) : null;
 ---
 
-<Layout title={`${page?.title || 'Hakijalle'} | Alajärven lukio`}>
+<Layout
+  title={`${page?.title || 'Hakijalle'} | Alajärven lukio`}
+  description={page?.lead || 'Tietoa hakemisesta Alajärven lukioon: valintaperusteet, yhteishaku ja opintotarjonta.'}
+  image={heroImg?.src || mainImg?.src}
+>
   <Header />
 
   <main class="py-12 bg-transparent">
@@ -34,10 +40,15 @@ const hasDynamicSections = page?.sections && page.sections.length > 0;
         {page?.heroBgImage && urlFor(page.heroBgImage) && (
           <div class="absolute inset-0 z-0 pointer-events-none">
             <img
-              src={urlFor(page.heroBgImage)?.width(1920).quality(90).url()}
+              src={heroImg?.src}
+              srcset={heroImg?.srcset}
+              sizes="100vw"
+              width={heroImg?.width}
+              height={heroImg?.height}
               alt={page.heroBgImage.alt || page?.title || 'Hero taustakuva'}
               class="w-full h-full object-cover object-center"
               loading="eager"
+              fetchpriority="high"
             />
             <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/55 to-slate-950/15"></div>
           </div>
@@ -63,10 +74,15 @@ const hasDynamicSections = page?.sections && page.sections.length > 0;
         <div class="overflow-hidden rounded-3xl bg-white border border-slate-200/80 shadow-xl group">
           <div class="relative overflow-hidden">
             <img
-              src={urlFor(page.mainImage)?.width(1920).quality(95).url()}
+              src={mainImg?.src}
+              srcset={mainImg?.srcset}
+              sizes="(min-width: 1024px) 1024px, 100vw"
+              width={mainImg?.width}
+              height={mainImg?.height}
               alt={page.mainImage.alt || page?.title || 'Alajärven lukion ilmakuva'}
               class="w-full h-auto object-cover max-h-[42vh] lg:max-h-[520px] w-full"
-              loading="eager"
+              loading="lazy"
+              decoding="async"
             />
             {page.mainImage.caption && (
               <div class="p-4 bg-slate-900/90 text-white text-xs sm:text-sm backdrop-blur-md border-t border-white/10">
@@ -121,7 +137,8 @@ const hasDynamicSections = page?.sections && page.sections.length > 0;
           {page.sections.map((sec: any, idx: number) => {
             const secId = sec.anchorId || `miksi-alajarven-lukio`;
             const secImage = sec.image;
-            const imageUrl = secImage?.src || (secImage?.asset ? urlFor(secImage)?.width(1600).quality(95).url() : null);
+            const imageUrl = secImage?.src || (secImage?.asset ? urlFor(secImage)?.width(1600).quality(85).url() : null);
+            const secImgResponsive = !secImage?.src && secImage?.asset ? responsiveImage(secImage, [400, 640, 828, 1080]) : null;
 
             return (
               <section
@@ -183,9 +200,14 @@ const hasDynamicSections = page?.sections && page.sections.length > 0;
                       <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-slate-50">
                         <a href={imageUrl} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden">
                           <img
-                            src={imageUrl}
+                            src={secImgResponsive?.src || imageUrl}
+                            srcset={secImgResponsive?.srcset}
+                            sizes="(min-width: 1024px) 50vw, 100vw"
+                            width={secImgResponsive?.width}
+                            height={secImgResponsive?.height}
                             alt={secImage?.alt || sec.title}
                             loading="lazy"
+                            decoding="async"
                             class="w-full h-auto max-h-[360px] object-cover rounded-t-2xl group-hover:scale-[1.02] transition-transform duration-300"
                           />
                           <div class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-900/85 text-white text-xs font-semibold backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 shadow-md">
@@ -359,15 +381,21 @@ const hasDynamicSections = page?.sections && page.sections.length > 0;
           </h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {page.gallery.map((img: any) => {
-              const galleryImgUrl = urlFor(img)?.width(1920).quality(95).url();
+              const galleryImgUrl = urlFor(img)?.width(1920).quality(85).url();
+              const galleryImg = responsiveImage(img, [400, 640, 828, 1080]);
               if (!galleryImgUrl) return null;
               return (
                 <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-white flex flex-col justify-between hover:shadow-lg transition-all">
                   <a href={galleryImgUrl} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden bg-slate-50">
                     <img
-                      src={galleryImgUrl}
+                      src={galleryImg?.src || galleryImgUrl}
+                      srcset={galleryImg?.srcset}
+                      sizes="(min-width: 640px) 50vw, 100vw"
+                      width={galleryImg?.width}
+                      height={galleryImg?.height}
                       alt={img.alt || img.caption || 'Kuva'}
                       loading="lazy"
+                      decoding="async"
                       class="w-full h-auto object-contain rounded-t-2xl group-hover:scale-[1.01] transition-transform duration-300 max-h-[400px]"
                     />
                     <div class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-900/85 text-white text-xs font-semibold backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 shadow-md">

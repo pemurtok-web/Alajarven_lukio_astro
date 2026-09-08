@@ -2,14 +2,19 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { getAllNews, getPageBySlug, urlFor } from '../../lib/sanity';
+import { getAllNews, getPageBySlug, urlFor, responsiveImage, retinaSrcSet } from '../../lib/sanity';
 import { Newspaper, Calendar, ArrowRight, ChevronRight, Search } from 'lucide-astro';
 
 const allPosts = await getAllNews();
 const page = await getPageBySlug('ajankohtaista');
+const heroImg = page?.heroBgImage ? responsiveImage(page.heroBgImage, [640, 960, 1280, 1600, 1920]) : null;
 ---
 
-<Layout title="Ajankohtaista - Uutisarkisto | Alajärven lukio">
+<Layout
+  title="Ajankohtaista - Uutisarkisto | Alajärven lukio"
+  description="Alajärven lukion uutiset, tiedotteet ja tapahtuma-artikkelit kootusti."
+  image={heroImg?.src}
+>
   <Header />
 
   <main class="py-12 bg-transparent min-h-[80vh]">
@@ -27,10 +32,15 @@ const page = await getPageBySlug('ajankohtaista');
         {page?.heroBgImage && urlFor(page.heroBgImage) && (
           <div class="absolute inset-0 z-0 pointer-events-none">
             <img
-              src={urlFor(page.heroBgImage)?.width(1920).quality(90).url()}
+              src={heroImg?.src}
+              srcset={heroImg?.srcset}
+              sizes="100vw"
+              width={heroImg?.width}
+              height={heroImg?.height}
               alt={page.heroBgImage.alt || 'Hero taustakuva'}
               class="w-full h-full object-cover object-center"
               loading="eager"
+              fetchpriority="high"
             />
             <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/55 to-slate-950/15"></div>
           </div>
@@ -56,8 +66,13 @@ const page = await getPageBySlug('ajankohtaista');
             <div class="relative h-48 bg-gradient-to-br from-alajarvi-700 to-alajarvi-900 overflow-hidden">
               {item.mainImage ? (
                 <img
-                  src={urlFor(item.mainImage)?.width(600).height(400).url() || ''}
+                  src={urlFor(item.mainImage)?.width(600).height(400).fit('crop').url() || ''}
+                  srcset={retinaSrcSet(item.mainImage, 600, 400)}
+                  width={600}
+                  height={400}
                   alt={item.title}
+                  loading="lazy"
+                  decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               ) : (

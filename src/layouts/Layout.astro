@@ -5,15 +5,45 @@ import CookieConsent from '../components/CookieConsent.astro';
 
 const gtmId = import.meta.env.PUBLIC_GTM_ID;
 
+// Site is still being built out — flip this to true (and remove the noindex header in
+// netlify.toml + the robots.txt Disallow) only when the school is ready to go fully public.
+const SITE_IS_PUBLIC = false;
+
+const SITE_NAME = 'Alajärven lukio';
+
+// Real school identity for JSON-LD (kept in sync manually with siteSettings/contactInfo in
+// Sanity — these change rarely, so fetching them per page render isn't worth the extra
+// round-trip on every single request).
+const SCHOOL_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'School',
+  name: 'Alajärven lukio',
+  url: 'https://alajarven-lukio-dev.netlify.app',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Kaupintie 7',
+    postalCode: '62900',
+    addressLocality: 'Alajärvi',
+    addressCountry: 'FI',
+  },
+  telephone: '+358406739091',
+  areaServed: 'Alajärvi',
+};
+
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
 }
 
 const {
   title = 'Alajärven lukio | Laadukasta ja yhteisöllistä lukio-opetusta',
   description = 'Alajärven lukio tarjoaa laadukasta ja monipuolista yleislukio-opetusta, vahvaa opinto-ohjausta ja laajoja kansainvälisyysmahdollisuuksia Alajärvellä.',
+  image,
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = image ? new URL(image, Astro.site).toString() : undefined;
 ---
 
 <!DOCTYPE html>
@@ -59,17 +89,34 @@ const {
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
-    
-    <!-- Hide site from search engines (Noindex, Nofollow) -->
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="googlebot" content="noindex, nofollow" />
-    
+    <link rel="canonical" href={canonicalURL} />
+
+    {!SITE_IS_PUBLIC && (
+      <>
+        <!-- Hide site from search engines while content is still being finished -->
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="googlebot" content="noindex, nofollow" />
+      </>
+    )}
+
     <!-- Open Graph / Meta -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="fi_FI" />
-    
+    {ogImageURL && <meta property="og:image" content={ogImageURL} />}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content={ogImageURL ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogImageURL && <meta name="twitter:image" content={ogImageURL} />}
+
+    <!-- Structured data for search engines and AI answer engines (GEO) -->
+    <script type="application/ld+json" set:html={JSON.stringify(SCHOOL_JSONLD)} />
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

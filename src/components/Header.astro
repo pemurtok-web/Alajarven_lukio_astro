@@ -1,11 +1,12 @@
 ---
-import { getQuickLinks, getSiteSettings, urlForLogo } from '../lib/sanity';
+import { getQuickLinks, getSiteSettings, urlForLogo, getImageDimensions } from '../lib/sanity';
 import { ExternalLink, ChevronDown, Menu, X, BookOpen, Utensils, GraduationCap } from 'lucide-astro';
 
 const quickLinks = await getQuickLinks();
 const siteSettings = await getSiteSettings();
 
 const logoUrl = siteSettings.logoImage ? urlForLogo(siteSettings.logoImage)?.url() : null;
+const logoDims = siteSettings.logoImage ? getImageDimensions(siteSettings.logoImage) : undefined;
 
 const opiskelijallePages = [
   { title: 'Opinto-opas', href: '/opiskelijalle/opinto-opas' },
@@ -81,7 +82,15 @@ const kansainvalisyysPages = [
     <!-- Brand Logo & Text -->
     <a href="/" class="group flex items-center gap-3 shrink-0">
       {logoUrl ? (
-        <img src={logoUrl} alt={siteSettings.title || 'Alajärven lukio logo'} class="h-9 sm:h-11 w-auto max-w-[140px] sm:max-w-[180px] max-h-11 object-contain group-hover:scale-105 transition-transform shrink-0" />
+        <img
+          src={logoUrl}
+          width={logoDims?.width}
+          height={logoDims?.height}
+          alt={siteSettings.title || 'Alajärven lukio logo'}
+          loading="eager"
+          fetchpriority="high"
+          class="h-9 sm:h-11 w-auto max-w-[140px] sm:max-w-[180px] max-h-11 object-contain group-hover:scale-105 transition-transform shrink-0"
+        />
       ) : (
         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-alajarvi-500 to-alajarvi-700 flex items-center justify-center text-white font-bold text-xl shadow-md group-hover:scale-105 transition-transform">
           AL

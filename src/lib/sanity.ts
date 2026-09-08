@@ -19,7 +19,7 @@ const builder = sanityClient ? imageUrlBuilder(sanityClient) : null;
 export function urlFor(source: any) {
   if (!builder || !source || !source.asset) return null;
   try {
-    return builder.image(source).auto('format').fit('max').width(1920).quality(85);
+    return builder.image(source).auto('format').fit('max').width(1920).quality(80);
   } catch (e) {
     return null;
   }
@@ -31,6 +31,55 @@ export function urlForLogo(source: any) {
     return builder.image(source).auto('format').height(96).quality(95);
   } catch (e) {
     return null;
+  }
+}
+
+// Intrinsic pixel dimensions encoded in a Sanity asset ref (e.g. "image-abc123-4000x3000-jpg").
+// Used to set width/height attributes on <img> so the browser can reserve space before
+// the image loads, avoiding layout shift (CLS) — without this every image pops in and
+// pushes surrounding content around.
+export function getImageDimensions(source: any): { width: number; height: number } | undefined {
+  const ref = source?.asset?._ref;
+  if (typeof ref !== 'string') return undefined;
+  const match = ref.match(/-(\d+)x(\d+)-/);
+  if (!match) return undefined;
+  return { width: parseInt(match[1], 10), height: parseInt(match[2], 10) };
+}
+
+export interface ResponsiveImage {
+  src: string;
+  srcset: string;
+  width?: number;
+  height?: number;
+}
+
+// Builds a srcset across the given widths so the browser can pick the smallest image that
+// still fills its rendered size, instead of every viewport downloading the same 1920px file.
+export function responsiveImage(source: any, widths: number[], quality = 80): ResponsiveImage | null {
+  if (!builder || !source || !source.asset) return null;
+  try {
+    const srcset = widths
+      .map((w) => `${builder!.image(source).auto('format').quality(quality).width(w).url()} ${w}w`)
+      .join(', ');
+    const maxWidth = widths[widths.length - 1];
+    const src = builder.image(source).auto('format').quality(quality).width(maxWidth).url();
+    const dims = getImageDimensions(source);
+    return { src, srcset, width: dims?.width, height: dims?.height };
+  } catch (e) {
+    return null;
+  }
+}
+
+// For fixed-size cropped thumbnails (fit('crop') with explicit width+height): a plain
+// 1x/2x pixel-density srcset so retina screens get a sharp image without oversizing everyone else.
+export function retinaSrcSet(source: any, width: number, height: number, quality = 80): string | undefined {
+  if (!builder || !source || !source.asset) return undefined;
+  try {
+    const url1x = builder.image(source).auto('format').quality(quality).width(width).height(height).fit('crop').url();
+    const url2x = builder.image(source).auto('format').quality(quality).width(width * 2).height(height * 2).fit('crop').url();
+    return `${url1x} 1x, ${url2x} 2x`;
+  } catch (e) {
+    return undefined;
   }
 }
 

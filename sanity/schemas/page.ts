@@ -5,6 +5,28 @@ export const pageSchema = defineType({
   name: 'page',
   title: 'Sivut (Sisältösivut)',
   type: 'document',
+  fieldsets: [
+    {
+      name: 'pageSettings',
+      title: '🎨 Sivun ulkoasu ja asettelu',
+      options: { collapsible: true, collapsed: true },
+    },
+    {
+      name: 'links',
+      title: '🔗 Ulkoiset linkit ja liitteet',
+      options: { collapsible: true, collapsed: true },
+    },
+    {
+      name: 'media',
+      title: '🖼️ Pääkuva ja video',
+      options: { collapsible: true, collapsed: true },
+    },
+    {
+      name: 'highlights',
+      title: '📊 Tilasto- ja infokortit',
+      options: { collapsible: true, collapsed: true },
+    },
+  ],
   fields: [
     defineField({
       name: 'title',
@@ -30,15 +52,10 @@ export const pageSchema = defineType({
       description: 'Valinnainen taustakuva sivun ylimpään laatikkoon (Hero header). Kuvan päälle tulee automaattisesti tumma liukuväri lukukelpoisuuden takaamiseksi. 💡 Pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa.',
       type: 'image',
       options: { hotspot: true },
+      fieldset: 'pageSettings',
       fields: [
         { name: 'alt', type: 'string', title: 'Alt-teksti' }
       ]
-    }),
-    defineField({
-      name: 'lead',
-      title: 'Ingressi / Johdantoteksti',
-      type: 'text',
-      rows: 3,
     }),
     defineField({
       name: 'layoutStyle',
@@ -54,6 +71,13 @@ export const pageSchema = defineType({
         layout: 'radio',
       },
       initialValue: 'cards',
+      fieldset: 'pageSettings',
+    }),
+    defineField({
+      name: 'lead',
+      title: 'Ingressi / Johdantoteksti',
+      type: 'text',
+      rows: 3,
     }),
 
     // --- LINKKIBANNERI & PÄÄKUVA (Näkyvät heti Hero-osion jälkeen) ---
@@ -62,17 +86,20 @@ export const pageSchema = defineType({
       title: 'Google Drive -linkki / Verkkolinkki (esim. https://drive.google.com/...)',
       description: 'Liitä tähän suora Google Drive -osoite tai verkkolinkki opinto-oppaaseen',
       type: 'url',
+      fieldset: 'links',
     }),
     defineField({
       name: 'externalLinkTitle',
       title: 'Linkkipainikkeen teksti (esim. Avaa Opinto-opas Google Drivessa)',
       type: 'string',
+      fieldset: 'links',
     }),
     defineField({
       name: 'documentLinks',
       title: '📄 Ulkoiset asiakirjalinkit (esim. useampi Google Drive -PDF)',
       description: 'Käytä tätä kun sivulla pitää olla useampi ladattava asiakirja/linkki (esim. useita opetussuunnitelmia). Näkyvät siisteinä kortteina.',
       type: 'array',
+      fieldset: 'links',
       of: [
         {
           type: 'object',
@@ -95,6 +122,7 @@ export const pageSchema = defineType({
       description: '💡 Kuvavinkki: pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa – järjestelmä optimoi koon automaattisesti.',
       type: 'image',
       options: { hotspot: true },
+      fieldset: 'media',
       fields: [
         { name: 'caption', type: 'string', title: 'Kuvateksti / Selite kuvan alle' },
         { name: 'alt', type: 'string', title: 'Alt-teksti' }
@@ -105,16 +133,19 @@ export const pageSchema = defineType({
       title: 'Video- / YouTube- / Google Drive -videolinkki (Sivun video)',
       description: 'Voit syöttää tähän YouTube-, Google Drive- tai Vimeo-videolinkin (esim. https://youtu.be/... tai https://drive.google.com/file/d/...)',
       type: 'url',
+      fieldset: 'media',
     }),
     defineField({
       name: 'youtubeTitle',
       title: 'Videon otsikko (esim. Katso lukion esittelyvideo)',
       type: 'string',
+      fieldset: 'media',
     }),
     defineField({
       name: 'youtubeCaption',
       title: 'Videon selite / Kuvateksti videon alle',
       type: 'string',
+      fieldset: 'media',
     }),
 
     // --- KOROSTUSKORTIT (Näkyvät pääkuvan/videon jälkeen, ennen leipätekstiä) ---
@@ -123,6 +154,7 @@ export const pageSchema = defineType({
       title: '📊 Tilasto- / Numerokortit (esim. Keskiarvoraja 7,00, Aloituspaikat 60–70)',
       description: 'Voit lisätä sivulle suuria numerokortteja esittelemään avainlukuja',
       type: 'array',
+      fieldset: 'highlights',
       of: [
         {
           type: 'object',
@@ -143,6 +175,7 @@ export const pageSchema = defineType({
       title: '💡 Info- / Korostuskortit (esim. Maksuton koulutus, Aito kansainvälisyys)',
       description: 'Voit lisätä sivulle vahvuus- ja korostuslaatikoita',
       type: 'array',
+      fieldset: 'highlights',
       of: [
         {
           type: 'object',

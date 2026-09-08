@@ -4,12 +4,14 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import LongPageNav from '../../components/LongPageNav.astro';
 import PortableText from '../../components/PortableText.astro';
-import { getPageBySlug, getContactInfo, urlFor } from '../../lib/sanity';
+import { getPageBySlug, getContactInfo, urlFor, responsiveImage } from '../../lib/sanity';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 import { MapPin, Phone, Mail, User, Clock, Send, Trophy, GraduationCap, HeartHandshake, ShieldCheck } from 'lucide-astro';
 
 const page = await getPageBySlug('yhteystiedot');
 const contact = await getContactInfo();
+const heroImg = page?.heroBgImage ? responsiveImage(page.heroBgImage, [640, 960, 1280, 1600, 1920]) : null;
+const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 1280, 1600, 1920]) : null;
 
 const anchors = [
   { id: 'rehtori-ja-toimisto', label: '1. Rehtorit & Koulusihteeri' },
@@ -44,7 +46,11 @@ function initials(name?: string) {
 }
 ---
 
-<Layout title={`${page?.title || 'Yhteystiedot'} | Alajärven lukio`}>
+<Layout
+  title={`${page?.title || 'Yhteystiedot'} | Alajärven lukio`}
+  description={page?.lead || 'Alajärven lukion yhteystiedot: johto, opinto-ohjaus, opettajakunta ja sijainti.'}
+  image={heroImg?.src || mainImg?.src}
+>
   <Header />
 
   <main class="py-12 bg-transparent">
@@ -55,10 +61,15 @@ function initials(name?: string) {
         {page?.heroBgImage && urlFor(page.heroBgImage) && (
           <div class="absolute inset-0 z-0 pointer-events-none">
             <img
-              src={urlFor(page.heroBgImage)?.width(1920).quality(90).url()}
+              src={heroImg?.src}
+              srcset={heroImg?.srcset}
+              sizes="100vw"
+              width={heroImg?.width}
+              height={heroImg?.height}
               alt={page.heroBgImage.alt || page?.title || 'Hero taustakuva'}
               class="w-full h-full object-cover object-center"
               loading="eager"
+              fetchpriority="high"
             />
             <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/55 to-slate-950/15"></div>
           </div>
@@ -82,10 +93,15 @@ function initials(name?: string) {
         <div class="overflow-hidden rounded-3xl bg-white border border-slate-200/80 shadow-xl group mb-8">
           <div class="relative overflow-hidden">
             <img
-              src={urlFor(page.mainImage)?.width(1920).quality(95).url()}
+              src={mainImg?.src}
+              srcset={mainImg?.srcset}
+              sizes="(min-width: 1024px) 1024px, 100vw"
+              width={mainImg?.width}
+              height={mainImg?.height}
               alt={page.mainImage.alt || page?.title || 'Yhteystiedot kuva'}
               class="w-full h-auto object-cover max-h-[42vh] lg:max-h-[520px]"
-              loading="eager"
+              loading="lazy"
+              decoding="async"
             />
             {page.mainImage.caption && (
               <div class="p-4 bg-slate-900/90 text-white text-xs sm:text-sm backdrop-blur-md border-t border-white/10">

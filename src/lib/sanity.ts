@@ -75,6 +75,7 @@ export interface PageContent {
   layoutStyle?: string;
   externalLink?: string;
   externalLinkTitle?: string;
+  documentLinks?: { title: string; description?: string; url: string }[];
   heroBgImage?: any;
   mainImage?: any;
   body?: any;
@@ -318,7 +319,7 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
   try {
     const page = await sanityClient.fetch<PageContent>(
       `*[_type == "page" && (_id == $slug || _id == "page-" + $slug || _id == "drafts.page-" + $slug || slug.current == $slug || slug.current == "lukion-" + $slug || slug.current match $slug + "*")] | order(_updatedAt desc)[0]{
-        _id, title, slug, lead, layoutStyle, externalLink, externalLinkTitle,
+        _id, title, slug, lead, layoutStyle, externalLink, externalLinkTitle, documentLinks,
         body[]{
           ...,
           _type == "file" => {

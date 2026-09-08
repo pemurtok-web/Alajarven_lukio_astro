@@ -18,6 +18,8 @@ export async function getStaticPaths() {
     'yo-kirjoitukset',
     'lomakkeet',
     'kodin-ja-koulun-yhteistyo',
+    'opetussuunnitelma',
+    'ruokalista',
   ];
   const pages = await getAllPages();
   const sanitySlugs = pages.map(p => p.slug?.current).filter(Boolean);
@@ -42,6 +44,8 @@ const iconMap: Record<string, any> = {
   'yo-kirjoitukset': Award,
   'lomakkeet': FileText,
   'kodin-ja-koulun-yhteistyo': HeartHandshake,
+  'opetussuunnitelma': FileText,
+  'ruokalista': ImageIcon,
 };
 const IconComponent = iconMap[slug as string] || BookOpen;
 const pageTitle = page?.title || 'Opiskelijalle';
@@ -112,6 +116,26 @@ const hasBodyCards = bodyCards.length > 0;
             <span>{page.externalLinkTitle || 'Avaa linkki'}</span>
             <ExternalLink class="w-4 h-4 text-alajarvi-600" />
           </a>
+        </div>
+      )}
+
+      {/* External document links (e.g. multiple Google Drive PDFs) */}
+      {page?.documentLinks && page.documentLinks.length > 0 && (
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {page.documentLinks.map((doc: any) => (
+            <a
+              href={doc.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="p-5 rounded-2xl bg-white border border-slate-200 hover:border-alajarvi-300 shadow-sm hover:shadow-md flex items-center justify-between gap-3 group transition-all"
+            >
+              <div>
+                <h4 class="font-bold text-slate-900 text-sm group-hover:text-alajarvi-600 transition-colors">{doc.title}</h4>
+                {doc.description && <p class="text-xs text-slate-500 mt-0.5">{doc.description}</p>}
+              </div>
+              <FileText class="w-5 h-5 text-alajarvi-500 shrink-0 group-hover:scale-110 transition-transform" />
+            </a>
+          ))}
         </div>
       )}
 

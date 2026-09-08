@@ -10,8 +10,8 @@ const links = await getQuickLinks();
     {links.map((item) => (
       <a
         href={item.url}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={item.url?.startsWith('/') ? '_self' : '_blank'}
+        rel={item.url?.startsWith('/') ? undefined : 'noopener noreferrer'}
         class="group p-6 rounded-2xl bg-white shadow-xl shadow-slate-200/50 border border-slate-100 hover:border-alajarvi-300 hover:shadow-2xl hover:shadow-alajarvi-500/10 transition-all duration-300 flex items-center justify-between transform hover:-translate-y-1"
       >
         <div class="flex items-center gap-4">

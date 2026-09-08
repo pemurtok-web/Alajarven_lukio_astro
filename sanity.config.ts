@@ -11,6 +11,8 @@ const pageTemplates = [
   { id: 'page-yo-kirjoitukset', title: 'YO-kirjoitukset', slug: 'yo-kirjoitukset' },
   { id: 'page-lomakkeet', title: 'Lomakkeet & Ohjeet', slug: 'lomakkeet' },
   { id: 'page-kodin-ja-koulun-yhteistyo', title: 'Kodin ja koulun yhteistyö', slug: 'kodin-ja-koulun-yhteistyo' },
+  { id: 'page-opetussuunnitelma', title: 'Opetussuunnitelma', slug: 'opetussuunnitelma' },
+  { id: 'page-ruokalista', title: 'Ruokalista', slug: 'ruokalista' },
   { id: 'page-hakijalle', title: 'Hakijalle (Tule opiskelemaan)', slug: 'hakijalle' },
   { id: 'page-jiyu-gakuen', title: 'Jiyu Gakuen (Japani)', slug: 'jiyu-gakuen' },
   { id: 'page-mukawa', title: 'Mukawa (Japani)', slug: 'mukawa' },
@@ -81,6 +83,12 @@ export default defineConfig({
                             S.listItem()
                               .title('🏡 Kodin ja koulun yhteistyö')
                               .child(S.document().schemaType('page').documentId('page-kodin-ja-koulun-yhteistyo').initialValueTemplate('tpl-page-kodin-ja-koulun-yhteistyo')),
+                            S.listItem()
+                              .title('📄 Opetussuunnitelma')
+                              .child(S.document().schemaType('page').documentId('page-opetussuunnitelma').initialValueTemplate('tpl-page-opetussuunnitelma')),
+                            S.listItem()
+                              .title('🍽️ Ruokalista')
+                              .child(S.document().schemaType('page').documentId('page-ruokalista').initialValueTemplate('tpl-page-ruokalista')),
                           ])
                       ),
 

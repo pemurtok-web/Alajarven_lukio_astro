@@ -69,6 +69,26 @@ export const pageSchema = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'documentLinks',
+      title: '📄 Ulkoiset asiakirjalinkit (esim. useampi Google Drive -PDF)',
+      description: 'Käytä tätä kun sivulla pitää olla useampi ladattava asiakirja/linkki (esim. useita opetussuunnitelmia). Näkyvät siisteinä kortteina.',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          title: 'Asiakirjalinkki',
+          fields: [
+            { name: 'title', type: 'string', title: 'Otsikko (esim. Opetussuunnitelma 2021)', validation: (Rule) => Rule.required() },
+            { name: 'description', type: 'string', title: 'Lisätieto (valinnainen)' },
+            { name: 'url', type: 'url', title: 'Osoite (esim. https://drive.google.com/...)', validation: (Rule) => Rule.required() },
+          ],
+          preview: {
+            select: { title: 'title', subtitle: 'url' },
+          },
+        },
+      ],
+    }),
+    defineField({
       name: 'mainImage',
       title: 'Sivun pääkuva / Bannerikuva',
       description: '💡 Kuvavinkki: pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa – järjestelmä optimoi koon automaattisesti.',

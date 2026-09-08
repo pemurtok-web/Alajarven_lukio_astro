@@ -76,6 +76,7 @@ export const pageSchema = defineType({
       of: [
         {
           type: 'object',
+          name: 'documentLink',
           title: 'Asiakirjalinkki',
           fields: [
             { name: 'title', type: 'string', title: 'Otsikko (esim. Opetussuunnitelma 2021)', validation: (Rule) => Rule.required() },

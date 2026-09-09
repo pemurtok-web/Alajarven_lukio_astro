@@ -117,10 +117,20 @@ const ogImageURL = image ? new URL(image, Astro.site).toString() : undefined;
     <!-- Structured data for search engines and AI answer engines (GEO) -->
     <script type="application/ld+json" set:html={JSON.stringify(SCHOOL_JSONLD)} />
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts: preconnect + a non-render-blocking stylesheet load (fetched at low
+    priority via media="print", then switched to "all" once loaded) — with display=swap the
+    fallback font shows immediately either way, so there's no reason to block first paint on it. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    </noscript>
   </head>
   <body class="min-h-screen flex flex-col bg-[#F6FAFE] text-slate-800 antialiased selection:bg-alajarvi-500 selection:text-white overflow-x-clip w-full max-w-full relative">
     {gtmId && (

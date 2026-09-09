@@ -139,6 +139,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
             const secImage = sec.image;
             const imageUrl = secImage?.src || (secImage?.asset ? urlFor(secImage)?.width(1600).quality(85).url() : null);
             const secImgResponsive = !secImage?.src && secImage?.asset ? responsiveImage(secImage, [400, 640, 828, 1080]) : null;
+            const secTitle = typeof sec.title === 'string' ? sec.title.replace(/^\d+\.\s*/, '') : sec.title;
 
             return (
               <section
@@ -150,7 +151,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                     {idx + 1}
                   </div>
                   <h2 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">
-                    {sec.title}
+                    {secTitle}
                   </h2>
                 </div>
 

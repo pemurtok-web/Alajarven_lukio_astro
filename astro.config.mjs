@@ -9,6 +9,9 @@ export default defineConfig({
   site: 'https://alajarven-lukio-dev.netlify.app',
   output: 'server',
   adapter: netlify(),
+  build: {
+    inlineStylesheets: 'always',
+  },
   integrations: [
     tailwind(),
     react(),

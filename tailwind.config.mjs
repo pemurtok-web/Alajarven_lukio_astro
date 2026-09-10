@@ -5,17 +5,17 @@ export default {
     extend: {
       colors: {
         alajarvi: {
-          50: '#F0F6FC',
-          100: '#E0EEFB',
-          200: '#BAFAF9',
-          300: '#7CC2FA',
-          400: '#38BDF8',
-          500: '#0055A5', // Official Alajärvi brand blue
-          600: '#004B93',
-          700: '#003B73', // Dark primary blue
-          800: '#0A2540', // Deep navy
-          900: '#07182B',
-          950: '#030D18',
+          50: '#F1F5FC',
+          100: '#E0E9F5',
+          200: '#B8D0F5',
+          300: '#8AB2EE',
+          400: '#4D82E0',
+          500: '#0046AD', // Alajärven kaupungin markkinointivaakunan sininen
+          600: '#003D96',
+          700: '#002D70', // Dark primary blue
+          800: '#001F4D', // Deep navy
+          900: '#001433',
+          950: '#000C1F',
         },
       },
       fontFamily: {
@@ -23,8 +23,8 @@ export default {
         display: ['Outfit', 'Inter', 'sans-serif'],
       },
       boxShadow: {
-        'glass': '0 8px 32px 0 rgba(0, 85, 165, 0.08)',
-        'card-hover': '0 20px 40px -15px rgba(0, 59, 115, 0.15)',
+        'glass': '0 8px 32px 0 rgba(0, 70, 173, 0.08)',
+        'card-hover': '0 20px 40px -15px rgba(0, 45, 112, 0.15)',
       }
     },
   },

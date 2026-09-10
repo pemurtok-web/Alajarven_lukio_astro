@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import LongPageNav from '../../components/LongPageNav.astro';
+import HeroWave from '../../components/HeroWave.astro';
 import PortableText from '../../components/PortableText.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 import { getPageBySlug, urlFor, responsiveImage, extractPageAnchors } from '../../lib/sanity';
@@ -32,30 +33,31 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
 >
   <Header />
 
-  <main class="py-12 bg-transparent">
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 space-y-8">
-      
-      <!-- Page Hero Header -->
-      <div class="p-8 sm:p-14 md:p-16 rounded-3xl bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-alajarvi-700 text-white shadow-2xl overflow-hidden relative border border-alajarvi-800">
-        {page?.heroBgImage && urlFor(page.heroBgImage) && (
-          <div class="absolute inset-0 z-0 pointer-events-none">
-            <img
-              src={heroImg?.src}
-              srcset={heroImg?.srcset}
-              sizes="100vw"
-              width={heroImg?.width}
-              height={heroImg?.height}
-              alt={page.heroBgImage.alt || page?.title || 'Hero taustakuva'}
-              class="w-full h-full object-cover object-center"
-              loading="eager"
-              fetchpriority="high"
-            />
-            <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/55 to-slate-950/15"></div>
-          </div>
-        )}
-        <div class="absolute -right-20 -top-20 w-80 h-80 bg-alajarvi-500/10 rounded-full blur-3xl pointer-events-none z-0"></div>
-        
-        <div class="relative z-10 space-y-4 max-w-3xl">
+  <main class="bg-transparent">
+
+    <!-- Page Hero — full-width, edge-to-edge (no rounded corners), flush against the
+         header, with the flowing Aalto wave mask at the bottom. -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white">
+      {page?.heroBgImage && urlFor(page.heroBgImage) && (
+        <div class="absolute inset-0 z-0 pointer-events-none">
+          <img
+            src={heroImg?.src}
+            srcset={heroImg?.srcset}
+            sizes="100vw"
+            width={heroImg?.width}
+            height={heroImg?.height}
+            alt={page.heroBgImage.alt || page?.title || 'Hero taustakuva'}
+            class="w-full h-full object-cover object-center"
+            loading="eager"
+            fetchpriority="high"
+          />
+          <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/55 to-slate-950/15"></div>
+        </div>
+      )}
+      <div class="absolute -right-20 -top-20 w-80 h-80 bg-alajarvi-500/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-16 pb-20 sm:pb-28">
+        <div class="space-y-4 max-w-3xl">
           <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold text-sky-200 border border-white/10 shadow-sm">
             <GraduationCap class="w-4 h-4 text-amber-400" />
             <span>Tule opiskelemaan meille</span>
@@ -68,6 +70,10 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
           </p>
         </div>
       </div>
+      <HeroWave />
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 space-y-8 py-8">
 
       <!-- Main Page Image (Full Resolution Sharp View) -->
       {page?.mainImage && urlFor(page.mainImage) && (
@@ -145,6 +151,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
               <section
                 id={secId}
                 class="scroll-mt-28 p-6 sm:p-8 md:p-10 rounded-3xl bg-white shadow-md border border-slate-200/90 hover:border-alajarvi-300 transition-all space-y-6"
+                style="scroll-margin-top: var(--anchor-offset, 112px)"
               >
                 <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
                   <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-alajarvi-600 to-alajarvi-800 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
@@ -231,7 +238,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
       ) : (
         <div class="space-y-12">
           <!-- Section 1: Miksi Alajärven lukio -->
-          <section id="miksi-alajarven-lukio" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+          <section id="miksi-alajarven-lukio" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6" style="scroll-margin-top: var(--anchor-offset, 112px)">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
                 1
@@ -269,7 +276,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
           </section>
 
           <!-- Section 2: Valintaperusteet -->
-          <section id="valintaperusteet" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+          <section id="valintaperusteet" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6" style="scroll-margin-top: var(--anchor-offset, 112px)">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
                 2
@@ -298,7 +305,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
           </section>
 
           <!-- Section 3: Kuinka haetaan -->
-          <section id="hakeminen" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+          <section id="hakeminen" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6" style="scroll-margin-top: var(--anchor-offset, 112px)">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
                 3
@@ -340,7 +347,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
           </section>
 
           <!-- Section 4: Kaksoistutkinto & yhdistelmäopinnot -->
-          <section id="yhdistelmaopinnot" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+          <section id="yhdistelmaopinnot" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6" style="scroll-margin-top: var(--anchor-offset, 112px)">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
                 4
@@ -356,7 +363,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
           </section>
 
           <!-- Section 5: Opintotarjonta & linjat -->
-          <section id="lukiolinjat" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+          <section id="lukiolinjat" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6" style="scroll-margin-top: var(--anchor-offset, 112px)">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
                 5

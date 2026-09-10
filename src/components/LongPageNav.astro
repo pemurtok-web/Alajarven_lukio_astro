@@ -18,11 +18,11 @@ const { anchors, title = 'Sivun osiot' } = Astro.props;
       <span class="w-2 h-2 rounded-full bg-alajarvi-500 animate-pulse"></span>
       {title}
     </span>
-    <div class="flex overflow-x-auto gap-2 pb-1 pt-0.5 sm:pb-0 scrollbar-none snap-x max-w-full -mx-1 px-1">
+    <div class="flex flex-wrap gap-2 max-w-full">
       {anchors.map(item => (
         <a
           href={`#${item.id}`}
-          class="whitespace-nowrap shrink-0 snap-start px-3.5 py-2 sm:py-1.5 rounded-full text-xs font-semibold text-slate-700 hover:text-alajarvi-600 bg-slate-100 hover:bg-alajarvi-50 border border-slate-200/70 hover:border-alajarvi-300 transition-all shadow-xs active:scale-95"
+          class="whitespace-nowrap px-3.5 py-2 sm:py-1.5 rounded-full text-xs font-semibold text-slate-700 hover:text-alajarvi-600 bg-slate-100 hover:bg-alajarvi-50 border border-slate-200/70 hover:border-alajarvi-300 transition-all shadow-xs active:scale-95"
         >
           {item.label}
         </a>
@@ -40,6 +40,12 @@ const { anchors, title = 'Sivun osiot' } = Astro.props;
     let top = header ? header.getBoundingClientRect().height : 0;
     if (breadcrumb) top += breadcrumb.getBoundingClientRect().height;
     el.style.top = `${top}px`;
+
+    // The anchor targets (section/heading) need scroll-margin-top that clears
+    // this whole sticky stack (header + breadcrumb + this nav bar itself),
+    // otherwise the heading ends up hidden underneath it after a jump.
+    const offset = top + el.getBoundingClientRect().height + 16;
+    document.documentElement.style.setProperty('--anchor-offset', `${offset}px`);
   }
   positionLongPageNav();
   window.addEventListener('resize', positionLongPageNav);
@@ -47,4 +53,6 @@ const { anchors, title = 'Sivun osiot' } = Astro.props;
   const breadcrumbEl = document.querySelector('[data-page-breadcrumb]');
   if (headerEl) new ResizeObserver(positionLongPageNav).observe(headerEl);
   if (breadcrumbEl) new ResizeObserver(positionLongPageNav).observe(breadcrumbEl);
+  const navEl = document.getElementById('long-page-nav');
+  if (navEl) new ResizeObserver(positionLongPageNav).observe(navEl);
 </script>

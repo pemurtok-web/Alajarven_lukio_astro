@@ -30,26 +30,77 @@
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(224, 238, 251, 0.6);
+  border: 1px solid rgba(224, 233, 245, 0.6);
 }
 
 .glass-dark {
-  background: rgba(10, 37, 64, 0.9);
+  background: rgba(0, 31, 77, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .gradient-brand {
-  background: linear-gradient(135deg, #0055A5 0%, #003B73 100%);
+  background: linear-gradient(135deg, #0046AD 0%, #002D70 100%);
 }
 
 .gradient-brand-light {
-  background: linear-gradient(135deg, #F0F6FC 0%, #E0EEFB 100%);
+  background: linear-gradient(135deg, #F1F5FC 0%, #E0E9F5 100%);
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #0055A5 0%, #0B84FF 100%);
+  background: linear-gradient(135deg, #0046AD 0%, #0A6CFF 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Shared entrance & attention animations */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.7s ease-out both;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.55; }
+  70%, 100% { transform: scale(1.4); opacity: 0; }
+}
+.animate-pulse-ring {
+  animation: pulse-ring 2.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 6s linear infinite;
+}
+
+/* Aalto-style wave mask for hero bottom edges — a single wavy cutout, filled with the exact
+   page background color, so it reads as a mask rather than a colored stripe. Drawn as a
+   real inline SVG (not a scaled CSS background-image) so there's no sub-pixel background-
+   size rounding to create a seam: the fill runs far past the visible viewBox bottom, and
+   the viewBox's own clipping guarantees full coverage. The path repeats every 200 units and
+   is scrolled by exactly that distance, so the loop is seamless. */
+.animate-hero-wave {
+  animation: hero-wave-flow 14s linear infinite;
+}
+@keyframes hero-wave-flow {
+  from { transform: translateX(0); }
+  to { transform: translateX(-200px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-pulse-ring,
+  .animate-spin-slow,
+  .animate-hero-wave {
+    animation: none;
+  }
+  .animate-pulse-ring {
+    display: none;
+  }
 }

@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import LightboxModal from '../components/LightboxModal.astro';
 import CookieConsent from '../components/CookieConsent.astro';
+import ContactFab from '../components/ContactFab.astro';
 
 const gtmId = import.meta.env.PUBLIC_GTM_ID;
 
@@ -152,9 +153,9 @@ const ogImageURL = image ? new URL(image, Astro.site).toString() : undefined;
           <path d="M900 0C720 140 560 80 400 240C240 400 120 320 0 500V0H900Z" fill="url(#aalto-grad-1)"/>
           <defs>
             <linearGradient id="aalto-grad-1" x1="450" y1="0" x2="450" y2="500" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#38BDF8" stop-opacity="0.32"/>
-              <stop offset="0.6" stop-color="#7CC2FA" stop-opacity="0.16"/>
-              <stop offset="1" stop-color="#E0EEFB" stop-opacity="0.0"/>
+              <stop stop-color="#4D82E0" stop-opacity="0.32"/>
+              <stop offset="0.6" stop-color="#8AB2EE" stop-opacity="0.16"/>
+              <stop offset="1" stop-color="#E0E9F5" stop-opacity="0.0"/>
             </linearGradient>
           </defs>
         </svg>
@@ -166,9 +167,9 @@ const ogImageURL = image ? new URL(image, Astro.site).toString() : undefined;
           <path d="M0 200C200 140 360 320 560 250C760 180 850 340 950 270V800H0V200Z" fill="url(#aalto-grad-2)"/>
           <defs>
             <linearGradient id="aalto-grad-2" x1="475" y1="140" x2="475" y2="800" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#0055A5" stop-opacity="0.20"/>
-              <stop offset="0.7" stop-color="#BAFAF9" stop-opacity="0.08"/>
-              <stop offset="1" stop-color="#E0EEFB" stop-opacity="0.0"/>
+              <stop stop-color="#0046AD" stop-opacity="0.20"/>
+              <stop offset="0.7" stop-color="#B8D0F5" stop-opacity="0.08"/>
+              <stop offset="1" stop-color="#E0E9F5" stop-opacity="0.0"/>
             </linearGradient>
           </defs>
         </svg>
@@ -180,8 +181,8 @@ const ogImageURL = image ? new URL(image, Astro.site).toString() : undefined;
           <path d="M1000 650H0C220 540 420 600 600 500C780 400 920 480 1000 380V650Z" fill="url(#aalto-grad-3)"/>
           <defs>
             <linearGradient id="aalto-grad-3" x1="500" y1="380" x2="500" y2="650" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#7CC2FA" stop-opacity="0.28"/>
-              <stop offset="1" stop-color="#E0EEFB" stop-opacity="0.05"/>
+              <stop stop-color="#8AB2EE" stop-opacity="0.28"/>
+              <stop offset="1" stop-color="#E0E9F5" stop-opacity="0.05"/>
             </linearGradient>
           </defs>
         </svg>
@@ -199,6 +200,7 @@ const ogImageURL = image ? new URL(image, Astro.site).toString() : undefined;
       <slot />
       <LightboxModal />
       <CookieConsent />
+      <ContactFab />
     </div>
   </body>
 </html>

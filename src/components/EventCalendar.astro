@@ -164,12 +164,15 @@ const visibleEvents = calendarCells.flatMap((c) => c.events);
                 >
                   <span
                     class:list={[
-                      'text-[10px] sm:text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-full shrink-0',
+                      'relative text-[10px] sm:text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-full shrink-0',
                       cell.inMonth ? 'text-slate-700' : 'text-slate-300',
                       cell.isToday && 'bg-alajarvi-600 text-white',
                     ]}
                   >
-                    {cell.day}
+                    {cell.isToday && (
+                      <span class="animate-pulse-ring absolute inset-0 rounded-full bg-alajarvi-400 pointer-events-none" aria-hidden="true"></span>
+                    )}
+                    <span class="relative z-10">{cell.day}</span>
                   </span>
                   <div class="flex flex-col gap-0.5 sm:gap-1">
                     {cell.events.slice(0, 3).map((evt) => (
@@ -248,7 +251,7 @@ const visibleEvents = calendarCells.flatMap((c) => c.events);
                       </div>
                     </div>
                   ) : (
-                    <div class="relative p-6 sm:p-8 bg-gradient-to-br from-alajarvi-900 to-alajarvi-950 text-white shrink-0">
+                    <div class="relative p-6 sm:p-8 bg-gradient-to-br from-alajarvi-600 to-alajarvi-800 text-white shrink-0">
                       <button
                         type="button"
                         data-modal-close={modalId}
@@ -319,7 +322,7 @@ const visibleEvents = calendarCells.flatMap((c) => c.events);
                     <button
                       type="button"
                       data-modal-close={modalId}
-                      class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
+                      class="px-5 py-2.5 rounded-xl bg-alajarvi-600 hover:bg-alajarvi-700 text-white text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
                     >
                       Sulje ikkuna
                     </button>

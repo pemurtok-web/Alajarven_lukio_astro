@@ -1,0 +1,32 @@
+---
+interface Props {
+  fill?: string;
+  class?: string;
+}
+
+const { fill = '#F6FAFE', class: className = 'h-14 sm:h-24' } = Astro.props;
+
+// One infinitely-tiling path (period 200 units), reused at two different viewBox "window"
+// widths below. preserveAspectRatio="none" scales X and Y independently, so a viewBox much
+// wider than the real element (e.g. 1440 units stretched into a 375px-wide phone screen)
+// squashes the humps far more horizontally than vertically and distorts their proportions.
+// Showing a narrower window (fewer repeats) on small screens keeps the X/Y scale factors
+// close enough together that the coat-of-arms hump proportions survive.
+const wavePath = "M-480,45 C-447,17 -413,73 -380,45 C-347,17 -313,73 -280,45 C-247,17 -213,73 -180,45 C-147,17 -113,73 -80,45 C-47,17 -13,73 20,45 C53,17 87,73 120,45 C153,17 187,73 220,45 C253,17 287,73 320,45 C353,17 387,73 420,45 C453,17 487,73 520,45 C553,17 587,73 620,45 C653,17 687,73 720,45 C753,17 787,73 820,45 C853,17 887,73 920,45 C953,17 987,73 1020,45 C1053,17 1087,73 1120,45 C1153,17 1187,73 1220,45 C1253,17 1287,73 1320,45 C1353,17 1387,73 1420,45 C1453,17 1487,73 1520,45 C1553,17 1587,73 1620,45 C1653,17 1687,73 1720,45 C1753,17 1787,73 1820,45 C1853,17 1887,73 1920,45 L1920,250 L-480,250 Z";
+---
+
+<!-- Aalto-style wave mask — a single wavy cutout at the hero's bottom edge (matching the
+     page background, so it reads as a mask, not a colored stripe), gently flowing sideways.
+     Hump proportions (width:height) are modelled on the city's actual coat of arms — a
+     bolder, rounder scallop than a flat ripple. Real inline SVG with the fill running far
+     past the viewBox's own bottom (auto-clipped by the viewBox itself, not a scaled
+     background-image), so there's no sub-pixel rounding seam to worry about. The path
+     repeats every 200 units and scrolls by exactly that distance, so the loop is seamless. -->
+<div class={`absolute bottom-0 left-0 z-10 w-full overflow-hidden pointer-events-none ${className}`} aria-hidden="true">
+  <svg viewBox="0 0 480 110" preserveAspectRatio="none" class="block w-full h-full sm:hidden">
+    <path class="animate-hero-wave" fill={fill} d={wavePath} />
+  </svg>
+  <svg viewBox="0 0 1440 110" preserveAspectRatio="none" class="hidden sm:block w-full h-full">
+    <path class="animate-hero-wave" fill={fill} d={wavePath} />
+  </svg>
+</div>

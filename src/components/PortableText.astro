@@ -69,11 +69,11 @@ function renderChildren(block: any) {
 
         if (block.style === 'h2') {
           const headingId = `heading-${idx}`;
-          return <h2 id={headingId} key={idx} class="text-2xl font-bold text-alajarvi-800 mt-8 mb-4 scroll-mt-28" set:html={htmlContent} />;
+          return <h2 id={headingId} key={idx} class="text-2xl font-bold text-alajarvi-800 mt-8 mb-4 scroll-mt-28" style="scroll-margin-top: var(--anchor-offset, 112px)" set:html={htmlContent} />;
         }
         if (block.style === 'h3') {
           const headingId = `heading-${idx}`;
-          return <h3 id={headingId} key={idx} class="text-xl font-bold text-alajarvi-700 mt-6 mb-3 scroll-mt-28" set:html={htmlContent} />;
+          return <h3 id={headingId} key={idx} class="text-xl font-bold text-alajarvi-700 mt-6 mb-3 scroll-mt-28" style="scroll-margin-top: var(--anchor-offset, 112px)" set:html={htmlContent} />;
         }
         if (block.style === 'blockquote') {
           return <blockquote key={idx} class="border-l-4 border-alajarvi-500 pl-4 italic text-slate-600 my-4" set:html={htmlContent} />;

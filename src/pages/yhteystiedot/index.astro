@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import LongPageNav from '../../components/LongPageNav.astro';
+import HeroWave from '../../components/HeroWave.astro';
 import PortableText from '../../components/PortableText.astro';
 import { getPageBySlug, getContactInfo, urlFor, responsiveImage, retinaSrcSet } from '../../lib/sanity';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
@@ -53,28 +54,29 @@ function initials(name?: string) {
 >
   <Header />
 
-  <main class="py-12 bg-transparent">
-    <div class="max-w-7xl mx-auto px-4 sm:px-8">
-      
-      <!-- Page Hero Header -->
-      <div class="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-alajarvi-700 text-white shadow-2xl mb-8 relative overflow-hidden">
-        {page?.heroBgImage && urlFor(page.heroBgImage) && (
-          <div class="absolute inset-0 z-0 pointer-events-none">
-            <img
-              src={heroImg?.src}
-              srcset={heroImg?.srcset}
-              sizes="100vw"
-              width={heroImg?.width}
-              height={heroImg?.height}
-              alt={page.heroBgImage.alt || page?.title || 'Hero taustakuva'}
-              class="w-full h-full object-cover object-center"
-              loading="eager"
-              fetchpriority="high"
-            />
-            <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/55 to-slate-950/15"></div>
-          </div>
-        )}
-        <div class="relative z-10 space-y-4 max-w-3xl">
+  <main class="bg-transparent">
+
+    <!-- Page Hero — full-width, edge-to-edge (no rounded corners), flush against the
+         header, with the flowing Aalto wave mask at the bottom. -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white">
+      {page?.heroBgImage && urlFor(page.heroBgImage) && (
+        <div class="absolute inset-0 z-0 pointer-events-none">
+          <img
+            src={heroImg?.src}
+            srcset={heroImg?.srcset}
+            sizes="100vw"
+            width={heroImg?.width}
+            height={heroImg?.height}
+            alt={page.heroBgImage.alt || page?.title || 'Hero taustakuva'}
+            class="w-full h-full object-cover object-center"
+            loading="eager"
+            fetchpriority="high"
+          />
+          <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/55 to-slate-950/15"></div>
+        </div>
+      )}
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-14 pb-20 sm:pb-28">
+        <div class="space-y-4 max-w-3xl">
           <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-xs font-semibold text-sky-200 border border-white/20">
             <Phone class="w-4 h-4 text-emerald-300" />
             <span>Olemme täällä sinua varten</span>
@@ -87,6 +89,10 @@ function initials(name?: string) {
           </p>
         </div>
       </div>
+      <HeroWave />
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
 
       {/* Main Banner Image if uploaded in Sanity */}
       {page?.mainImage && urlFor(page.mainImage) && (
@@ -150,7 +156,7 @@ function initials(name?: string) {
       <div class="space-y-12">
         
         <!-- Section 1: Rehtorit & Koulusihteeri -->
-        <section id="rehtori-ja-toimisto" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+        <section id="rehtori-ja-toimisto" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6" style="scroll-margin-top: var(--anchor-offset, 112px)">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
               1
@@ -205,7 +211,7 @@ function initials(name?: string) {
         </section>
 
         <!-- Section 2: OPO & Opiskeluhuolto -->
-        <section id="opinto-ohjaus" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+        <section id="opinto-ohjaus" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6" style="scroll-margin-top: var(--anchor-offset, 112px)">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
               2
@@ -273,7 +279,7 @@ function initials(name?: string) {
         </section>
 
         <!-- Section 3: Opettajakunta -->
-        <section id="opettajat" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+        <section id="opettajat" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6" style="scroll-margin-top: var(--anchor-offset, 112px)">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
               3
@@ -298,7 +304,7 @@ function initials(name?: string) {
         </section>
 
         <!-- Section 4: Liikuntalinjan valmentajat -->
-        <section id="valmentajat" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+        <section id="valmentajat" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6" style="scroll-margin-top: var(--anchor-offset, 112px)">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
               4
@@ -323,7 +329,7 @@ function initials(name?: string) {
         </section>
 
         <!-- Section 5: Sijainti & Kartta -->
-        <section id="sijainti-ja-kartta" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+        <section id="sijainti-ja-kartta" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6" style="scroll-margin-top: var(--anchor-offset, 112px)">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
               5
@@ -374,7 +380,7 @@ function initials(name?: string) {
         </section>
 
         <!-- Section 6: Yhteydenottolomake -->
-        <section id="yhteydenotto" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+        <section id="yhteydenotto" class="scroll-mt-28 p-5 sm:p-8 md:p-10 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6" style="scroll-margin-top: var(--anchor-offset, 112px)">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center font-bold font-display text-lg">
               6

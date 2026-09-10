@@ -6,7 +6,7 @@ import Hero from '../components/Hero.astro';
 import QuickLinks from '../components/QuickLinks.astro';
 import NewsHighlights from '../components/NewsHighlights.astro';
 import EventCalendar from '../components/EventCalendar.astro';
-import { Award, BookOpen, Compass, CheckCircle2, ArrowRight, Phone } from 'lucide-astro';
+import { Award, BookOpen, Compass, CheckCircle2, ArrowRight } from 'lucide-astro';
 import { getHomepage, responsiveImage } from '../lib/sanity';
 
 const homepage = await getHomepage();
@@ -216,17 +216,6 @@ const gridColsClass =
       </div>
     </section>
   </main>
-
-  <!-- Floating quick-access button to Yhteystiedot — always reachable, especially on mobile -->
-  <a
-    href="/yhteystiedot"
-    class="fixed bottom-5 left-5 z-40 inline-flex items-center gap-2 pl-4 pr-5 py-3.5 rounded-full bg-alajarvi-500 hover:bg-alajarvi-600 text-white font-bold text-sm shadow-xl shadow-alajarvi-900/25 transition-all hover:scale-105 active:scale-95"
-    style="padding-bottom: calc(0.875rem + env(safe-area-inset-bottom))"
-    aria-label="Ota yhteyttä"
-  >
-    <Phone class="w-5 h-5 shrink-0" />
-    <span>Ota yhteyttä</span>
-  </a>
 
   <Footer />
 </Layout>

@@ -1,6 +1,7 @@
 ---
 import { ArrowRight, Sparkles, Globe, Compass, GraduationCap, Users } from 'lucide-astro';
 import { urlFor, responsiveImage } from '../lib/sanity';
+import HeroWave from './HeroWave.astro';
 
 interface Props {
   badge?: string;
@@ -25,7 +26,7 @@ const bgImgDesktop = responsiveImage(heroBgImage, [640, 960, 1280, 1600, 1920]);
 const mainImg = responsiveImage(heroImage, [400, 600, 800]);
 ---
 
-<section class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-alajarvi-700 text-white py-16 sm:py-24">
+<section class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white py-16 sm:py-24">
   {heroBgImage && (
     <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
       <picture class="w-full h-full">
@@ -56,22 +57,22 @@ const mainImg = responsiveImage(heroImage, [400, 600, 800]);
       
       <!-- Text & CTA Column (7 cols) -->
       <div class="lg:col-span-7 space-y-6">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-semibold text-alajarvi-100 backdrop-blur-md">
+        <div class="animate-fade-in-up inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-semibold text-alajarvi-100 backdrop-blur-md">
           <Sparkles class="w-4 h-4 text-amber-300 animate-spin-slow" />
           <span>{badge}</span>
         </div>
 
-        <h1 class="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.15] text-white">
+        <h1 class="animate-fade-in-up font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.15] text-white" style="animation-delay: 100ms">
           {title}
         </h1>
 
-        <p class="text-base sm:text-lg text-slate-200 leading-relaxed font-normal max-w-2xl">
+        <p class="animate-fade-in-up text-base sm:text-lg text-slate-200 leading-relaxed font-normal max-w-2xl" style="animation-delay: 200ms">
           {description}
         </p>
 
 
         <!-- CTA Action Buttons (Full width on mobile for easy tap) -->
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+        <div class="animate-fade-in-up flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2" style="animation-delay: 300ms">
           <a
             href="/hakijalle"
             class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-alajarvi-900 bg-white hover:bg-alajarvi-50 shadow-lg shadow-black/10 transition-all hover:scale-[1.02] active:scale-95 text-sm sm:text-base text-center"
@@ -90,7 +91,7 @@ const mainImg = responsiveImage(heroImage, [400, 600, 800]);
         </div>
 
         <!-- Quick Highlight Badges -->
-        <div class="pt-6 border-t border-white/10 grid grid-cols-3 gap-2 sm:gap-4 text-center sm:text-left">
+        <div class="animate-fade-in-up pt-6 border-t border-white/10 grid grid-cols-3 gap-2 sm:gap-4 text-center sm:text-left" style="animation-delay: 400ms">
           <div class="space-y-0.5 sm:space-y-1">
             <div class="text-xl sm:text-3xl font-extrabold font-display text-white">100%</div>
             <div class="text-[11px] sm:text-xs text-slate-300">Yksilöllinen OPO-ohjaus</div>
@@ -107,7 +108,7 @@ const mainImg = responsiveImage(heroImage, [400, 600, 800]);
       </div>
 
       <!-- Image & Cards Column (5 cols) -->
-      <div class="lg:col-span-5 relative">
+      <div class="animate-fade-in-up lg:col-span-5 relative" style="animation-delay: 250ms">
         <!-- Main Featured Image Container -->
         <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 group">
           {mainImg ? (
@@ -170,4 +171,6 @@ const mainImg = responsiveImage(heroImage, [400, 600, 800]);
 
     </div>
   </div>
+
+  <HeroWave />
 </section>

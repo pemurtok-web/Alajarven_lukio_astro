@@ -1,5 +1,10 @@
 ---
 import { MapPin, Phone, Mail, ExternalLink, Heart } from 'lucide-astro';
+import { getSiteSettings, urlForLogo, getImageDimensions } from '../lib/sanity';
+
+const siteSettings = await getSiteSettings();
+const logoUrl = siteSettings.logoImage ? urlForLogo(siteSettings.logoImage)?.url() : null;
+const logoDims = siteSettings.logoImage ? getImageDimensions(siteSettings.logoImage) : undefined;
 ---
 
 <footer class="bg-alajarvi-900 text-white pt-16 pb-12 border-t border-alajarvi-800">
@@ -8,9 +13,20 @@ import { MapPin, Phone, Mail, ExternalLink, Heart } from 'lucide-astro';
       <!-- Brand & Info -->
       <div class="space-y-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-alajarvi-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
-            AL
-          </div>
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              width={logoDims?.width}
+              height={logoDims?.height}
+              alt={siteSettings.title || 'Alajärven lukio logo'}
+              loading="lazy"
+              class="h-12 w-auto max-w-[70px] object-contain bg-white rounded-lg p-1 shrink-0"
+            />
+          ) : (
+            <div class="w-10 h-10 rounded-xl bg-alajarvi-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shrink-0">
+              AL
+            </div>
+          )}
           <div>
             <span class="block font-display font-bold text-lg text-white tracking-tight">
               ALAJÄRVEN LUKIO
@@ -117,10 +133,23 @@ import { MapPin, Phone, Mail, ExternalLink, Heart } from 'lucide-astro';
           Evästeasetukset
         </button>
       </div>
-      <div class="flex items-center gap-1 text-slate-400">
-        <span>Toteutettu saavutettavalla</span>
-        <span class="text-alajarvi-300 font-semibold">Astro + Sanity</span>
-        <span>-arkkitehtuurilla</span>
+      <div class="flex flex-col items-center sm:items-end gap-1 text-slate-400">
+        <div class="flex items-center gap-1">
+          <span>Toteutettu saavutettavalla</span>
+          <span class="text-alajarvi-300 font-semibold">Astro + Sanity</span>
+          <span>-arkkitehtuurilla</span>
+        </div>
+        <p>
+          Sivuston suunnittelu ja toteutus:{' '}
+          <a
+            href="https://pm-digital.fi"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-alajarvi-300 hover:text-white font-semibold underline underline-offset-2 transition-colors"
+          >
+            PM-Digital
+          </a>
+        </p>
       </div>
     </div>
   </div>

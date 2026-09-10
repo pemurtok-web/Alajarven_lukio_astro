@@ -1,0 +1,60 @@
+---
+import { Phone } from 'lucide-astro';
+---
+
+<!-- Floating quick-access button to Yhteystiedot — always reachable, especially on mobile.
+     A script docks the full pill just outside the max-w-7xl content column when there's
+     room, and collapses it to an icon-only button in the viewport corner when there isn't,
+     so it never overlaps real content regardless of viewport width. -->
+<a
+  href="/yhteystiedot"
+  id="contact-fab"
+  class="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 pl-4 pr-5 py-3.5 rounded-full bg-alajarvi-500 hover:bg-alajarvi-600 text-white font-bold text-sm shadow-xl shadow-alajarvi-900/25 transition-all hover:scale-105 active:scale-95"
+  style="padding-bottom: calc(0.875rem + env(safe-area-inset-bottom))"
+  aria-label="Ota yhteyttä"
+>
+  <span class="animate-pulse-ring absolute inset-0 rounded-full bg-alajarvi-300 pointer-events-none" aria-hidden="true"></span>
+  <Phone class="relative z-10 w-5 h-5 shrink-0" />
+  <span id="contact-fab-label" class="relative z-10">Ota yhteyttä</span>
+</a>
+
+<script>
+  function positionContactFab() {
+    const fab = document.getElementById('contact-fab');
+    const label = document.getElementById('contact-fab-label');
+    if (!fab || !label) return;
+
+    // Don't fight the user's own click navigation — skip on the yhteystiedot page itself.
+    if (window.location.pathname.replace(/\/$/, '') === '/yhteystiedot') {
+      fab.style.display = 'none';
+      return;
+    }
+
+    const margin = 20;
+
+    // Measure the pill in its full (icon + label) state first.
+    label.style.display = '';
+    fab.style.paddingLeft = '1rem';
+    fab.style.paddingRight = '1.25rem';
+    const pillWidth = fab.getBoundingClientRect().width;
+
+    const container = document.querySelector('main .max-w-7xl');
+    const containerRight = container ? container.getBoundingClientRect().right : 0;
+    const gutter = window.innerWidth - containerRight;
+
+    if (container && gutter >= pillWidth + margin * 2) {
+      fab.style.right = `${window.innerWidth - containerRight - margin - pillWidth}px`;
+      return;
+    }
+
+    // Not enough room beside the content column — collapse to an icon-only
+    // button pinned to the viewport corner so it never overlaps real content.
+    label.style.display = 'none';
+    fab.style.paddingLeft = '0.875rem';
+    fab.style.paddingRight = '0.875rem';
+    fab.style.right = `${margin}px`;
+  }
+
+  positionContactFab();
+  window.addEventListener('resize', positionContactFab);
+</script>

@@ -1,6 +1,6 @@
 ---
 import { getQuickLinks, getSiteSettings, urlForLogo, getImageDimensions } from '../lib/sanity';
-import { ExternalLink, ChevronDown, Menu, X, BookOpen, Utensils, GraduationCap } from 'lucide-astro';
+import { ExternalLink, ChevronDown, Menu, X, BookOpen, Utensils, GraduationCap, Home, Globe, Megaphone, Phone } from 'lucide-astro';
 
 const quickLinks = await getQuickLinks();
 const siteSettings = await getSiteSettings();
@@ -179,43 +179,61 @@ const kansainvalisyysPages = [
   </div>
 
   <!-- Mobile Dropdown Menu -->
-  <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-100 bg-white/98 backdrop-blur-lg px-4 pt-3 pb-6 shadow-2xl max-h-[85vh] overflow-y-auto">
-    <div class="flex flex-col space-y-1">
-      <a href="/" class="px-3.5 py-2.5 rounded-xl text-base font-semibold text-slate-800 hover:bg-alajarvi-50 hover:text-alajarvi-600 transition-colors">
+  <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-100 bg-white/98 backdrop-blur-lg shadow-2xl max-h-[85vh] flex flex-col">
+    <div class="flex flex-col px-4 pt-3 pb-2 overflow-y-auto divide-y divide-slate-100">
+      <a href="/" class="flex items-center gap-3 px-3 py-3 text-base font-semibold text-slate-800 hover:bg-alajarvi-50 hover:text-alajarvi-600 rounded-xl transition-colors">
+        <Home class="w-[18px] h-[18px] text-alajarvi-400 shrink-0" />
         Etusivu
       </a>
 
-      <div class="pt-2 pb-1">
-        <span class="px-3 text-xs font-bold text-alajarvi-500 uppercase tracking-wider">Opiskelijalle</span>
-        <div class="mt-1 pl-2 space-y-1 border-l-2 border-alajarvi-200">
+      <details class="group">
+        <summary class="flex items-center gap-3 px-3 py-3 text-base font-semibold text-slate-800 hover:bg-alajarvi-50 hover:text-alajarvi-600 rounded-xl transition-colors cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+          <GraduationCap class="w-[18px] h-[18px] text-alajarvi-400 shrink-0" />
+          <span class="flex-1">Opiskelijalle</span>
+          <ChevronDown class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform duration-200 shrink-0" />
+        </summary>
+        <div class="pb-1 pl-4 grid grid-cols-2 gap-1">
           {opiskelijallePages.map(page => (
-            <a href={page.href} class="block px-3 py-2 text-sm font-medium text-slate-700 hover:text-alajarvi-600 hover:bg-alajarvi-50 rounded-lg transition-colors">
+            <a href={page.href} class="block px-3 py-2 text-sm font-medium text-slate-600 hover:text-alajarvi-600 hover:bg-alajarvi-50 rounded-lg transition-colors">
               {page.title}
             </a>
           ))}
         </div>
-      </div>
+      </details>
 
-      <a href="/hakijalle" class="px-3.5 py-2.5 rounded-xl text-base font-semibold text-slate-800 hover:bg-alajarvi-50 hover:text-alajarvi-600 transition-colors">
+      <a href="/hakijalle" class="flex items-center gap-3 px-3 py-3 text-base font-semibold text-slate-800 hover:bg-alajarvi-50 hover:text-alajarvi-600 rounded-xl transition-colors">
+        <BookOpen class="w-[18px] h-[18px] text-alajarvi-400 shrink-0" />
         Hakijalle
       </a>
 
-      <div class="pt-2 pb-1">
-        <a href="/kansainvalisyys" class="block px-3 text-xs font-bold text-alajarvi-500 uppercase tracking-wider hover:text-alajarvi-600">Kansainvälisyys</a>
-        <div class="mt-1 pl-2 space-y-1 border-l-2 border-alajarvi-200">
+      <details class="group">
+        <summary class="flex items-center gap-3 px-3 py-3 text-base font-semibold text-slate-800 hover:bg-alajarvi-50 hover:text-alajarvi-600 rounded-xl transition-colors cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+          <Globe class="w-[18px] h-[18px] text-alajarvi-400 shrink-0" />
+          <span class="flex-1">Kansainvälisyys</span>
+          <ChevronDown class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform duration-200 shrink-0" />
+        </summary>
+        <div class="pb-1 pl-4 space-y-1">
+          <a href="/kansainvalisyys" class="block px-3 py-2 text-sm font-bold text-alajarvi-600 hover:bg-alajarvi-50 rounded-lg transition-colors">
+            Yleiskatsaus
+          </a>
           {kansainvalisyysPages.map(page => (
-            <a href={page.href} class="block px-3 py-2 text-sm font-medium text-slate-700 hover:text-alajarvi-600 hover:bg-alajarvi-50 rounded-lg transition-colors">
+            <a href={page.href} class="block px-3 py-2 text-sm font-medium text-slate-600 hover:text-alajarvi-600 hover:bg-alajarvi-50 rounded-lg transition-colors">
               {page.title}
             </a>
           ))}
         </div>
-      </div>
+      </details>
 
-      <a href="/ajankohtaista" class="px-3.5 py-2.5 rounded-xl text-base font-semibold text-slate-800 hover:bg-alajarvi-50 hover:text-alajarvi-600 transition-colors">
+      <a href="/ajankohtaista" class="flex items-center gap-3 px-3 py-3 text-base font-semibold text-slate-800 hover:bg-alajarvi-50 hover:text-alajarvi-600 rounded-xl transition-colors">
+        <Megaphone class="w-[18px] h-[18px] text-alajarvi-400 shrink-0" />
         Ajankohtaista
       </a>
+    </div>
 
-      <a href="/yhteystiedot" class="mt-3 block w-full text-center px-4 py-3 rounded-xl text-base font-bold text-white bg-alajarvi-500 hover:bg-alajarvi-600 shadow-md active:scale-95 transition-all">
+    <!-- Sticky CTA — always visible without scrolling the list above -->
+    <div class="shrink-0 px-4 py-3 border-t border-slate-100 bg-white/98 backdrop-blur-lg" style="padding-bottom: calc(0.75rem + env(safe-area-inset-bottom))">
+      <a href="/yhteystiedot" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl text-base font-bold text-white bg-alajarvi-500 hover:bg-alajarvi-600 shadow-md active:scale-95 transition-all">
+        <Phone class="w-[18px] h-[18px]" />
         Yhteystiedot
       </a>
     </div>

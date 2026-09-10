@@ -1,6 +1,6 @@
 ---
-import { getUpcomingEvents, urlFor, retinaSrcSet } from '../lib/sanity';
-import { Calendar as CalendarIcon, Clock, MapPin, ChevronRight, Sparkles, X, Info } from 'lucide-astro';
+import { getUpcomingEvents, urlFor, retinaSrcSet, type EventItem } from '../lib/sanity';
+import { Calendar as CalendarIcon, Clock, MapPin, ChevronRight, ChevronLeft, Sparkles, X, Info } from 'lucide-astro';
 import PortableText from './PortableText.astro';
 
 const events = await getUpcomingEvents();
@@ -13,9 +13,66 @@ function formatDateBadge(dateStr: string) {
   const fullDate = `${day}.${d.getMonth() + 1}.${d.getFullYear()}`;
   return { day, month, fullDate };
 }
+
+const pad2 = (n: number) => String(n).padStart(2, '0');
+const MONTH_NAMES_FI = [
+  'Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu',
+  'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu',
+];
+const WEEKDAY_NAMES_FI = ['Ma', 'Ti', 'Ke', 'To', 'Pe', 'La', 'Su'];
+
+const today = new Date();
+const todayKey = `${today.getFullYear()}-${pad2(today.getMonth() + 1)}-${pad2(today.getDate())}`;
+
+const monthParam = Astro.url.searchParams.get('month');
+let calYear = today.getFullYear();
+let calMonth = today.getMonth();
+if (monthParam && /^\d{4}-\d{2}$/.test(monthParam)) {
+  const [y, m] = monthParam.split('-').map(Number);
+  if (m >= 1 && m <= 12) {
+    calYear = y;
+    calMonth = m - 1;
+  }
+}
+
+const monthLabel = `${MONTH_NAMES_FI[calMonth]} ${calYear}`;
+const isCurrentMonth = calYear === today.getFullYear() && calMonth === today.getMonth();
+
+const prevMonthDate = new Date(calYear, calMonth - 1, 1);
+const nextMonthDate = new Date(calYear, calMonth + 1, 1);
+const prevHref = `?month=${prevMonthDate.getFullYear()}-${pad2(prevMonthDate.getMonth() + 1)}#tapahtumakalenteri`;
+const nextHref = `?month=${nextMonthDate.getFullYear()}-${pad2(nextMonthDate.getMonth() + 1)}#tapahtumakalenteri`;
+const todayHref = `${Astro.url.pathname}#tapahtumakalenteri`;
+
+const eventsByDate = new Map<string, EventItem[]>();
+for (const evt of events) {
+  const key = evt.date?.slice(0, 10);
+  if (!key) continue;
+  const list = eventsByDate.get(key) ?? [];
+  list.push(evt);
+  eventsByDate.set(key, list);
+}
+
+const firstWeekday = (new Date(calYear, calMonth, 1).getDay() + 6) % 7; // Monday = 0
+const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+const totalCells = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
+
+const calendarCells = Array.from({ length: totalCells }, (_, i) => {
+  const d = new Date(calYear, calMonth, i - firstWeekday + 1);
+  const key = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  return {
+    key,
+    day: d.getDate(),
+    inMonth: d.getMonth() === calMonth,
+    isToday: key === todayKey,
+    events: eventsByDate.get(key) ?? [],
+  };
+});
+
+const visibleEvents = calendarCells.flatMap((c) => c.events);
 ---
 
-<section class="py-20 bg-transparent border-t border-slate-200/40">
+<section id="tapahtumakalenteri" class="py-20 bg-transparent border-t border-slate-200/40 scroll-mt-24">
   <div class="max-w-7xl mx-auto px-4 sm:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
       
@@ -50,81 +107,105 @@ function formatDateBadge(dateStr: string) {
         </div>
       </div>
 
-      <!-- Events List Right (8 cols) -->
+      <!-- Month Calendar Right (8 cols) -->
       <div class="lg:col-span-8 space-y-4">
-        {events.map((evt) => {
-          const { day, month } = formatDateBadge(evt.date);
-          const imgUrl = evt.image ? urlFor(evt.image)?.width(400).height(300).fit('crop').url() : null;
+
+        <!-- Calendar Header / Navigation -->
+        <div class="flex items-center justify-between gap-3 px-1">
+          <h3 class="font-display font-bold text-xl sm:text-2xl text-alajarvi-900 tracking-tight">
+            {monthLabel}
+          </h3>
+          <div class="flex items-center gap-2">
+            {!isCurrentMonth && (
+              <a
+                href={todayHref}
+                class="hidden sm:inline-flex items-center px-3 py-2 rounded-xl bg-alajarvi-50 hover:bg-alajarvi-100 text-alajarvi-700 text-xs font-bold transition-colors"
+              >
+                Tänään
+              </a>
+            )}
+            <a
+              href={prevHref}
+              aria-label="Edellinen kuukausi"
+              class="w-9 h-9 rounded-xl bg-white hover:bg-slate-100 border border-slate-200/80 text-slate-600 flex items-center justify-center transition-colors shadow-xs"
+            >
+              <ChevronLeft class="w-4 h-4" />
+            </a>
+            <a
+              href={nextHref}
+              aria-label="Seuraava kuukausi"
+              class="w-9 h-9 rounded-xl bg-white hover:bg-slate-100 border border-slate-200/80 text-slate-600 flex items-center justify-center transition-colors shadow-xs"
+            >
+              <ChevronRight class="w-4 h-4" />
+            </a>
+          </div>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="overflow-x-auto">
+          <div class="min-w-[320px] rounded-2xl border border-slate-200/80 bg-white shadow-xs overflow-hidden">
+            <!-- Weekday Header -->
+            <div class="grid grid-cols-7 bg-slate-50 border-b border-slate-200/80">
+              {WEEKDAY_NAMES_FI.map((wd) => (
+                <div class="py-1.5 sm:py-2.5 text-center text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500">
+                  {wd}
+                </div>
+              ))}
+            </div>
+            <!-- Day Cells -->
+            <div class="grid grid-cols-7">
+              {calendarCells.map((cell) => (
+                <div
+                  class:list={[
+                    'min-h-[58px] sm:min-h-[92px] p-1 sm:p-2 border-b border-r border-slate-100 last:border-r-0 flex flex-col gap-0.5 sm:gap-1',
+                    !cell.inMonth && 'bg-slate-50/60',
+                    cell.isToday && 'bg-alajarvi-50 ring-1 ring-inset ring-alajarvi-300',
+                  ]}
+                >
+                  <span
+                    class:list={[
+                      'text-[10px] sm:text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-full shrink-0',
+                      cell.inMonth ? 'text-slate-700' : 'text-slate-300',
+                      cell.isToday && 'bg-alajarvi-600 text-white',
+                    ]}
+                  >
+                    {cell.day}
+                  </span>
+                  <div class="flex flex-col gap-0.5 sm:gap-1">
+                    {cell.events.slice(0, 3).map((evt) => (
+                      <button
+                        type="button"
+                        data-modal-target={`event-modal-${evt._id}`}
+                        class:list={[
+                          'event-modal-trigger w-full text-left px-1 py-0.5 sm:px-1.5 sm:py-1 rounded sm:rounded-md text-[9px] sm:text-[11px] leading-tight font-semibold truncate transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-alajarvi-500',
+                          cell.inMonth
+                            ? 'bg-alajarvi-100 text-alajarvi-800 hover:bg-alajarvi-200'
+                            : 'bg-slate-100 text-slate-400 hover:bg-slate-200',
+                        ]}
+                        title={evt.title}
+                      >
+                        {evt.title}
+                      </button>
+                    ))}
+                    {cell.events.length > 3 && (
+                      <span class="text-[9px] sm:text-[10px] font-semibold text-slate-400 px-1 sm:px-1.5">
+                        +{cell.events.length - 3} lisää
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {visibleEvents.length === 0 && (
+          <p class="text-sm text-slate-500 px-1">Ei tapahtumia tässä kuussa.</p>
+        )}
+
+        {visibleEvents.map((evt) => {
           const modalId = `event-modal-${evt._id}`;
           return (
-            <>
-              <!-- Event Card -->
-              <button
-                type="button"
-                data-modal-target={modalId}
-                class="event-modal-trigger w-full text-left group p-5 rounded-2xl bg-slate-50 hover:bg-white border border-slate-200/80 hover:border-alajarvi-300 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-alajarvi-500"
-              >
-                
-                <!-- Date Badge -->
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-alajarvi-500 to-alajarvi-700 text-white flex flex-col items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
-                  <span class="text-xs font-bold tracking-widest text-alajarvi-200 uppercase leading-none">{month}</span>
-                  <span class="text-2xl font-extrabold font-display leading-none mt-0.5">{day}</span>
-                </div>
-
-                {imgUrl && (
-                  <div class="w-full sm:w-28 h-36 sm:h-24 rounded-xl overflow-hidden shrink-0 border border-slate-200/80 shadow-xs">
-                    <img
-                      src={imgUrl}
-                      srcset={retinaSrcSet(evt.image, 400, 300)}
-                      width={400}
-                      height={300}
-                      alt={evt.title}
-                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                )}
-
-                <!-- Event Details -->
-                <div class="flex-1 space-y-1.5">
-                  <h3 class="font-display font-bold text-lg text-slate-900 group-hover:text-alajarvi-600 transition-colors flex items-center gap-2">
-                    <span>{evt.title}</span>
-                  </h3>
-                  
-                  {evt.description && (
-                    <p class="text-sm text-slate-600 line-clamp-2">
-                      {evt.description}
-                    </p>
-                  )}
-
-                  <div class="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500 pt-1">
-                    {evt.time && (
-                      <span class="inline-flex items-center gap-1">
-                        <Clock class="w-3.5 h-3.5 text-alajarvi-500" />
-                        {evt.time}
-                      </span>
-                    )}
-                    {evt.location && (
-                      <span class="inline-flex items-center gap-1">
-                        <MapPin class="w-3.5 h-3.5 text-alajarvi-500" />
-                        {evt.location}
-                      </span>
-                    )}
-                    <span class="inline-flex items-center gap-1 text-alajarvi-600 font-semibold group-hover:underline">
-                      <span>Lue lisää & ohjelma</span>
-                    </span>
-                  </div>
-                </div>
-
-                <div class="self-end sm:self-center">
-                  <div class="w-8 h-8 rounded-full bg-white group-hover:bg-alajarvi-100 text-slate-400 group-hover:text-alajarvi-600 flex items-center justify-center transition-colors shadow-xs">
-                    <ChevronRight class="w-4 h-4" />
-                  </div>
-                </div>
-
-              </button>
-
               <!-- Event Details Modal -->
               <div
                 id={modalId}
@@ -246,7 +327,6 @@ function formatDateBadge(dateStr: string) {
 
                 </div>
               </div>
-            </>
           );
         })}
       </div>

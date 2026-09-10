@@ -1,0 +1,260 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { Award, ChevronRight, Send, User, BookOpen, ClipboardList } from 'lucide-astro';
+
+// Netlify Forms needs a static HTML build of this page to detect the form,
+// even though the rest of the site runs in SSR mode.
+export const prerender = true;
+
+const pageTitle = 'Ilmoittautuminen ylioppilaskirjoituksiin';
+const pageLead = 'Täytä lomake huolellisesti ja lähetä se ennen ilmoittautumisajan päättymistä. Lomake vastaa lukion paperista ilmoittautumislomaketta.';
+---
+
+<Layout
+  title={`${pageTitle} | Alajärven lukio`}
+  description={pageLead}
+>
+  <Header />
+
+  <main class="py-12 bg-transparent min-h-[70vh]">
+    <div class="max-w-4xl mx-auto px-4 sm:px-8 space-y-6">
+
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-2 text-xs font-semibold text-slate-500 py-2.5 mb-2">
+        <a href="/" class="hover:text-alajarvi-600">Etusivu</a>
+        <ChevronRight class="w-3.5 h-3.5" />
+        <a href="/opiskelijalle/yo-kirjoitukset" class="hover:text-alajarvi-600">Opiskelijalle</a>
+        <ChevronRight class="w-3.5 h-3.5" />
+        <span class="text-slate-800">{pageTitle}</span>
+      </nav>
+
+      <!-- Page Header Card -->
+      <div class="p-6 sm:p-8 md:p-10 rounded-3xl bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-alajarvi-700 text-white shadow-xl relative overflow-hidden">
+        <div class="relative z-10 space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center justify-center text-sky-300">
+            <Award class="w-6 h-6" />
+          </div>
+          <h1 class="font-display font-extrabold text-2xl sm:text-4xl text-white">
+            {pageTitle}
+          </h1>
+          <p class="text-sm sm:text-base text-slate-200 max-w-2xl">
+            {pageLead}
+          </p>
+        </div>
+      </div>
+
+      <form
+        name="yo-ilmoittautuminen"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        action="/opiskelijalle/yo-ilmoittautuminen/kiitos"
+        class="space-y-6"
+      >
+        <input type="hidden" name="form-name" value="yo-ilmoittautuminen" />
+        <p class="hidden">
+          <label>Älä täytä tätä kenttää: <input name="bot-field" /></label>
+        </p>
+
+        <!-- Henkilötiedot -->
+        <section class="p-6 sm:p-8 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-5">
+          <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div class="w-9 h-9 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center shrink-0">
+              <User class="w-5 h-5" />
+            </div>
+            <h2 class="font-display font-bold text-xl sm:text-2xl text-alajarvi-900">Henkilötiedot</h2>
+          </div>
+          <p class="text-xs text-slate-500 -mt-2">Täytä selkeästi tekstaten.</p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Sukunimi *</label>
+              <input type="text" name="sukunimi" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Etunimet *</label>
+              <input type="text" name="etunimet" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Henkilötunnus *</label>
+              <input type="text" name="henkilotunnus" required placeholder="ppkkvv-xxxx" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Puhelinnumero *</label>
+              <input type="tel" name="puhelin" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Katuosoite *</label>
+              <input type="text" name="katuosoite" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Postitoimipaikka *</label>
+              <input type="text" name="postitoimipaikka" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Kokelaslaji + kirjoituskerta -->
+        <section class="p-6 sm:p-8 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-5">
+          <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div class="w-9 h-9 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center shrink-0">
+              <ClipboardList class="w-5 h-5" />
+            </div>
+            <h2 class="font-display font-bold text-xl sm:text-2xl text-alajarvi-900">Kokelaslaji ja kirjoituskerta</h2>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Kokelaslaji *</label>
+              <select name="kokelaslaji" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm bg-white">
+                <option value="">Valitse kokelaslaji...</option>
+                <option value="01 Koko lukion suorittaja">01 Koko lukion suorittaja</option>
+                <option value="02 Koko tutkinnon uusija">02 Koko tutkinnon uusija</option>
+                <option value="03 Ammatillisen tutkinnon osallistuja (kaksoistutkinto)">03 Ammatillisen tutkinnon osallistuja (kaksoistutkinto)</option>
+                <option value="04 Hylätyn pakollisen kokeen uusija">04 Hylätyn pakollisen kokeen uusija</option>
+                <option value="05 Hyväksytyn kokeen uusija">05 Hyväksytyn kokeen uusija</option>
+                <option value="06 Aikaisemman tutkinnon täydentäjä">06 Aikaisemman tutkinnon täydentäjä</option>
+                <option value="07 Kompensoidun kokeen uusija">07 Kompensoidun kokeen uusija</option>
+                <option value="08 Hylätyn ylimääräisen kokeen uusija">08 Hylätyn ylimääräisen kokeen uusija</option>
+                <option value="09 Erillisen kokeen suorittaja">09 Erillisen kokeen suorittaja</option>
+                <option value="10 Lukion oppimäärä ja ammatillinen tutkinto (kolmoistutkinto)">10 Lukion oppimäärä ja ammatillinen tutkinto (kolmoistutkinto)</option>
+              </select>
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Kirjoituskerta *</label>
+              <input type="text" name="kirjoituskerta" required placeholder="esim. Kevät 2027" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Kokeet -->
+        <section class="p-6 sm:p-8 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-6">
+          <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div class="w-9 h-9 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center shrink-0">
+              <BookOpen class="w-5 h-5" />
+            </div>
+            <h2 class="font-display font-bold text-xl sm:text-2xl text-alajarvi-900">Kokeet, joihin ilmoittaudun</h2>
+          </div>
+
+          <!-- Äidinkieli -->
+          <div class="flex items-center gap-3">
+            <input type="checkbox" id="aidinkieli" name="aidinkieli" value="Äidinkieli" class="w-5 h-5 rounded border-slate-300 text-alajarvi-600 focus:ring-alajarvi-400" />
+            <label for="aidinkieli" class="text-sm font-semibold text-slate-800">Äidinkieli</label>
+          </div>
+
+          <!-- Ruotsi -->
+          <div class="grid grid-cols-1 sm:grid-cols-[auto_1fr] sm:items-center gap-3 pt-2 border-t border-slate-100">
+            <div class="flex items-center gap-3">
+              <input type="checkbox" id="ruotsi" name="ruotsi" value="Ruotsi" class="w-5 h-5 rounded border-slate-300 text-alajarvi-600 focus:ring-alajarvi-400" />
+              <label for="ruotsi" class="text-sm font-semibold text-slate-800 whitespace-nowrap">Ruotsi</label>
+            </div>
+            <select name="ruotsi_taso" class="w-full sm:w-48 px-4 py-2 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm bg-white">
+              <option value="">Taso...</option>
+              <option value="A-taso">A-taso</option>
+              <option value="B-taso">B-taso</option>
+            </select>
+          </div>
+
+          <!-- Vieras kieli 1 -->
+          <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 pt-2 border-t border-slate-100">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Vieras kieli</label>
+              <input type="text" name="vieras_kieli_1" placeholder="esim. Englanti" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Taso</label>
+              <select name="vieras_kieli_1_taso" class="w-full sm:w-48 px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm bg-white">
+                <option value="">Taso...</option>
+                <option value="A-taso">A-taso</option>
+                <option value="C-taso">C-taso</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Vieras kieli 2 -->
+          <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 pt-2 border-t border-slate-100">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Vieras kieli (2)</label>
+              <input type="text" name="vieras_kieli_2" placeholder="esim. Saksa" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Taso</label>
+              <select name="vieras_kieli_2_taso" class="w-full sm:w-48 px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm bg-white">
+                <option value="">Taso...</option>
+                <option value="A-taso">A-taso</option>
+                <option value="C-taso">C-taso</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Reaaliaineet -->
+          <div class="pt-2 border-t border-slate-100 space-y-4">
+            <p class="text-sm font-bold text-slate-800">Reaaliaineet</p>
+
+            <div>
+              <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">1. koepäivä</p>
+              <div class="flex flex-wrap gap-x-6 gap-y-2">
+                {['PS', 'FI', 'HI', 'FY', 'BI'].map((aine) => (
+                  <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
+                    <input type="checkbox" name="reaaliaineet_paiva1" value={aine} class="w-5 h-5 rounded border-slate-300 text-alajarvi-600 focus:ring-alajarvi-400" />
+                    {aine}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">2. koepäivä</p>
+              <div class="flex flex-wrap gap-x-6 gap-y-2">
+                {['UE/UO', 'ET', 'YH', 'KE', 'GE', 'TE'].map((aine) => (
+                  <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
+                    <input type="checkbox" name="reaaliaineet_paiva2" value={aine} class="w-5 h-5 rounded border-slate-300 text-alajarvi-600 focus:ring-alajarvi-400" />
+                    {aine}
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <!-- Matematiikka -->
+          <div class="pt-2 border-t border-slate-100">
+            <p class="text-sm font-bold text-slate-800 mb-2">Matematiikka</p>
+            <div class="flex flex-wrap gap-x-6 gap-y-2">
+              <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
+                <input type="radio" name="matematiikka" value="M (pitkä)" class="w-5 h-5 border-slate-300 text-alajarvi-600 focus:ring-alajarvi-400" />
+                M (pitkä)
+              </label>
+              <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
+                <input type="radio" name="matematiikka" value="N (lyhyt)" class="w-5 h-5 border-slate-300 text-alajarvi-600 focus:ring-alajarvi-400" />
+                N (lyhyt)
+              </label>
+              <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
+                <input type="radio" name="matematiikka" value="En osallistu" class="w-5 h-5 border-slate-300 text-alajarvi-600 focus:ring-alajarvi-400" />
+                En osallistu
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lisätiedot -->
+        <section class="p-6 sm:p-8 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-3">
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Lisätietoa ilmoittautumiseen liittyen (vapaaehtoinen)</label>
+          <textarea name="lisatiedot" rows="4" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm"></textarea>
+        </section>
+
+        <button
+          type="submit"
+          class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-alajarvi-500 hover:bg-alajarvi-600 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
+        >
+          <Send class="w-4 h-4" />
+          <span>Lähetä ilmoittautuminen</span>
+        </button>
+      </form>
+
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

@@ -4,7 +4,7 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import LongPageNav from '../../components/LongPageNav.astro';
 import PortableText from '../../components/PortableText.astro';
-import { getPageBySlug, getContactInfo, urlFor, responsiveImage } from '../../lib/sanity';
+import { getPageBySlug, getContactInfo, urlFor, responsiveImage, retinaSrcSet } from '../../lib/sanity';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 import { MapPin, Phone, Mail, User, Clock, Send, Trophy, GraduationCap, HeartHandshake, ShieldCheck } from 'lucide-astro';
 
@@ -164,9 +164,22 @@ function initials(name?: string) {
             {leadership.map((person, i) => (
               <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                 <div class="flex items-center gap-3">
-                  <div class={`w-12 h-12 rounded-full ${avatarColors[i % avatarColors.length]} text-white flex items-center justify-center font-bold text-lg`}>
-                    {initials(person.name)}
-                  </div>
+                  {person.image && urlFor(person.image) ? (
+                    <img
+                      src={urlFor(person.image)?.width(128).height(128).fit('crop').url()}
+                      srcset={retinaSrcSet(person.image, 64, 64)}
+                      width={64}
+                      height={64}
+                      alt={person.name || ''}
+                      class="w-16 h-16 rounded-full object-cover shrink-0"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div class={`w-16 h-16 rounded-full ${avatarColors[i % avatarColors.length]} text-white flex items-center justify-center font-bold text-lg shrink-0`}>
+                      {initials(person.name)}
+                    </div>
+                  )}
                   <div>
                     <h3 class="font-bold text-lg text-slate-900">{person.name}</h3>
                     <span class="text-xs text-alajarvi-600 font-semibold uppercase tracking-wider">{person.role}</span>
@@ -203,15 +216,35 @@ function initials(name?: string) {
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {studentSupport.map((person) => {
+            {studentSupport.map((person, i) => {
               const Icon = supportIcons[person.icon || 'graduationCap'] || GraduationCap;
               return (
                 <div class="p-6 rounded-2xl bg-alajarvi-50/70 border border-alajarvi-100 space-y-3">
-                  <div class="flex items-center gap-2 text-alajarvi-700 font-bold">
-                    <Icon class="w-5 h-5 text-alajarvi-500" />
-                    <span>{person.role}</span>
+                  <div class="flex items-center gap-3">
+                    {person.image && urlFor(person.image) ? (
+                      <img
+                        src={urlFor(person.image)?.width(96).height(96).fit('crop').url()}
+                        srcset={retinaSrcSet(person.image, 48, 48)}
+                        width={48}
+                        height={48}
+                        alt={person.name || ''}
+                        class="w-12 h-12 rounded-full object-cover shrink-0"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div class={`w-12 h-12 rounded-full ${avatarColors[i % avatarColors.length]} text-white flex items-center justify-center font-bold text-lg shrink-0`}>
+                        {initials(person.name)}
+                      </div>
+                    )}
+                    <div>
+                      <h3 class="font-bold text-lg text-slate-900">{person.name}</h3>
+                      <div class="flex items-center gap-1.5 text-alajarvi-700 font-bold text-xs uppercase tracking-wider">
+                        <Icon class="w-3.5 h-3.5 text-alajarvi-500" />
+                        <span>{person.role}</span>
+                      </div>
+                    </div>
                   </div>
-                  <h3 class="font-bold text-lg text-slate-900">{person.name}</h3>
                   <div class="space-y-1 text-sm text-slate-700 pt-2 border-t border-alajarvi-200">
                     {person.phone && (
                       <p class="flex items-center gap-2">
@@ -351,26 +384,38 @@ function initials(name?: string) {
             </h2>
           </div>
 
-          <form class="space-y-4 max-w-2xl" onsubmit="event.preventDefault(); alert('Kiitos yhteydenotostasi! Viestisi on lähetetty.');">
+          <form
+            id="yhteydenotto-form"
+            name="yhteydenotto"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            class="space-y-4 max-w-2xl"
+          >
+            <input type="hidden" name="form-name" value="yhteydenotto" />
+            <p class="hidden">
+              <label>Älä täytä tätä kenttää: <input name="bot-field" /></label>
+            </p>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Nimesi *</label>
-                <input type="text" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" placeholder="Matti Meikäläinen" />
+                <input type="text" name="nimi" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" placeholder="Matti Meikäläinen" />
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Sähköpostiosoite *</label>
-                <input type="email" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" placeholder="matti@esimerkki.fi" />
+                <input type="email" name="sahkoposti" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" placeholder="matti@esimerkki.fi" />
               </div>
             </div>
 
             <div>
               <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Aihe</label>
-              <input type="text" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" placeholder="Kysymys lukio-opinnoista" />
+              <input type="text" name="aihe" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" placeholder="Kysymys lukio-opinnoista" />
             </div>
 
             <div>
               <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Viestisi *</label>
-              <textarea rows="4" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" placeholder="Kirjoita viestisi tähän..."></textarea>
+              <textarea name="viesti" rows="4" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" placeholder="Kirjoita viestisi tähän..."></textarea>
             </div>
 
             <button
@@ -380,7 +425,42 @@ function initials(name?: string) {
               <Send class="w-4 h-4" />
               <span>Lähetä viesti</span>
             </button>
+
+            <p id="yhteydenotto-error" hidden class="text-sm font-semibold text-red-600">
+              Viestin lähetys epäonnistui. Yritä hetken kuluttua uudelleen tai ota yhteyttä puhelimitse.
+            </p>
           </form>
+
+          <div id="yhteydenotto-success" hidden class="max-w-2xl p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold text-sm">
+            Kiitos yhteydenotostasi! Viestisi on vastaanotettu.
+          </div>
+
+          <script>
+            const form = document.getElementById('yhteydenotto-form') as HTMLFormElement | null;
+            const errorEl = document.getElementById('yhteydenotto-error');
+            const successEl = document.getElementById('yhteydenotto-success');
+
+            form?.addEventListener('submit', async (event) => {
+              event.preventDefault();
+              errorEl?.setAttribute('hidden', '');
+
+              try {
+                const body = new URLSearchParams(new FormData(form) as any).toString();
+                const response = await fetch('/', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                  body,
+                });
+                if (!response.ok) throw new Error(`Netlify Forms vastasi statuksella ${response.status}`);
+
+                form.hidden = true;
+                successEl?.removeAttribute('hidden');
+              } catch (err) {
+                console.error('Yhteydenottolomakkeen lähetys epäonnistui:', err);
+                errorEl?.removeAttribute('hidden');
+              }
+            });
+          </script>
         </section>
 
       </div>

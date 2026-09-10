@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head><meta charset="utf-8" /><title>Netlify Forms: yhteydenotto</title></head>
+<body>
+<!--
+  Tämä tiedosto on olemassa vain, jotta Netlifyn build-aikainen lomaketunnistus
+  löytää "yhteydenotto"-lomakkeen. Yhteystiedot-sivu ajetaan SSR-tilassa (Sanity-
+  sisältö haetaan livenä per pyyntö), joten sen HTML ei koskaan päädy tähän
+  dist-kansioon staattisena — Netlify ei siis muuten näkisi lomaketta lainkaan.
+  Kenttien nimien on pysyttävä identtisinä src/pages/yhteystiedot/index.astro
+  -sivun lomakkeen kanssa.
+-->
+<form name="yhteydenotto" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="hidden" name="form-name" value="yhteydenotto" />
+  <input name="bot-field" />
+  <input type="text" name="nimi" />
+  <input type="email" name="sahkoposti" />
+  <input type="text" name="aihe" />
+  <textarea name="viesti"></textarea>
+</form>
+</body>
+</html>

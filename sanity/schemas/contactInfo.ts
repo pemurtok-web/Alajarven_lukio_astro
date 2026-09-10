@@ -18,11 +18,18 @@ export const contactInfoSchema = defineType({
           fields: [
             { name: 'name', type: 'string', title: 'Nimi' },
             { name: 'role', type: 'string', title: 'Tehtävänimike (esim. Rehtori)' },
+            {
+              name: 'image',
+              type: 'image',
+              title: 'Kuva (valinnainen)',
+              description: 'Jos kuvaa ei lisätä, näytetään nimikirjaimet.',
+              options: { hotspot: true },
+            },
             { name: 'phone', type: 'string', title: 'Puhelinnumero (esim. 040 673 9091)' },
             { name: 'email', type: 'string', title: 'Sähköposti' },
           ],
           preview: {
-            select: { title: 'name', subtitle: 'role' },
+            select: { title: 'name', subtitle: 'role', media: 'image' },
           },
         },
       ],
@@ -42,6 +49,13 @@ export const contactInfoSchema = defineType({
             { name: 'name', type: 'string', title: 'Nimi' },
             { name: 'role', type: 'string', title: 'Tehtävänimike (esim. Opinto-ohjaaja (OPO))' },
             {
+              name: 'image',
+              type: 'image',
+              title: 'Kuva (valinnainen)',
+              description: 'Jos kuvaa ei lisätä, näytetään nimikirjaimet.',
+              options: { hotspot: true },
+            },
+            {
               name: 'icon',
               type: 'string',
               title: 'Kuvake',
@@ -58,7 +72,7 @@ export const contactInfoSchema = defineType({
             { name: 'email', type: 'string', title: 'Sähköposti' },
           ],
           preview: {
-            select: { title: 'name', subtitle: 'role' },
+            select: { title: 'name', subtitle: 'role', media: 'image' },
           },
         },
       ],

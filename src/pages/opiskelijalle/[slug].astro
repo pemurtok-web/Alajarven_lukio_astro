@@ -6,7 +6,7 @@ import LongPageNav from '../../components/LongPageNav.astro';
 import PortableText from '../../components/PortableText.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 import { getPageBySlug, getAllPages, urlFor, responsiveImage, extractPageAnchors, splitBodyIntoCards } from '../../lib/sanity';
-import { BookOpen, ChevronRight, FileText, Calendar, ShieldCheck, HeartHandshake, Award, Image as ImageIcon, ExternalLink, CheckCircle, Globe, Star } from 'lucide-astro';
+import { BookOpen, ChevronRight, FileText, Calendar, ShieldCheck, HeartHandshake, Award, Image as ImageIcon, ExternalLink, CheckCircle, Globe, Star, Send } from 'lucide-astro';
 
 export async function getStaticPaths() {
   const defaultSlugs = [
@@ -110,6 +110,22 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
       <!-- Jump Navigation for Sections or PortableText Headings -->
       {anchors.length > 0 && (
         <LongPageNav anchors={anchors} title="Sisällysluettelo" />
+      )}
+
+      {slug === 'yo-kirjoitukset' && (
+        <div class="p-5 sm:p-6 rounded-3xl bg-alajarvi-500 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
+          <div class="space-y-1">
+            <span class="text-xs font-bold uppercase tracking-wider text-sky-100">Ilmoittautuminen</span>
+            <h4 class="font-bold text-white text-base sm:text-lg">Ilmoittaudu ylioppilaskirjoituksiin sähköisellä lomakkeella</h4>
+          </div>
+          <a
+            href="/opiskelijalle/yo-ilmoittautuminen"
+            class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-alajarvi-50 text-alajarvi-900 text-sm font-extrabold transition-all shadow-md active:scale-95 shrink-0"
+          >
+            <span>Ilmoittautumislomakkeeseen</span>
+            <Send class="w-4 h-4 text-alajarvi-600" />
+          </a>
+        </div>
       )}
 
       {page?.externalLink && (

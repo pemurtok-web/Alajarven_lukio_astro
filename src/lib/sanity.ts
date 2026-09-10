@@ -443,6 +443,7 @@ export interface ContactPerson {
   name?: string;
   role?: string;
   icon?: string;
+  image?: any;
   phone?: string;
   email?: string;
 }

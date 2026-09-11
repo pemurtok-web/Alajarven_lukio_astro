@@ -1,0 +1,22 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import FormThankYou from '../../../components/FormThankYou.astro';
+
+export const prerender = true;
+---
+
+<Layout
+  title="Kiitos ilmoittautumisesta | Alajärven lukio"
+  description="Ilmoittautumisesi uusintakokeeseen on vastaanotettu."
+>
+  <Header />
+  <FormThankYou
+    title="Kiitos ilmoittautumisesta!"
+    message="Ilmoittautumisesi uusintakokeeseen on vastaanotettu. Aineen opettaja saa tiedon ilmoittautumisestasi."
+    backHref="/opiskelijalle/lomakkeet"
+    backLabel="Takaisin lomakkeisiin"
+  />
+  <Footer />
+</Layout>

@@ -141,7 +141,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
       {hasDynamicSections ? (
         <div class="space-y-8">
           {page.sections.map((sec: any, idx: number) => {
-            const secId = sec.anchorId || `miksi-alajarven-lukio`;
+            const secId = sec.anchorId || `aihe-${idx + 1}`;
             const secImage = sec.image;
             const imageUrl = secImage?.src || (secImage?.asset ? urlFor(secImage)?.width(1600).quality(85).url() : null);
             const secImgResponsive = !secImage?.src && secImage?.asset ? responsiveImage(secImage, [400, 640, 828, 1080]) : null;

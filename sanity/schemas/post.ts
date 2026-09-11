@@ -63,6 +63,15 @@ export const postSchema = defineType({
           description: '💡 Pidempi sivu n. 1920–2500 px riittää hyvin.',
           options: { hotspot: true },
           fields: [{ name: 'alt', type: 'string', title: 'Alt-teksti' }]
+        },
+        {
+          type: 'object',
+          name: 'youtube',
+          title: 'Video tekstin sekaan (YouTube / Google Drive)',
+          fields: [
+            { name: 'url', type: 'url', title: 'Videon URL-osoite' },
+            { name: 'caption', type: 'string', title: 'Kuvateksti / Videon otsikko' }
+          ]
         }
       ],
     }),

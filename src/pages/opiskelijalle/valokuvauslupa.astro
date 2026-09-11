@@ -1,0 +1,158 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { Camera, ChevronRight, Send, User, Info } from 'lucide-astro';
+import HeroWave from '../../components/HeroWave.astro';
+
+// Netlify Forms needs a static HTML build of this page to detect the form,
+// even though the rest of the site runs in SSR mode.
+export const prerender = true;
+
+const pageTitle = 'Valokuvauslupa';
+const pageLead = 'Lupa opiskelijan ja opiskelijan harjoitustöiden kuvaamiseen ja tallentamiseen sekä kuvien ja tallenteiden julkaisemiseen.';
+
+const kylla_ei_kysymykset = [
+  { name: 'kuvata_saa', label: 'Opiskelijaa saa kuvata' },
+  { name: 'harjoitustyot_tallentaa', label: 'Opiskelijan harjoitustöitä saa tallentaa / muuttaa digitaaliseen muotoon' },
+  { name: 'valokuva_julkaista', label: 'Valokuvan saa julkaista lukion ja kunnan koulutoimen painetuissa julkaisuissa ja www-sivuilla' },
+  { name: 'harjoitustyot_julkaista', label: 'Harjoitustöistä otettuja tallenteita saa julkaista' },
+  { name: 'materiaali_opetuskayttoon', label: 'Opetustilanteissa kuvattua materiaalia saa käyttää opetustarkoituksiin' },
+  { name: 'nimi_kuvan_yhteydessa', label: 'Opiskelijan nimen saa julkaista valokuvan yhteydessä' },
+  { name: 'nimi_lehdistolle', label: 'Opiskelijan nimen saa antaa lehdistölle' },
+  { name: 'nimi_verkkosivuilla', label: 'Opiskelijan nimen saa julkaista verkkosivuilla' },
+];
+---
+
+<Layout
+  title={`${pageTitle} | Alajärven lukio`}
+  description={pageLead}
+>
+  <Header />
+
+  <main class="bg-transparent min-h-[70vh]">
+    <div class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white">
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-8 py-8 sm:py-12 pb-20 sm:pb-28 space-y-3">
+        <nav class="flex items-center gap-2 text-xs font-semibold text-slate-300 mb-3">
+          <a href="/" class="hover:text-white transition-colors">Etusivu</a>
+          <ChevronRight class="w-3.5 h-3.5 text-slate-500" />
+          <a href="/opiskelijalle/lomakkeet" class="hover:text-white transition-colors">Lomakkeita</a>
+          <ChevronRight class="w-3.5 h-3.5 text-slate-500" />
+          <span class="text-white">{pageTitle}</span>
+        </nav>
+
+        <div class="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center justify-center text-sky-300">
+          <Camera class="w-6 h-6" />
+        </div>
+        <h1 class="font-display font-extrabold text-2xl sm:text-4xl text-white">
+          {pageTitle}
+        </h1>
+        <p class="text-sm sm:text-base text-slate-200 max-w-2xl">
+          {pageLead}
+        </p>
+      </div>
+      <HeroWave />
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-8 space-y-6 py-8">
+
+      <div class="p-5 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3">
+        <Info class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+        <p class="text-sm text-amber-900">
+          Alle 18-vuotiaan opiskelijan puolesta lomakkeen täyttää huoltaja. Täysi-ikäinen opiskelija voi täyttää lomakkeen itse.
+          Lupa on voimassa toistaiseksi, ja sen voi perua milloin tahansa ilmoittamalla siitä kirjallisesti lukion rehtorille.
+        </p>
+      </div>
+
+      <form
+        name="valokuvauslupa"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        action="/opiskelijalle/valokuvauslupa/kiitos"
+        class="space-y-6"
+      >
+        <input type="hidden" name="form-name" value="valokuvauslupa" />
+        <p class="hidden">
+          <label>Älä täytä tätä kenttää: <input name="bot-field" /></label>
+        </p>
+
+        <!-- Opiskelijan tiedot -->
+        <section class="p-6 sm:p-8 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-5">
+          <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div class="w-9 h-9 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center shrink-0">
+              <User class="w-5 h-5" />
+            </div>
+            <h2 class="font-display font-bold text-xl sm:text-2xl text-alajarvi-900">Opiskelijan tiedot</h2>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Sukunimi *</label>
+              <input type="text" name="sukunimi" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Etunimet *</label>
+              <input type="text" name="etunimet" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Ryhmä *</label>
+              <input type="text" name="ryhma" required placeholder="esim. 1A, 2B, 3C" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Lomakkeen täyttäjä *</label>
+              <select name="tayttaja" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-alajarvi-500 focus:ring-2 focus:ring-alajarvi-200 outline-none text-sm bg-white">
+                <option value="">Valitse...</option>
+                <option value="Huoltaja (opiskelija alle 18 v.)">Huoltaja (opiskelija alle 18 v.)</option>
+                <option value="Opiskelija itse (täysi-ikäinen)">Opiskelija itse (täysi-ikäinen)</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Kyllä/Ei kysymykset -->
+        <section class="p-6 sm:p-8 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-5">
+          <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div class="w-9 h-9 rounded-xl bg-alajarvi-100 text-alajarvi-600 flex items-center justify-center shrink-0">
+              <Camera class="w-5 h-5" />
+            </div>
+            <h2 class="font-display font-bold text-xl sm:text-2xl text-alajarvi-900">Annetut luvat</h2>
+          </div>
+
+          <div class="space-y-3">
+            {kylla_ei_kysymykset.map((q) => (
+              <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] sm:items-center gap-3 pt-3 border-t border-slate-100 first:pt-0 first:border-t-0">
+                <p class="text-sm font-medium text-slate-800">{q.label}</p>
+                <div class="flex gap-2 shrink-0">
+                  <label class="flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl border border-slate-200 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-700 cursor-pointer transition-colors">
+                    <input type="radio" name={q.name} value="Kyllä" required class="w-4 h-4 text-emerald-600 focus:ring-emerald-400" />
+                    Kyllä
+                  </label>
+                  <label class="flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl border border-slate-200 has-[:checked]:border-rose-500 has-[:checked]:bg-rose-50 has-[:checked]:text-rose-700 cursor-pointer transition-colors">
+                    <input type="radio" name={q.name} value="Ei" required class="w-4 h-4 text-rose-600 focus:ring-rose-400" />
+                    Ei
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p class="text-xs text-slate-500 pt-2 border-t border-slate-100">
+            Lomakkeen lähettäminen omilla tiedoillasi toimii allekirjoituksena.
+          </p>
+        </section>
+
+        <button
+          type="submit"
+          class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-alajarvi-500 hover:bg-alajarvi-600 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
+        >
+          <Send class="w-4 h-4" />
+          <span>Lähetä lupa</span>
+        </button>
+      </form>
+
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

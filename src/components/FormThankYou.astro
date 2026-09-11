@@ -1,0 +1,30 @@
+---
+import { CheckCircle } from 'lucide-astro';
+
+interface Props {
+  title: string;
+  message: string;
+  backHref: string;
+  backLabel: string;
+}
+
+const { title, message, backHref, backLabel } = Astro.props;
+---
+
+<main class="py-16 bg-transparent min-h-[60vh] flex items-center">
+  <div class="max-w-2xl mx-auto px-4 sm:px-8 text-center">
+    <div class="p-8 sm:p-12 rounded-3xl bg-white shadow-sm border border-slate-200/80 space-y-4">
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+        <CheckCircle class="w-7 h-7" />
+      </div>
+      <h1 class="font-display font-bold text-2xl sm:text-3xl text-alajarvi-900">{title}</h1>
+      <p class="text-sm sm:text-base text-slate-600">{message}</p>
+      <a
+        href={backHref}
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-alajarvi-500 hover:bg-alajarvi-600 text-white font-bold text-sm shadow-md transition-all mt-2"
+      >
+        <span>{backLabel}</span>
+      </a>
+    </div>
+  </div>
+</main>

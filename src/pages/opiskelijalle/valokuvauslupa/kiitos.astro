@@ -1,0 +1,22 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import FormThankYou from '../../../components/FormThankYou.astro';
+
+export const prerender = true;
+---
+
+<Layout
+  title="Kiitos valokuvausluvasta | Alajärven lukio"
+  description="Valokuvauslupa on vastaanotettu."
+>
+  <Header />
+  <FormThankYou
+    title="Kiitos!"
+    message="Valokuvauslupa on vastaanotettu ja tallennettu. Lupa on voimassa toistaiseksi, ja sen voi perua milloin tahansa ilmoittamalla siitä kirjallisesti rehtorille."
+    backHref="/opiskelijalle/lomakkeet"
+    backLabel="Takaisin lomakkeisiin"
+  />
+  <Footer />
+</Layout>

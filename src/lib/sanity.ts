@@ -122,20 +122,14 @@ export interface PageContent {
   slug: { current: string };
   lead?: string;
   layoutStyle?: string;
-  externalLink?: string;
-  externalLinkTitle?: string;
-  documentLinks?: { title: string; description?: string; url: string }[];
+  documentLinks?: { title: string; description?: string; url?: string; fileUrl?: string }[];
   heroBgImage?: any;
   mainImage?: any;
   body?: any;
   gallery?: { caption?: string; alt?: string; asset?: any }[];
-  pdfFiles?: { title?: string; description?: string; fileUrl?: string }[];
   sections?: { title: string; anchorId: string; content?: any }[];
   stats?: any[];
   features?: any[];
-  youtubeUrl?: string;
-  youtubeTitle?: string;
-  youtubeCaption?: string;
 }
 
 // Fallback Mock Data
@@ -368,18 +362,19 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
   try {
     const page = await sanityClient.fetch<PageContent>(
       `*[_type == "page" && (_id == $slug || _id == "page-" + $slug || _id == "drafts.page-" + $slug || slug.current == $slug || slug.current == "lukion-" + $slug || slug.current match $slug + "*")] | order(_updatedAt desc)[0]{
-        _id, title, slug, lead, layoutStyle, externalLink, externalLinkTitle, documentLinks,
+        _id, title, slug, lead, layoutStyle,
+        documentLinks[]{
+          title,
+          description,
+          url,
+          "fileUrl": file.asset->url
+        },
         body[]{
           ...,
           _type == "file" => {
             "fileUrl": asset->url,
             description
           }
-        },
-        pdfFiles[]{
-          title,
-          description,
-          "fileUrl": asset->url
         },
         gallery,
         sections[]{
@@ -391,7 +386,7 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
               description
             }
           }
-        }, heroBgImage, mainImage, stats, features, youtubeUrl, youtubeTitle, youtubeCaption
+        }, heroBgImage, mainImage, stats, features
       }`,
       { slug }
     );

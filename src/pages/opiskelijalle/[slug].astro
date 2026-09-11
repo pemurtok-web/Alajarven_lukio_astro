@@ -7,7 +7,7 @@ import HeroWave from '../../components/HeroWave.astro';
 import PortableText from '../../components/PortableText.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 import { getPageBySlug, getAllPages, urlFor, responsiveImage, extractPageAnchors, splitBodyIntoCards } from '../../lib/sanity';
-import { BookOpen, ChevronRight, FileText, Calendar, ShieldCheck, HeartHandshake, Award, Image as ImageIcon, ExternalLink, CheckCircle, Globe, Star, Send } from 'lucide-astro';
+import { BookOpen, ChevronRight, FileText, Calendar, ShieldCheck, HeartHandshake, Award, Image as ImageIcon, CheckCircle, Globe, Star } from 'lucide-astro';
 
 export async function getStaticPaths() {
   const defaultSlugs = [
@@ -115,48 +115,15 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
         <LongPageNav anchors={anchors} title="Sisällysluettelo" />
       )}
 
-      {slug === 'yo-kirjoitukset' && (
-        <div class="p-5 sm:p-6 rounded-3xl bg-alajarvi-500 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
-          <div class="space-y-1">
-            <span class="text-xs font-bold uppercase tracking-wider text-sky-100">Ilmoittautuminen</span>
-            <h4 class="font-bold text-white text-base sm:text-lg">Ilmoittaudu ylioppilaskirjoituksiin sähköisellä lomakkeella</h4>
-          </div>
-          <a
-            href="/opiskelijalle/yo-ilmoittautuminen"
-            class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-alajarvi-50 text-alajarvi-900 text-sm font-extrabold transition-all shadow-md active:scale-95 shrink-0"
-          >
-            <span>Ilmoittautumislomakkeeseen</span>
-            <Send class="w-4 h-4 text-alajarvi-600" />
-          </a>
-        </div>
-      )}
-
-      {page?.externalLink && (
-        <div class="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-alajarvi-800 to-alajarvi-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
-          <div class="space-y-1">
-            <span class="text-xs font-bold uppercase tracking-wider text-sky-300">Verkkolinkki / Google Drive</span>
-            <h4 class="font-bold text-white text-base sm:text-lg">{page.externalLinkTitle || 'Avaa opinto-opas / verkkolinkki'}</h4>
-          </div>
-          <a
-            href={page.externalLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-alajarvi-50 text-alajarvi-900 text-sm font-extrabold transition-all shadow-md active:scale-95 shrink-0"
-          >
-            <span>{page.externalLinkTitle || 'Avaa linkki'}</span>
-            <ExternalLink class="w-4 h-4 text-alajarvi-600" />
-          </a>
-        </div>
-      )}
-
-      {/* External document links (e.g. multiple Google Drive PDFs) */}
+      {/* Liitteet ja linkit (esim. Google Drive -linkit tai ladatut PDF:t) */}
       {page?.documentLinks && page.documentLinks.length > 0 && (
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {page.documentLinks.map((doc: any) => (
             <a
-              href={doc.url}
+              href={doc.fileUrl || doc.url}
               target="_blank"
               rel="noopener noreferrer"
+              download={doc.fileUrl ? true : undefined}
               class="p-5 rounded-2xl bg-white border border-slate-200 hover:border-alajarvi-300 shadow-sm hover:shadow-md flex items-center justify-between gap-3 group transition-all"
             >
               <div>
@@ -170,7 +137,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
       )}
 
       {/* Main Banner Image if uploaded in Sanity */}
-      {page?.mainImage && (
+      {page?.mainImage?.asset && (
         <div class="group relative rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white hover:shadow-xl transition-all">
           <a href={mainImg?.src} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden bg-slate-50 flex flex-col justify-center">
             <img
@@ -193,13 +160,6 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
               {page.mainImage.caption}
             </div>
           )}
-        </div>
-      )}
-
-      {/* Page YouTube Video if added in Sanity */}
-      {page?.youtubeUrl && (
-        <div class="my-6">
-          <YouTubeEmbed url={page.youtubeUrl} title={page?.youtubeTitle || page?.title || 'Sivun video'} caption={page?.youtubeCaption} />
         </div>
       )}
 
@@ -372,39 +332,11 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
               })}
 
             </div>
-          ) : !page?.lead && !page?.pdfFiles?.length ? (
+          ) : !page?.lead && !page?.documentLinks?.length ? (
             <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200/80 text-center text-slate-500 text-sm">
               Sisältöä päivitetään pian.
             </div>
           ) : null}
-
-          <!-- PDF files in cards mode -->
-          {page?.pdfFiles && page.pdfFiles.length > 0 && (
-            <div class="space-y-4 pt-4">
-              <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
-                <FileText class="w-5 h-5 text-alajarvi-600" />
-                <span>Ladattavat liitedokumentit & PDF-tiedostot</span>
-              </h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {page.pdfFiles.map((file: any) => (
-                  file.fileUrl && (
-                    <a
-                      href={file.fileUrl}
-                      target="_blank"
-                      download
-                      class="p-5 rounded-2xl bg-white border border-slate-200 hover:border-alajarvi-300 shadow-sm hover:shadow-md flex items-center justify-between gap-3 group transition-all"
-                    >
-                      <div>
-                        <h4 class="font-bold text-slate-900 text-sm group-hover:text-alajarvi-600 transition-colors">{file.title || 'Ladattava PDF'}</h4>
-                        {file.description && <p class="text-xs text-slate-500 mt-0.5">{file.description}</p>}
-                      </div>
-                      <FileText class="w-5 h-5 text-alajarvi-500 shrink-0 group-hover:scale-110 transition-transform" />
-                    </a>
-                  )
-                ))}
-              </div>
-            </div>
-          )}
 
         </div>
       ) : (
@@ -456,7 +388,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
 
           {page?.body && page.body.length > 0 ? (
             <PortableText value={page.body} />
-          ) : !page?.lead && !page?.pdfFiles?.length && !page?.gallery?.length && !page?.sections?.length ? (
+          ) : !page?.lead && !page?.documentLinks?.length && !page?.gallery?.length && !page?.sections?.length ? (
             <p class="text-center text-slate-500 text-sm py-8">Sisältöä päivitetään pian.</p>
           ) : null}
 
@@ -570,32 +502,6 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
             </div>
           )}
 
-          {page?.pdfFiles && page.pdfFiles.length > 0 && (
-            <div class="mt-8 pt-8 border-t border-slate-200 space-y-4">
-              <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
-                <FileText class="w-5 h-5 text-alajarvi-600" />
-                <span>Ladattavat liitedokumentit & PDF-tiedostot</span>
-              </h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {page.pdfFiles.map((file: any) => (
-                  file.fileUrl && (
-                    <a
-                      href={file.fileUrl}
-                      target="_blank"
-                      download
-                      class="p-4 rounded-2xl bg-slate-50 border border-slate-200 hover:border-alajarvi-300 shadow-xs flex items-center justify-between gap-3 group transition-all"
-                    >
-                      <div>
-                        <h4 class="font-bold text-slate-900 text-sm group-hover:text-alajarvi-600 transition-colors">{file.title || 'Ladattava PDF'}</h4>
-                        {file.description && <p class="text-xs text-slate-500">{file.description}</p>}
-                      </div>
-                      <FileText class="w-5 h-5 text-alajarvi-500 shrink-0 group-hover:scale-110 transition-transform" />
-                    </a>
-                  )
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       )}
 

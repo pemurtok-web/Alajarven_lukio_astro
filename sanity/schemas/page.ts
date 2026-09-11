@@ -7,23 +7,9 @@ export const pageSchema = defineType({
   type: 'document',
   fieldsets: [
     {
-      name: 'pageSettings',
-      title: '🎨 Sivun ulkoasu ja asettelu',
-      options: { collapsible: true, collapsed: true },
-    },
-    {
-      name: 'links',
-      title: '🔗 Ulkoiset linkit ja liitteet',
-      options: { collapsible: true, collapsed: true },
-    },
-    {
-      name: 'media',
-      title: '🖼️ Pääkuva ja video',
-      options: { collapsible: true, collapsed: true },
-    },
-    {
-      name: 'highlights',
-      title: '📊 Tilasto- ja infokortit',
+      name: 'advanced',
+      title: '⚙️ Lisäasetukset (tarvitaan harvoin)',
+      description: 'Avaa tämä osio vain jos sivulle halutaan erikoisasettelu, tilastokortteja tai kuvagalleria. Tavallisella sivulla näitä ei tarvita — riittää otsikko, ingressi, pääkuva, teksti ja liitteet.',
       options: { collapsible: true, collapsed: true },
     },
   ],
@@ -44,23 +30,126 @@ export const pageSchema = defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
-
-    // --- YLÄBANNERI (HERO) ---
     defineField({
-      name: 'heroBgImage',
-      title: '🌄 Yläbannerin taustakuva (Hero-osion taustakuva)',
-      description: 'Valinnainen taustakuva sivun ylimpään laatikkoon (Hero header). Kuvan päälle tulee automaattisesti tumma liukuväri lukukelpoisuuden takaamiseksi. 💡 Pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa.',
+      name: 'lead',
+      title: 'Ingressi / Johdantoteksti',
+      description: 'Lyhyt johdattava teksti, joka näkyy isolla otsikon alla.',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
+      name: 'mainImage',
+      title: 'Sivun pääkuva',
+      description: '💡 Kuvavinkki: pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa – järjestelmä optimoi koon automaattisesti.',
       type: 'image',
       options: { hotspot: true },
-      fieldset: 'pageSettings',
       fields: [
+        { name: 'caption', type: 'string', title: 'Kuvateksti / Selite kuvan alle' },
         { name: 'alt', type: 'string', title: 'Alt-teksti' }
       ]
     }),
+
+    // --- PÄÄSISÄLTÖ (Leipäteksti: otsikot, kuvat, video, linkit, PDF kaikki samassa editorissa) ---
+    defineField({
+      name: 'body',
+      title: 'Sivun sisältö (teksti, kuvat, video, linkit)',
+      description: 'Kirjoita tähän sivun varsinainen sisältö. Voit lisätä otsikoita, tekstiä, kuvia, YouTube-videon ja ladattavan PDF:n suoraan tekstin sekaan "+"-painikkeesta.',
+      type: 'array',
+      of: [
+        commonBlock,
+        {
+          type: 'image',
+          title: 'Kuva tekstin sekaan (Rinnakkain tai sovitetusti)',
+          description: '💡 Pidempi sivu n. 1920–2500 px riittää hyvin.',
+          options: { hotspot: true },
+          fields: [
+            { name: 'caption', type: 'string', title: 'Kuvateksti (Näkyy kuvan alla)' },
+            { name: 'alt', type: 'string', title: 'Alt-teksti' },
+            {
+              name: 'layout',
+              type: 'string',
+              title: 'Kuvan sijoitus tekstissä',
+              options: {
+                list: [
+                  { title: 'Oikealla (Teksti ja kuva rinnakkain)', value: 'right' },
+                  { title: 'Vasemmalla (Teksti ja kuva rinnakkain)', value: 'left' },
+                  { title: 'Koko leveydellä (Kuva tekstin ylä/alapuolella)', value: 'full' },
+                  { title: 'Alkuperäinen koko (ei skaalattu, ei keskitetty, tasattu vasemmalle)', value: 'original' }
+                ],
+                layout: 'radio'
+              },
+              initialValue: 'right'
+            }
+          ]
+        },
+        {
+          type: 'object',
+          name: 'youtube',
+          title: 'YouTube -video tekstin sekaan',
+          fields: [
+            { name: 'url', type: 'url', title: 'Videon URL-osoite (YouTube, Google Drive tai Vimeo)' },
+            { name: 'caption', type: 'string', title: 'Kuvateksti / Videon otsikko' }
+          ]
+        },
+        {
+          type: 'file',
+          title: 'Ladattava PDF / Tiedosto tekstin sekaan',
+          options: { accept: '.pdf,.doc,.docx,.xlsx' },
+          fields: [
+            { name: 'description', type: 'string', title: 'Painikkeen teksti (esim. Lataa opinto-opas PDF)' }
+          ]
+        }
+      ],
+    }),
+
+    // --- LIITTEET (Yksi paikka kaikille linkeille ja tiedostoille) ---
+    defineField({
+      name: 'documentLinks',
+      title: '📄 Liitteet ja linkit (esim. Opinto-opas, PDF:t, Google Drive -linkit)',
+      description: 'Lisää tähän kaikki sivun liitteet ja ulkoiset linkit — käytä joko verkko-osoitetta (esim. Google Drive) TAI lataa tiedosto suoraan, ei molempia samaan riviin. Näkyvät siisteinä painikkeina sivun alussa.',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'documentLink',
+          title: 'Liite / Linkki',
+          fields: [
+            { name: 'title', type: 'string', title: 'Otsikko (esim. Opetussuunnitelma 2021)', validation: (Rule) => Rule.required() },
+            { name: 'description', type: 'string', title: 'Lisätieto (valinnainen)' },
+            {
+              name: 'url',
+              type: 'url',
+              title: 'Verkko-osoite (esim. https://drive.google.com/... tai /opiskelijalle/yo-ilmoittautuminen)',
+              description: 'Käytä TÄTÄ jos linkitetään ulkoiseen sivuun (Google Drive) TAI sivuston omaan sisäiseen sivuun.',
+              validation: (Rule) =>
+                Rule.uri({
+                  allowRelative: true,
+                  scheme: ['http', 'https', 'mailto', 'tel'],
+                }),
+            },
+            {
+              name: 'file',
+              type: 'file',
+              title: 'Tai lataa tiedosto suoraan',
+              description: 'Käytä TÄTÄ jos tiedosto ladataan suoraan Sanityyn (esim. PDF).',
+              options: { accept: '.pdf,.doc,.docx,.xlsx' },
+            },
+          ],
+          preview: {
+            select: { title: 'title', url: 'url', fileName: 'file.asset.originalFilename' },
+            prepare({ title, url, fileName }: any) {
+              return { title, subtitle: fileName ? `📎 ${fileName}` : url };
+            },
+          },
+        },
+      ],
+    }),
+
+    // --- LISÄASETUKSET (Harvoin tarvittavat, oletuksena piilossa) ---
     defineField({
       name: 'layoutStyle',
       title: 'Sivun asettelutyyppi (Valitse sivupohja)',
-      description: 'Valitse miten sivu ja sen osiot asettuvat sivustolle',
+      description: 'Valitse miten sivu ja sen osiot asettuvat sivustolle. Oletuksena tavallinen tekstiartikkeli riittää useimmille sivuille.',
       type: 'string',
       options: {
         list: [
@@ -71,90 +160,25 @@ export const pageSchema = defineType({
         layout: 'radio',
       },
       initialValue: 'cards',
-      fieldset: 'pageSettings',
+      fieldset: 'advanced',
     }),
     defineField({
-      name: 'lead',
-      title: 'Ingressi / Johdantoteksti',
-      type: 'text',
-      rows: 3,
-    }),
-
-    // --- LINKKIBANNERI & PÄÄKUVA (Näkyvät heti Hero-osion jälkeen) ---
-    defineField({
-      name: 'externalLink',
-      title: 'Google Drive -linkki / Verkkolinkki (esim. https://drive.google.com/...)',
-      description: 'Liitä tähän suora Google Drive -osoite tai verkkolinkki opinto-oppaaseen',
-      type: 'url',
-      fieldset: 'links',
-    }),
-    defineField({
-      name: 'externalLinkTitle',
-      title: 'Linkkipainikkeen teksti (esim. Avaa Opinto-opas Google Drivessa)',
-      type: 'string',
-      fieldset: 'links',
-    }),
-    defineField({
-      name: 'documentLinks',
-      title: '📄 Ulkoiset asiakirjalinkit (esim. useampi Google Drive -PDF)',
-      description: 'Käytä tätä kun sivulla pitää olla useampi ladattava asiakirja/linkki (esim. useita opetussuunnitelmia). Näkyvät siisteinä kortteina.',
-      type: 'array',
-      fieldset: 'links',
-      of: [
-        {
-          type: 'object',
-          name: 'documentLink',
-          title: 'Asiakirjalinkki',
-          fields: [
-            { name: 'title', type: 'string', title: 'Otsikko (esim. Opetussuunnitelma 2021)', validation: (Rule) => Rule.required() },
-            { name: 'description', type: 'string', title: 'Lisätieto (valinnainen)' },
-            { name: 'url', type: 'url', title: 'Osoite (esim. https://drive.google.com/...)', validation: (Rule) => Rule.required() },
-          ],
-          preview: {
-            select: { title: 'title', subtitle: 'url' },
-          },
-        },
-      ],
-    }),
-    defineField({
-      name: 'mainImage',
-      title: 'Sivun pääkuva / Bannerikuva',
-      description: '💡 Kuvavinkki: pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa – järjestelmä optimoi koon automaattisesti.',
+      name: 'heroBgImage',
+      title: '🌄 Yläbannerin taustakuva (Hero-osion taustakuva)',
+      description: 'Valinnainen taustakuva sivun ylimpään laatikkoon (Hero header). Kuvan päälle tulee automaattisesti tumma liukuväri lukukelpoisuuden takaamiseksi. 💡 Pidempi sivu n. 1920–2500 px riittää sekä vaaka- että pystykuvissa.',
       type: 'image',
       options: { hotspot: true },
-      fieldset: 'media',
+      fieldset: 'advanced',
       fields: [
-        { name: 'caption', type: 'string', title: 'Kuvateksti / Selite kuvan alle' },
         { name: 'alt', type: 'string', title: 'Alt-teksti' }
       ]
     }),
-    defineField({
-      name: 'youtubeUrl',
-      title: 'Video- / YouTube- / Google Drive -videolinkki (Sivun video)',
-      description: 'Voit syöttää tähän YouTube-, Google Drive- tai Vimeo-videolinkin (esim. https://youtu.be/... tai https://drive.google.com/file/d/...)',
-      type: 'url',
-      fieldset: 'media',
-    }),
-    defineField({
-      name: 'youtubeTitle',
-      title: 'Videon otsikko (esim. Katso lukion esittelyvideo)',
-      type: 'string',
-      fieldset: 'media',
-    }),
-    defineField({
-      name: 'youtubeCaption',
-      title: 'Videon selite / Kuvateksti videon alle',
-      type: 'string',
-      fieldset: 'media',
-    }),
-
-    // --- KOROSTUSKORTIT (Näkyvät pääkuvan/videon jälkeen, ennen leipätekstiä) ---
     defineField({
       name: 'stats',
       title: '📊 Tilasto- / Numerokortit (esim. Keskiarvoraja 7,00, Aloituspaikat 60–70)',
       description: 'Voit lisätä sivulle suuria numerokortteja esittelemään avainlukuja',
       type: 'array',
-      fieldset: 'highlights',
+      fieldset: 'advanced',
       of: [
         {
           type: 'object',
@@ -175,7 +199,7 @@ export const pageSchema = defineType({
       title: '💡 Info- / Korostuskortit (esim. Maksuton koulutus, Aito kansainvälisyys)',
       description: 'Voit lisätä sivulle vahvuus- ja korostuslaatikoita',
       type: 'array',
-      fieldset: 'highlights',
+      fieldset: 'advanced',
       of: [
         {
           type: 'object',
@@ -205,62 +229,12 @@ export const pageSchema = defineType({
         }
       ]
     }),
-
-    // --- PÄÄSISÄLTÖ (Leipäteksti, osiot, galleria, liitteet) ---
-    defineField({
-      name: 'body',
-      title: 'Päätekstisisältö (Block content)',
-      type: 'array',
-      of: [
-        commonBlock,
-        {
-          type: 'image',
-          title: 'Kuva tekstin sekaan (Rinnakkain tai sovitetusti)',
-          description: '💡 Pidempi sivu n. 1920–2500 px riittää hyvin.',
-          options: { hotspot: true },
-          fields: [
-            { name: 'caption', type: 'string', title: 'Kuvateksti (Näkyy kuvan alla)' },
-            { name: 'alt', type: 'string', title: 'Alt-teksti' },
-            {
-              name: 'layout',
-              type: 'string',
-              title: 'Kuvan sijoitus tekstissä',
-              options: {
-                list: [
-                  { title: 'Oikealla (Teksti ja kuva rinnakkain)', value: 'right' },
-                  { title: 'Vasemmalla (Teksti ja kuva rinnakkain)', value: 'left' },
-                  { title: 'Koko leveydellä (Kuva tekstin ylä/alapuolella)', value: 'full' }
-                ],
-                layout: 'radio'
-              },
-              initialValue: 'right'
-            }
-          ]
-        },
-        {
-          type: 'object',
-          name: 'youtube',
-          title: 'YouTube -video tekstin sekaan',
-          fields: [
-            { name: 'url', type: 'url', title: 'YouTube-videon URL-osoite' },
-            { name: 'caption', type: 'string', title: 'Kuvateksti / Videon otsikko' }
-          ]
-        },
-        {
-          type: 'file',
-          title: 'Ladattava PDF / Tiedosto tekstin sekaan',
-          options: { accept: '.pdf,.doc,.docx,.xlsx' },
-          fields: [
-            { name: 'description', type: 'string', title: 'Painikkeen teksti (esim. Lataa opinto-opas PDF)' }
-          ]
-        }
-      ],
-    }),
     defineField({
       name: 'sections',
       title: '🖼️ Rinnakkaiset Osio-kortit (Teksti 1 + Kuva 1, Teksti 2 + Kuva 2...)',
       description: 'Lisää tähän osioita klikkaamalla "+ Lisää Osio". Jokaisessa osiossa Teksti ja Kuva asettuvat automaattisesti rinnakkain.',
       type: 'array',
+      fieldset: 'advanced',
       of: [
         {
           type: 'object',
@@ -343,6 +317,7 @@ export const pageSchema = defineType({
       title: 'Kuvagalleria / Lisäkuvat sivulle',
       description: 'Voit ladata tähän useita kuvia kuvateksteineen',
       type: 'array',
+      fieldset: 'advanced',
       of: [
         {
           type: 'image',
@@ -356,22 +331,6 @@ export const pageSchema = defineType({
         }
       ]
     }),
-    defineField({
-      name: 'pdfFiles',
-      title: 'Ladattavat PDF-tiedostot / Liitteet sivun alalaitaan',
-      type: 'array',
-      of: [
-        {
-          type: 'file',
-          title: 'PDF-tiedosto / Liite',
-          options: { accept: '.pdf,.doc,.docx,.xlsx' },
-          fields: [
-            { name: 'title', type: 'string', title: 'Tiedoston nimi (esim. Opinto-opas 2026–2027.pdf)' },
-            { name: 'description', type: 'string', title: 'Lyhyt kuvaus' }
-          ]
-        }
-      ]
-    })
   ],
   preview: {
     select: {

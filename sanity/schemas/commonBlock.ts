@@ -32,12 +32,44 @@ export const commonBlock = defineArrayMember({
           {
             name: 'href',
             type: 'url',
-            title: 'Osoite (esim. https://... tai mailto:... / tel:...)',
+            title: 'Osoite',
+            description: 'Ulkoinen linkki (esim. https://...) TAI sivuston oma sisäinen sivu (esim. /opiskelijalle/yo-ilmoittautuminen). Sähköposti- ja puhelinlinkit: mailto:... / tel:...',
             validation: (Rule) =>
-              Rule.uri({
-                allowRelative: true,
-                scheme: ['http', 'https', 'mailto', 'tel'],
-              }),
+              Rule.required()
+                .error('Linkille on annettava osoite')
+                .uri({
+                  allowRelative: true,
+                  scheme: ['http', 'https', 'mailto', 'tel'],
+                }),
+          },
+          {
+            name: 'style',
+            type: 'string',
+            title: 'Ulkoasu',
+            description: 'Näkyykö linkki tavallisena tekstilinkkinä, vai halutaanko se erottuvan huomiopainikkeena',
+            options: {
+              list: [
+                { title: 'Normaali linkki', value: 'inline' },
+                { title: 'Painike (korostettu)', value: 'button' },
+              ],
+              layout: 'radio',
+            },
+            initialValue: 'inline',
+          },
+          {
+            name: 'size',
+            type: 'string',
+            title: 'Painikkeen koko',
+            description: 'Käytä "Suuri", kun painikkeen pitää erottua sivulla varmasti (esim. tärkeä ilmoittautuminen)',
+            options: {
+              list: [
+                { title: 'Normaali', value: 'normal' },
+                { title: 'Suuri (erottuu selvästi)', value: 'large' },
+              ],
+              layout: 'radio',
+            },
+            initialValue: 'normal',
+            hidden: ({ parent }: any) => parent?.style !== 'button',
           },
         ],
       },

@@ -31,7 +31,14 @@ function renderChildren(block: any) {
         if (def && (def._type === 'link' || def._type === 'url') && def.href) {
           const isExternal = def.href.startsWith('http');
           const targetAttr = isExternal ? 'target="_blank" rel="noopener noreferrer"' : '';
-          text = `<a href="${def.href}" ${targetAttr} class="font-bold text-alajarvi-600 hover:text-alajarvi-800 underline decoration-alajarvi-300 hover:decoration-alajarvi-600 transition-colors inline-flex items-center gap-1 shrink-0">${text} ${isExternal ? '↗' : ''}</a>`;
+          if (def.style === 'button') {
+            const arrow = isExternal ? '↗' : '→';
+            const isLarge = def.size === 'large';
+            const sizeClasses = isLarge ? 'gap-2 px-7 py-4 text-lg' : 'gap-1.5 px-4 py-2 text-sm';
+            text = `<a href="${def.href}" ${targetAttr} class="group inline-flex items-center ${sizeClasses} my-1 rounded-xl bg-alajarvi-500 hover:bg-alajarvi-600 text-white font-bold no-underline shadow-sm hover:shadow-md active:scale-95 transition-all shrink-0">${text}<span class="transition-transform group-hover:translate-x-0.5">${arrow}</span></a>`;
+          } else {
+            text = `<a href="${def.href}" ${targetAttr} class="font-bold text-alajarvi-600 hover:text-alajarvi-800 underline decoration-alajarvi-300 hover:decoration-alajarvi-600 transition-colors inline-flex items-center gap-1 shrink-0">${text} ${isExternal ? '↗' : ''}</a>`;
+          }
         } else if (markKey === 'strong' || markKey === 'bold') {
           text = `<strong class="font-bold text-slate-900">${text}</strong>`;
         } else if (markKey === 'em' || markKey === 'italic') {
@@ -69,11 +76,11 @@ function renderChildren(block: any) {
 
         if (block.style === 'h2') {
           const headingId = `heading-${idx}`;
-          return <h2 id={headingId} key={idx} class="text-2xl font-bold text-alajarvi-800 mt-8 mb-4 scroll-mt-28" style="scroll-margin-top: var(--anchor-offset, 112px)" set:html={htmlContent} />;
+          return <h2 id={headingId} key={idx} class="clear-both pt-6 text-2xl font-bold text-alajarvi-800 mt-8 mb-4 scroll-mt-28" style="scroll-margin-top: var(--anchor-offset, 112px)" set:html={htmlContent} />;
         }
         if (block.style === 'h3') {
           const headingId = `heading-${idx}`;
-          return <h3 id={headingId} key={idx} class="text-xl font-bold text-alajarvi-700 mt-6 mb-3 scroll-mt-28" style="scroll-margin-top: var(--anchor-offset, 112px)" set:html={htmlContent} />;
+          return <h3 id={headingId} key={idx} class="clear-both pt-6 text-xl font-bold text-alajarvi-700 mt-6 mb-3 scroll-mt-28" style="scroll-margin-top: var(--anchor-offset, 112px)" set:html={htmlContent} />;
         }
         if (block.style === 'blockquote') {
           return <blockquote key={idx} class="border-l-4 border-alajarvi-500 pl-4 italic text-slate-600 my-4" set:html={htmlContent} />;
@@ -99,12 +106,15 @@ function renderChildren(block: any) {
       if (block._type === 'image') {
         const layoutStyle = block.layout || 'right';
         const isFloated = layoutStyle === 'left' || layoutStyle === 'right';
+        const isOriginal = layoutStyle === 'original';
         const img = responsiveImage(block, isFloated ? [400, 600, 900] : [640, 960, 1280, 1600, 1920]);
         if (!img) return null;
         const floatClass = layoutStyle === 'left'
           ? 'float-none sm:float-left sm:mr-6 mb-6 w-full sm:w-1/2 max-w-md'
           : layoutStyle === 'right'
           ? 'float-none sm:float-right sm:ml-6 mb-6 w-full sm:w-1/2 max-w-md'
+          : isOriginal
+          ? 'my-8 inline-block'
           : 'w-full my-8';
 
         return (
@@ -119,14 +129,16 @@ function renderChildren(block: any) {
                 alt={block.alt || block.caption || 'Kuva'}
                 loading="lazy"
                 decoding="async"
-                class="w-full h-auto object-contain rounded-2xl group-hover:scale-[1.01] transition-transform duration-300 max-h-[450px]"
+                class={isOriginal
+                  ? 'max-w-full h-auto object-contain rounded-2xl group-hover:scale-[1.01] transition-transform duration-300'
+                  : 'w-full h-auto object-contain rounded-2xl group-hover:scale-[1.01] transition-transform duration-300 max-h-[450px]'}
               />
               <div class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-900/85 text-white text-xs font-semibold backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 shadow-md">
                 <span>Suurenna kuva 🔍</span>
               </div>
             </a>
             {block.caption && (
-              <figcaption class="text-xs sm:text-sm text-slate-600 mt-2 text-center font-medium italic bg-slate-50/80 p-2 rounded-xl border border-slate-100">{block.caption}</figcaption>
+              <figcaption class={`text-xs sm:text-sm text-slate-600 mt-2 font-medium italic bg-slate-50/80 p-2 rounded-xl border border-slate-100 ${isOriginal ? 'text-left' : 'text-center'}`}>{block.caption}</figcaption>
             )}
           </figure>
         );

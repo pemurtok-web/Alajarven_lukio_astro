@@ -6,8 +6,7 @@ import LongPageNav from '../../components/LongPageNav.astro';
 import HeroWave from '../../components/HeroWave.astro';
 import PortableText from '../../components/PortableText.astro';
 import { getPageBySlug, getContactInfo, urlFor, responsiveImage, retinaSrcSet } from '../../lib/sanity';
-import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
-import { MapPin, Phone, Mail, User, Clock, Send, Trophy, GraduationCap, HeartHandshake, ShieldCheck } from 'lucide-astro';
+import { MapPin, Phone, Mail, User, Clock, Send, Trophy, GraduationCap, HeartHandshake, ShieldCheck, FileText } from 'lucide-astro';
 
 const page = await getPageBySlug('yhteystiedot');
 const contact = await getContactInfo();
@@ -118,28 +117,24 @@ function initials(name?: string) {
         </div>
       )}
 
-      {/* External Link Banner */}
-      {page?.externalLink && (
-        <div class="p-6 rounded-3xl bg-gradient-to-r from-alajarvi-800 to-alajarvi-900 text-white shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-sky-300">Verkkolinkki</span>
-            <h4 class="font-bold text-white text-base sm:text-lg">{page.externalLinkTitle || 'Avaa linkki'}</h4>
-          </div>
-          <a
-            href={page.externalLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-alajarvi-50 text-alajarvi-900 text-sm font-extrabold transition-all shadow-md active:scale-95 shrink-0"
-          >
-            <span>{page.externalLinkTitle || 'Avaa linkki'}</span>
-          </a>
-        </div>
-      )}
-
-      {/* YouTube video if uploaded in Sanity */}
-      {page?.youtubeUrl && (
-        <div class="mb-8">
-          <YouTubeEmbed url={page.youtubeUrl} title={page?.youtubeTitle || 'Yhteystiedot video'} caption={page?.youtubeCaption} />
+      {/* Liitteet ja linkit (esim. Google Drive -linkit tai ladatut PDF:t) */}
+      {page?.documentLinks && page.documentLinks.length > 0 && (
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          {page.documentLinks.map((doc: any) => (
+            <a
+              href={doc.fileUrl || doc.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              download={doc.fileUrl ? true : undefined}
+              class="p-5 rounded-2xl bg-white border border-slate-200 hover:border-alajarvi-300 shadow-sm hover:shadow-md flex items-center justify-between gap-3 group transition-all"
+            >
+              <div>
+                <h4 class="font-bold text-slate-900 text-sm group-hover:text-alajarvi-600 transition-colors">{doc.title}</h4>
+                {doc.description && <p class="text-xs text-slate-500 mt-0.5">{doc.description}</p>}
+              </div>
+              <FileText class="w-5 h-5 text-alajarvi-500 shrink-0 group-hover:scale-110 transition-transform" />
+            </a>
+          ))}
         </div>
       )}
 

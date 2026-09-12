@@ -58,7 +58,7 @@ function renderChildren(block: any) {
 ---
 
 {value && Array.isArray(value) ? (
-  <div class="prose prose-slate max-w-3xl prose-headings:font-display prose-headings:text-alajarvi-800 prose-a:text-alajarvi-600 hover:prose-a:text-alajarvi-800 prose-img:rounded-2xl overflow-x-auto break-words space-y-4">
+  <div class="prose prose-slate max-w-4xl prose-headings:font-display prose-headings:text-alajarvi-800 prose-a:text-alajarvi-600 hover:prose-a:text-alajarvi-800 prose-img:rounded-2xl overflow-x-auto break-words space-y-4">
     {value.map((block: any, idx: number) => {
       if (block._type === 'block') {
         const htmlContent = renderChildren(block);

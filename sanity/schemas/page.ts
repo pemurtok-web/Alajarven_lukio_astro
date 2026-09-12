@@ -1,6 +1,11 @@
 import { defineType, defineField } from 'sanity';
 import { commonBlock } from './commonBlock';
 
+// Nämä osoitteet ovat jo sivuston omien, kovakoodattujen sivujen käytössä.
+// "Erillisenä kohtana päävalikossa" -sivu ei saa käyttää näitä, koska sivusto ei silloin
+// tietäisi kumpaa sivua näyttää samassa osoitteessa.
+const RESERVED_TOP_LEVEL_SLUGS = ['ajankohtaista', 'hakijalle', 'kansainvalisyys', 'opiskelijalle', 'tietosuoja', 'yhteystiedot'];
+
 export const pageSchema = defineType({
   name: 'page',
   title: 'Sivut (Sisältösivut)',
@@ -28,7 +33,37 @@ export const pageSchema = defineType({
         source: 'title',
         maxLength: 96,
       },
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) =>
+        Rule.required().custom((slugValue: any, context: any) => {
+          const doc = context.document as any;
+          if (doc?.menuPlacement === 'top' && slugValue?.current && RESERVED_TOP_LEVEL_SLUGS.includes(slugValue.current)) {
+            return `"${slugValue.current}" on jo sivuston oman sivun osoite. Valitse "Erillisenä kohtana päävalikossa" -sivulle toinen slug.`;
+          }
+          return true;
+        }),
+    }),
+    defineField({
+      name: 'menuPlacement',
+      title: '📋 Näytä päävalikossa',
+      description: 'Valitse tähän jos haluat, että tämä sivu ilmestyy automaattisesti sivuston yläpalkin päävalikkoon (ja mobiilivalikkoon). Oletuksena sivu EI näy valikossa, vaikka se on julkaistu ja löytyy suoralla osoitteella.',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Ei näy päävalikossa', value: 'none' },
+          { title: 'Opiskelijalle-alavalikossa', value: 'opiskelijalle' },
+          { title: 'Kansainvälisyys-alavalikossa', value: 'kansainvalisyys' },
+          { title: 'Erillisenä kohtana päävalikossa (ei alavalikossa)', value: 'top' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'none',
+    }),
+    defineField({
+      name: 'menuOrder',
+      title: 'Järjestysnumero valikossa',
+      description: 'Pienempi luku näkyy valikossa ylempänä. Voi jättää tyhjäksi — silloin sivu näkyy listan lopussa.',
+      type: 'number',
+      hidden: ({ document }) => document?.menuPlacement === 'none' || !document?.menuPlacement,
     }),
     defineField({
       name: 'lead',
@@ -60,7 +95,7 @@ export const pageSchema = defineType({
         {
           type: 'image',
           title: 'Kuva tekstin sekaan (Rinnakkain tai sovitetusti)',
-          description: '💡 Pidempi sivu n. 1920–2500 px riittää hyvin.',
+          description: '💡 Pidempi sivu n. 1920–2500 px riittää hyvin. ⚠️ Jos haluat tekstin kiertyvän kuvan viereen ("Oikealla"/"Vasemmalla"), lisää kuva ENNEN sitä tekstikappaletta, jonka haluat näkyvän kuvan vieressä — teksti kiertyy vain kuvan JÄLKEEN tulevan sisällön kohdalla, ei ennen kuvaa olevan.',
           options: { hotspot: true },
           fields: [
             { name: 'caption', type: 'string', title: 'Kuvateksti (Näkyy kuvan alla)' },
@@ -69,6 +104,7 @@ export const pageSchema = defineType({
               name: 'layout',
               type: 'string',
               title: 'Kuvan sijoitus tekstissä',
+              description: 'Muista: teksti asettuu kuvan viereen vain, jos se tulee kuvan JÄLKEEN sisällössä. Ennen kuvaa oleva teksti pysyy aina kuvan yläpuolella.',
               options: {
                 list: [
                   { title: 'Oikealla (Teksti ja kuva rinnakkain)', value: 'right' },
@@ -159,7 +195,7 @@ export const pageSchema = defineType({
         ],
         layout: 'radio',
       },
-      initialValue: 'cards',
+      initialValue: 'standard',
       fieldset: 'advanced',
     }),
     defineField({

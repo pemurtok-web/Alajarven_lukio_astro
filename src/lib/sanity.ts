@@ -130,6 +130,8 @@ export interface PageContent {
   sections?: { title: string; anchorId: string; content?: any }[];
   stats?: any[];
   features?: any[];
+  menuPlacement?: string;
+  menuOrder?: number;
 }
 
 // Fallback Mock Data
@@ -404,6 +406,50 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
   }
 }
 
+// Used only by the top-level "/[slug]" catch-all route. Unlike getPageBySlug, this returns
+// null (never a mock placeholder) when nothing matches, so unknown URLs stay a real 404
+// instead of silently rendering a fake page — and it only matches pages the editor has
+// explicitly opted into their own top-level menu spot, so it can't collide with the
+// site's other hardcoded routes.
+export async function getTopLevelPageBySlug(slug: string): Promise<PageContent | null> {
+  if (!sanityClient) return null;
+  try {
+    const page = await sanityClient.fetch<PageContent | null>(
+      `*[_type == "page" && slug.current == $slug && menuPlacement == "top"] | order(_updatedAt desc)[0]{
+        _id, title, slug, lead, layoutStyle,
+        documentLinks[]{
+          title,
+          description,
+          url,
+          "fileUrl": file.asset->url
+        },
+        body[]{
+          ...,
+          _type == "file" => {
+            "fileUrl": asset->url,
+            description
+          }
+        },
+        gallery,
+        sections[]{
+          ...,
+          content[]{
+            ...,
+            _type == "file" => {
+              "fileUrl": asset->url,
+              description
+            }
+          }
+        }, heroBgImage, mainImage, stats, features
+      }`,
+      { slug }
+    );
+    return page || null;
+  } catch (e) {
+    return null;
+  }
+}
+
 export interface SiteSettings {
   title?: string;
   subtitle?: string;
@@ -505,7 +551,7 @@ export async function getAllPages(): Promise<PageContent[]> {
   try {
     const pages = await sanityClient.fetch<PageContent[]>(
       `*[_type == "page"] | order(_updatedAt desc){
-        _id, title, slug
+        _id, title, slug, menuPlacement, menuOrder
       }`
     );
     return pages || [];

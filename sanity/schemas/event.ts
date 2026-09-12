@@ -45,10 +45,29 @@ export const eventSchema = defineType({
         commonBlock,
         {
           type: 'image',
-          title: 'Kuva',
-          description: '💡 Pidempi sivu n. 1920–2500 px riittää hyvin.',
+          title: 'Kuva tekstin sekaan (Rinnakkain tai sovitetusti)',
+          description: '💡 Pidempi sivu n. 1920–2500 px riittää hyvin. ⚠️ Jos haluat tekstin kiertyvän kuvan viereen ("Oikealla"/"Vasemmalla"), lisää kuva ENNEN sitä tekstikappaletta, jonka haluat näkyvän kuvan vieressä — teksti kiertyy vain kuvan JÄLKEEN tulevan sisällön kohdalla, ei ennen kuvaa olevan.',
           options: { hotspot: true },
-          fields: [{ name: 'alt', type: 'string', title: 'Alt-teksti' }]
+          fields: [
+            { name: 'caption', type: 'string', title: 'Kuvateksti (Näkyy kuvan alla)' },
+            { name: 'alt', type: 'string', title: 'Alt-teksti' },
+            {
+              name: 'layout',
+              type: 'string',
+              title: 'Kuvan sijoitus tekstissä',
+              description: 'Muista: teksti asettuu kuvan viereen vain, jos se tulee kuvan JÄLKEEN sisällössä. Ennen kuvaa oleva teksti pysyy aina kuvan yläpuolella.',
+              options: {
+                list: [
+                  { title: 'Oikealla (Teksti ja kuva rinnakkain)', value: 'right' },
+                  { title: 'Vasemmalla (Teksti ja kuva rinnakkain)', value: 'left' },
+                  { title: 'Koko leveydellä (Kuva tekstin ylä/alapuolella)', value: 'full' },
+                  { title: 'Alkuperäinen koko (ei skaalattu, ei keskitetty, tasattu vasemmalle)', value: 'original' }
+                ],
+                layout: 'radio'
+              },
+              initialValue: 'right'
+            }
+          ]
         },
         {
           type: 'file',

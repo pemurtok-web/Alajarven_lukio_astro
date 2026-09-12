@@ -1,5 +1,6 @@
 import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
+import { fiFILocale } from '@sanity/locale-fi-fi';
 import { schemaTypes } from './sanity/schemas';
 
 const pageTemplates = [
@@ -33,10 +34,28 @@ export default defineConfig({
         S.list()
           .title('Alajärven lukio - Sisällöt')
           .items([
-            // 1. Etusivu
+            // 1. Etusivu (kaikki etusivulla näkyvä sisältö samassa paikassa)
             S.listItem()
-              .title('🏠 Etusivun sisällöt')
-              .child(S.document().schemaType('homepage').documentId('homepage')),
+              .title('🏠 Etusivu')
+              .child(
+                S.list()
+                  .title('Etusivu')
+                  .items([
+                    S.listItem()
+                      .title('🖼️ Etusivun päänäkymä (Hero, esittely, valttikortit)')
+                      .child(S.document().schemaType('homepage').documentId('homepage')),
+                    S.divider(),
+                    S.listItem()
+                      .title('📰 Ajankohtaista (Uutiset)')
+                      .child(S.documentTypeList('post').title('Uutiset')),
+                    S.listItem()
+                      .title('📆 Tapahtumakalenteri')
+                      .child(S.documentTypeList('event').title('Tapahtumat')),
+                    S.listItem()
+                      .title('🔗 Pikalinkit')
+                      .child(S.documentTypeList('quicklink').title('Pikalinkit')),
+                  ])
+              ),
 
             // 2. Sivuston yleisasetukset & Logo
             S.listItem()
@@ -125,10 +144,41 @@ export default defineConfig({
 
                     S.divider(),
 
+                    // Yhteystiedot (päävalikkokohta sivustolla) - kaksi eri dokumenttia (page + contactInfo) samassa alilistassa
+                    S.listItem()
+                      .title('📞 Yhteystiedot')
+                      .child(
+                        S.list()
+                          .title('Yhteystiedot')
+                          .items([
+                            S.listItem()
+                              .title('🖼️ Sivun ylätiedot (otsikko, kuva, ingressi)')
+                              .child(S.document().schemaType('page').documentId('page-yhteystiedot').initialValueTemplate('tpl-page-yhteystiedot')),
+                            S.listItem()
+                              .title('👥 Henkilökunta, opettajat & osoite')
+                              .child(S.document().schemaType('contactInfo').documentId('contactInfo')),
+                          ])
+                      ),
+
+                    S.divider(),
+
                     // Muut sivut
                     S.listItem()
                       .title('🔒 Tietosuoja ja evästeet')
                       .child(S.document().schemaType('page').documentId('page-tietosuoja').initialValueTemplate('tpl-page-tietosuoja')),
+
+                    S.divider(),
+
+                    // Sivut, joilla on erillinen (ei-alavalikkoon kuuluva) kohta päävalikossa —
+                    // dynaaminen lista, koska nämä ovat asiakkaan itse luomia uusia sivuja eikä
+                    // niitä siksi voi listata etukäteen kiinteillä dokumentti-ID:illä (kuten yllä olevat kansiot).
+                    S.listItem()
+                      .title('🆕 Muut päävalikon sivut')
+                      .child(
+                        S.documentTypeList('page')
+                          .title('Sivut, joilla erillinen kohta päävalikossa')
+                          .filter('_type == "page" && menuPlacement == "top"')
+                      ),
 
                     S.divider(),
 
@@ -138,38 +188,9 @@ export default defineConfig({
                       .child(S.documentTypeList('page').title('Kaikki sivut')),
                   ])
               ),
-
-            S.divider(),
-
-            // 4. Uutiset & Tapahtumat & Yhteystiedot & Pikalinkit
-            S.listItem()
-              .title('📰 Ajankohtaista (Uutiset)')
-              .child(S.documentTypeList('post').title('Uutiset')),
-
-            // 5. Yhteystiedot (viimeinen kohta päävalikossa sivustolla)
-            S.listItem()
-              .title('📞 Yhteystiedot')
-              .child(
-                S.list()
-                  .title('Yhteystiedot')
-                  .items([
-                    S.listItem()
-                      .title('🖼️ Sivun ylätiedot (otsikko, kuva, ingressi)')
-                      .child(S.document().schemaType('page').documentId('page-yhteystiedot').initialValueTemplate('tpl-page-yhteystiedot')),
-                    S.listItem()
-                      .title('👥 Henkilökunta, opettajat & osoite')
-                      .child(S.document().schemaType('contactInfo').documentId('contactInfo')),
-                  ])
-              ),
-
-            S.listItem()
-              .title('📆 Tapahtumakalenteri')
-              .child(S.documentTypeList('event').title('Tapahtumat')),
-            S.listItem()
-              .title('🔗 Pikalinkit')
-              .child(S.documentTypeList('quicklink').title('Pikalinkit')),
           ]),
     }),
+    fiFILocale(),
   ],
   schema: {
     types: schemaTypes,

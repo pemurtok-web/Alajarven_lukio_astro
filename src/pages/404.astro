@@ -1,0 +1,21 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+Astro.response.status = 404;
+---
+
+<Layout title="Sivua ei löytynyt | Alajärven lukio" description="Etsimääsi sivua ei löytynyt.">
+  <Header />
+  <main class="bg-transparent min-h-[60vh] flex items-center">
+    <div class="max-w-3xl mx-auto px-4 sm:px-8 py-20 text-center space-y-4">
+      <h1 class="font-display font-extrabold text-3xl text-alajarvi-900">Sivua ei löytynyt</h1>
+      <p class="text-slate-600">Etsimääsi sivua ei valitettavasti löytynyt. Se on voitu poistaa tai osoite on kirjoitettu väärin.</p>
+      <a href="/" class="inline-flex items-center gap-1.5 mt-4 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-alajarvi-500 hover:bg-alajarvi-600 transition-colors">
+        Etusivulle
+      </a>
+    </div>
+  </main>
+  <Footer />
+</Layout>

@@ -1,55 +1,33 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import LongPageNav from '../../components/LongPageNav.astro';
-import HeroWave from '../../components/HeroWave.astro';
-import PortableText from '../../components/PortableText.astro';
-import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
-import { getPageBySlug, getAllPages, urlFor, responsiveImage, extractPageAnchors, splitBodyIntoCards } from '../../lib/sanity';
-import { BookOpen, ChevronRight, FileText, Calendar, ShieldCheck, HeartHandshake, Award, Image as ImageIcon, CheckCircle, Globe, Star } from 'lucide-astro';
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import LongPageNav from '../components/LongPageNav.astro';
+import HeroWave from '../components/HeroWave.astro';
+import PortableText from '../components/PortableText.astro';
+import YouTubeEmbed from '../components/YouTubeEmbed.astro';
+import { getTopLevelPageBySlug, urlFor, responsiveImage, extractPageAnchors, splitBodyIntoCards } from '../lib/sanity';
+import { FileText, ChevronRight, Image as ImageIcon, CheckCircle, Globe, Star, BookOpen, Award } from 'lucide-astro';
 
-export async function getStaticPaths() {
-  const defaultSlugs = [
-    'opinto-opas',
-    'opintotarjotin',
-    'tyoaika',
-    'opinto-ohjaus',
-    'opiskeluhuolto',
-    'yo-kirjoitukset',
-    'kodin-ja-koulun-yhteistyo',
-    'opetussuunnitelma',
-    'ruokalista',
-  ];
-  const pages = await getAllPages();
-  const sanitySlugs = pages.map(p => p.slug?.current).filter(Boolean);
-  const allSlugs = Array.from(new Set([...defaultSlugs, ...sanitySlugs]));
-  return allSlugs.map(slug => ({ params: { slug } }));
-}
-
+// Renders a brand-new, top-level content page created in Sanity with
+// "Näytä päävalikossa" = "Erillisenä kohtana päävalikossa". Unlike /opiskelijalle/[slug] and
+// /kansainvalisyys/[slug], this route only matches pages explicitly opted into a top-level
+// slot (see getTopLevelPageBySlug). If nothing matches, setting the 404 status here makes
+// Astro automatically render the site's own src/pages/404.astro instead — a bare "/[slug]"
+// route would otherwise swallow every unmatched URL on the site as a fake 200 page.
 const { slug } = Astro.params;
-const page = await getPageBySlug(slug as string);
+const page = await getTopLevelPageBySlug(slug as string);
+
+if (!page) {
+  Astro.response.status = 404;
+}
 
 const anchors = extractPageAnchors(page);
 const isCardsLayout = page?.layoutStyle === 'cards';
 const bodyCards = page?.body ? splitBodyIntoCards(page.body) : [];
 
-// Purely visual icon per page type — not editorial content, so kept in code rather than Sanity
-const iconMap: Record<string, any> = {
-  'opinto-opas': BookOpen,
-  'opintotarjotin': FileText,
-  'tyoaika': Calendar,
-  'opinto-ohjaus': HeartHandshake,
-  'opiskeluhuolto': ShieldCheck,
-  'yo-kirjoitukset': Award,
-  'lomakkeet': FileText,
-  'kodin-ja-koulun-yhteistyo': HeartHandshake,
-  'opetussuunnitelma': FileText,
-  'ruokalista': ImageIcon,
-};
-const IconComponent = iconMap[slug as string] || BookOpen;
-const pageTitle = page?.title || 'Opiskelijalle';
-const pageLead = page?.lead || 'Tietoa lukio-opiskelusta Alajärven lukiossa.';
+const pageTitle = page?.title || '';
+const pageLead = page?.lead || '';
 const hasSections = page?.sections && page.sections.length > 0;
 const hasGallery = page?.gallery && page.gallery.length > 0;
 const hasBodyCards = bodyCards.length > 0;
@@ -62,6 +40,7 @@ const heroImg = page?.heroBgImage ? responsiveImage(page.heroBgImage, [640, 960,
 const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 1280, 1600, 1920]) : null;
 ---
 
+{page && (
 <Layout
   title={`${pageTitle} | Alajärven lukio`}
   description={pageLead}
@@ -71,11 +50,9 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
 
   <main class="bg-transparent min-h-[70vh]">
 
-    <!-- Page Hero — full-width, edge-to-edge (no rounded corners), flush against the header,
-         with the flowing Aalto wave mask at the bottom. Breadcrumb lives inside it (restyled
-         for the dark background) instead of its own row above. -->
+    <!-- Page Hero — full-width, edge-to-edge, flush against the header, with the Aalto wave mask at the bottom. -->
     <div class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white">
-      {page?.heroBgImage && urlFor(page.heroBgImage) && (
+      {page.heroBgImage && urlFor(page.heroBgImage) && (
         <div class="absolute inset-0 z-0 pointer-events-none">
           <img
             src={heroImg?.src}
@@ -83,7 +60,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
             sizes="100vw"
             width={heroImg?.width}
             height={heroImg?.height}
-            alt={page.heroBgImage.alt || page?.title || 'Hero taustakuva'}
+            alt={page.heroBgImage.alt || pageTitle || 'Hero taustakuva'}
             class="w-full h-full object-cover object-center"
             loading="eager"
             fetchpriority="high"
@@ -95,33 +72,31 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
         <nav class="flex items-center gap-2 text-xs font-semibold text-slate-300 mb-3">
           <a href="/" class="hover:text-white transition-colors">Etusivu</a>
           <ChevronRight class="w-3.5 h-3.5 text-slate-500" />
-          <span class="text-slate-300">Opiskelijalle</span>
-          <ChevronRight class="w-3.5 h-3.5 text-slate-500" />
           <span class="text-white">{pageTitle}</span>
         </nav>
 
         <div class="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center justify-center text-sky-300">
-          <IconComponent class="w-6 h-6" />
+          <FileText class="w-6 h-6" />
         </div>
         <h1 class="font-display font-extrabold text-2xl sm:text-4xl text-white">
           {pageTitle}
         </h1>
-        <p class="text-sm sm:text-base text-slate-200 max-w-2xl">
-          {pageLead}
-        </p>
+        {pageLead && (
+          <p class="text-sm sm:text-base text-slate-200 max-w-2xl">
+            {pageLead}
+          </p>
+        )}
       </div>
       <HeroWave />
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-8 space-y-6 py-8">
 
-      <!-- Jump Navigation for Sections or PortableText Headings -->
       {anchors.length > 0 && (
         <LongPageNav anchors={anchors} title="Sisällysluettelo" />
       )}
 
-      {/* Liitteet ja linkit (esim. Google Drive -linkit tai ladatut PDF:t) */}
-      {page?.documentLinks && page.documentLinks.length > 0 && (
+      {page.documentLinks && page.documentLinks.length > 0 && (
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {page.documentLinks.map((doc: any) => (
             <a
@@ -141,8 +116,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
         </div>
       )}
 
-      {/* Main Banner Image if uploaded in Sanity */}
-      {page?.mainImage?.asset && (
+      {page.mainImage?.asset && (
         <div class="group relative rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white hover:shadow-xl transition-all">
           <a href={mainImg?.src} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden bg-slate-50 flex flex-col justify-center">
             <img
@@ -151,7 +125,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
               sizes="(min-width: 1024px) 1024px, 100vw"
               width={mainImg?.width}
               height={mainImg?.height}
-              alt={page.mainImage.alt || page.mainImage.caption || page?.title || 'Sivun kuva'}
+              alt={page.mainImage.alt || page.mainImage.caption || pageTitle || 'Sivun kuva'}
               loading="lazy"
               decoding="async"
               class="w-full h-auto object-contain rounded-t-3xl group-hover:scale-[1.01] transition-transform duration-300 max-h-[42vh] lg:max-h-[600px]"
@@ -168,18 +142,16 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
         </div>
       )}
 
-      <!-- CARDS GRID LAYOUT (Unified side-by-side 2-column grid for Body Headings, Sections & Gallery Images) -->
       {isCardsLayout ? (
         <div class="space-y-6">
-          
-          {page?.lead && (
+
+          {page.lead && (
             <div class="p-5 sm:p-6 rounded-3xl bg-white shadow-sm border border-alajarvi-100 text-alajarvi-900 font-medium text-base leading-relaxed">
               {page.lead}
             </div>
           )}
 
-          {/* Tilasto- / Numerokortit (Stats) */}
-          {page?.stats && page.stats.length > 0 && (
+          {page.stats && page.stats.length > 0 && (
             <div class="p-6 rounded-3xl bg-white shadow-sm border border-slate-200/90 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 my-6">
               {page.stats.map((st: any) => (
                 <div class="p-4 rounded-2xl bg-alajarvi-50/50 border border-alajarvi-100 space-y-1">
@@ -191,8 +163,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
             </div>
           )}
 
-          {/* Info- / Korostuskortit (Features) */}
-          {page?.features && page.features.length > 0 && (
+          {page.features && page.features.length > 0 && (
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 my-6">
               {page.features.map((feat: any) => (
                 <div class="p-5 sm:p-6 rounded-3xl bg-white shadow-sm border border-slate-200/90 hover:border-alajarvi-300 transition-all space-y-2">
@@ -216,11 +187,9 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
             </div>
           )}
 
-          <!-- Unified 2-column Grid for Body Cards, Sections and Gallery Images -->
           {(hasBodyCards || hasSections || hasGallery) ? (
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-stretch">
-              
-              <!-- 1. PortableText Body Headings split into individual cards -->
+
               {bodyCards.map((card: any) => (
                 <div id={card.anchorId} class="scroll-mt-28 p-6 sm:p-8 rounded-3xl bg-white shadow-md border border-slate-200/90 hover:border-alajarvi-300 transition-all flex flex-col justify-between space-y-3" style="scroll-margin-top: var(--anchor-offset, 112px)">
                   {card.title && (
@@ -234,8 +203,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                 </div>
               ))}
 
-              <!-- 2. Sections rendered as cards in the same grid -->
-              {page?.sections?.map((sec: any, idx: number) => {
+              {page.sections?.map((sec: any, idx: number) => {
                 const secId = sec.anchorId || `aihe-${idx + 1}`;
                 const secImage = sec.image;
                 const imageUrl = secImage?.asset ? urlFor(secImage)?.width(1600).quality(85).url() : null;
@@ -304,8 +272,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                 );
               })}
 
-              <!-- 3. Gallery Images rendered as cards in the same grid -->
-              {page?.gallery?.map((img: any) => {
+              {page.gallery?.map((img: any) => {
                 const galleryImgUrl = urlFor(img)?.width(1920).quality(85).url();
                 const galleryImg = responsiveImage(img, [400, 640, 828, 1080]);
                 if (!galleryImgUrl) return null;
@@ -337,7 +304,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
               })}
 
             </div>
-          ) : !page?.lead && !page?.documentLinks?.length ? (
+          ) : !page.lead && !page.documentLinks?.length ? (
             <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200/80 text-center text-slate-500 text-sm">
               Sisältöä päivitetään pian.
             </div>
@@ -345,16 +312,14 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
 
         </div>
       ) : (
-        /* STANDARD ARTICLE LAYOUT */
         <div class={`bg-white rounded-3xl p-5 sm:p-8 md:p-10 shadow-sm border border-slate-200/80 space-y-8 ${hasWideExtras ? '' : 'max-w-4xl mx-auto'}`}>
-          {page?.lead && (
+          {page.lead && (
             <div class="p-4 sm:p-5 rounded-2xl bg-alajarvi-50 border border-alajarvi-100 text-alajarvi-900 font-medium text-base leading-relaxed">
               {page.lead}
             </div>
           )}
 
-          {/* Tilasto- / Numerokortit (Stats) */}
-          {page?.stats && page.stats.length > 0 && (
+          {page.stats && page.stats.length > 0 && (
             <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 my-6">
               {page.stats.map((st: any) => (
                 <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-1 shadow-xs">
@@ -366,8 +331,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
             </div>
           )}
 
-          {/* Info- / Korostuskortit (Features) */}
-          {page?.features && page.features.length > 0 && (
+          {page.features && page.features.length > 0 && (
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 my-6">
               {page.features.map((feat: any) => (
                 <div class="p-5 rounded-2xl bg-alajarvi-50/60 border border-alajarvi-100 space-y-2">
@@ -391,13 +355,13 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
             </div>
           )}
 
-          {page?.body && page.body.length > 0 ? (
+          {page.body && page.body.length > 0 ? (
             <PortableText value={page.body} />
-          ) : !page?.lead && !page?.documentLinks?.length && !page?.gallery?.length && !page?.sections?.length ? (
+          ) : !page.lead && !page.documentLinks?.length && !page.gallery?.length && !page.sections?.length ? (
             <p class="text-center text-slate-500 text-sm py-8">Sisältöä päivitetään pian.</p>
           ) : null}
 
-          {page?.sections && page.sections.length > 0 && (
+          {page.sections && page.sections.length > 0 && (
             <div class="space-y-8 pt-4">
               {page.sections.map((sec: any, idx: number) => {
                 const secId = sec.anchorId || `aihe-${idx + 1}`;
@@ -466,7 +430,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
             </div>
           )}
 
-          {page?.gallery && page.gallery.length > 0 && (
+          {page.gallery && page.gallery.length > 0 && (
             <div class="mt-8 pt-8 border-t border-slate-200 space-y-6">
               <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
                 <ImageIcon class="w-5 h-5 text-alajarvi-600" />
@@ -515,3 +479,4 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
 
   <Footer />
 </Layout>
+)}

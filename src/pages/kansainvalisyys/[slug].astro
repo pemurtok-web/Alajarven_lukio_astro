@@ -29,6 +29,11 @@ const pageTitle = page?.title || 'Kansainvälisyys';
 const pageLead = page?.lead || 'Kansainvälistä toimintaa Alajärven lukiossa.';
 const pageSections = page?.sections && page.sections.length > 0 ? page.sections : [];
 const pageGallery = page?.gallery && page.gallery.length > 0 ? page.gallery : [];
+// "Perinteinen tekstiartikkeli" -asettelussa leipäteksti on rajattu kapeaksi lukupalstaksi
+// luettavuuden vuoksi. Jos sivulla EI ole muuta täysleveää sisältöä (tilastot/infokortit/
+// osiot/galleria) täyttämässä korttia, kavennetaan koko kortti tekstin levyiseksi, jotta
+// oikealle ei jää tyhjää tilaa. Jos näitä osioita on, kortti pidetään täysleveänä niitä varten.
+const hasWideExtras = pageSections.length > 0 || pageGallery.length > 0 || (page?.stats && page.stats.length > 0) || (page?.features && page.features.length > 0);
 const heroImg = page?.heroBgImage ? responsiveImage(page.heroBgImage, [640, 960, 1280, 1600, 1920]) : null;
 const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 1280, 1600, 1920]) : null;
 ---
@@ -286,7 +291,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
         </div>
       ) : (
         /* STANDARD ARTICLE LAYOUT */
-        <div class="bg-white rounded-3xl p-5 sm:p-8 md:p-10 shadow-sm border border-slate-200/80 space-y-8">
+        <div class={`bg-white rounded-3xl p-5 sm:p-8 md:p-10 shadow-sm border border-slate-200/80 space-y-8 ${hasWideExtras ? '' : 'max-w-4xl mx-auto'}`}>
           {page?.lead && (
             <div class="p-4 sm:p-5 rounded-2xl bg-alajarvi-50 border border-alajarvi-100 text-alajarvi-900 font-medium text-base leading-relaxed">
               {page.lead}

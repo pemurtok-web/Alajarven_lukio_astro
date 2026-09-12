@@ -13,12 +13,23 @@ const { anchors, title = 'Sivun osiot' } = Astro.props;
 ---
 
 <nav id="long-page-nav" class="sticky z-30 bg-white/95 backdrop-blur-md rounded-2xl shadow-md border border-slate-200/80 p-3 sm:p-4 mb-8" style="top: var(--header-h, 132px)">
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
-    <span class="text-xs font-bold uppercase tracking-wider text-alajarvi-700 flex items-center gap-2 shrink-0">
-      <span class="w-2 h-2 rounded-full bg-alajarvi-500 animate-pulse"></span>
-      {title}
-    </span>
-    <div class="flex flex-wrap gap-2 max-w-full">
+  <div class="flex flex-col md:flex-row md:items-start justify-between gap-2.5">
+    <button
+      type="button"
+      id="long-page-nav-toggle"
+      class="flex items-center justify-between gap-2 w-full md:w-auto md:shrink-0 md:h-7 md:pointer-events-none"
+      aria-expanded="false"
+      aria-controls="long-page-nav-list"
+    >
+      <span class="text-xs font-bold uppercase tracking-wider text-alajarvi-700 flex items-center gap-2 shrink-0">
+        <span class="w-2 h-2 rounded-full bg-alajarvi-500 animate-pulse"></span>
+        {title}
+      </span>
+      <svg id="long-page-nav-chevron" class="w-4 h-4 text-alajarvi-600 transition-transform duration-200 shrink-0 md:hidden" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="5 7.5 10 12.5 15 7.5"></polyline>
+      </svg>
+    </button>
+    <div id="long-page-nav-list" class="gap-2 max-w-full mt-2.5 md:mt-0">
       {anchors.map(item => (
         <a
           href={`#${item.id}`}
@@ -30,6 +41,27 @@ const { anchors, title = 'Sivun osiot' } = Astro.props;
     </div>
   </div>
 </nav>
+
+<style>
+  #long-page-nav-list {
+    display: none;
+    flex-direction: column;
+  }
+  #long-page-nav-list.is-open {
+    display: flex;
+  }
+  @media (min-width: 768px) {
+    #long-page-nav-list {
+      display: flex !important;
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin-top: 0;
+    }
+    #long-page-nav-chevron {
+      display: none;
+    }
+  }
+</style>
 
 <script>
   function positionLongPageNav() {
@@ -49,6 +81,27 @@ const { anchors, title = 'Sivun osiot' } = Astro.props;
   }
   positionLongPageNav();
   window.addEventListener('resize', positionLongPageNav);
+
+  const toggleBtn = document.getElementById('long-page-nav-toggle');
+  const list = document.getElementById('long-page-nav-list');
+  const chevron = document.getElementById('long-page-nav-chevron');
+  function setOpen(open: boolean) {
+    if (!list || !toggleBtn) return;
+    list.classList.toggle('is-open', open);
+    toggleBtn.setAttribute('aria-expanded', String(open));
+    if (chevron) chevron.style.transform = open ? 'rotate(180deg)' : '';
+  }
+  if (toggleBtn && list) {
+    toggleBtn.addEventListener('click', () => {
+      setOpen(!list.classList.contains('is-open'));
+    });
+    list.addEventListener('click', (e) => {
+      if (e.target instanceof Element && e.target.closest('a') && window.innerWidth < 768) {
+        setOpen(false);
+      }
+    });
+  }
+
   const headerEl = document.querySelector('header');
   const breadcrumbEl = document.querySelector('[data-page-breadcrumb]');
   if (headerEl) new ResizeObserver(positionLongPageNav).observe(headerEl);

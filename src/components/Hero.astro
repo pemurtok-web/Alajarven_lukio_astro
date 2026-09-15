@@ -3,6 +3,11 @@ import { ArrowRight, Sparkles, Globe, Compass, GraduationCap, Users } from 'luci
 import { urlFor, responsiveImage } from '../lib/sanity';
 import HeroWave from './HeroWave.astro';
 
+interface Stat {
+  value: string;
+  label: string;
+}
+
 interface Props {
   badge?: string;
   title?: string;
@@ -10,7 +15,16 @@ interface Props {
   heroBgImage?: any;
   heroBgImageMobile?: any;
   heroImage?: any;
+  heroStats?: Stat[];
 }
+
+const DEFAULT_STATS: Stat[] = [
+  { value: '100%', label: 'Yksilöllinen OPO-ohjaus' },
+  { value: 'Japani', label: 'Jiyu Gakuen -vaihto' },
+  { value: '0 €', label: 'Maksuton 2. aste' },
+];
+
+const STAT_COLOR_CLASSES = ['text-white', 'text-sky-300', 'text-amber-300'];
 
 const {
   badge = 'Laadukasta lukio-opetusta Alajärvellä',
@@ -19,7 +33,10 @@ const {
   heroBgImage,
   heroBgImageMobile,
   heroImage,
+  heroStats,
 } = Astro.props;
+
+const stats = heroStats && heroStats.length > 0 ? heroStats : DEFAULT_STATS;
 
 const bgImgMobile = responsiveImage(heroBgImageMobile || heroBgImage, [480, 640, 800]);
 const bgImgDesktop = responsiveImage(heroBgImage, [640, 960, 1280, 1600, 1920]);
@@ -43,7 +60,7 @@ const mainImg = responsiveImage(heroImage, [400, 600, 800]);
           fetchpriority="high"
         />
       </picture>
-      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/65 to-slate-950/50 lg:bg-gradient-to-r lg:from-slate-950/88 lg:from-0% lg:via-slate-950/80 lg:via-58% lg:to-transparent lg:to-90%"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-alajarvi-950/85 via-alajarvi-950/65 to-alajarvi-950/50 lg:bg-gradient-to-r lg:from-alajarvi-950/88 lg:from-0% lg:via-alajarvi-950/80 lg:via-58% lg:to-transparent lg:to-90%"></div>
     </div>
   )}
   <!-- Subtle Background Pattern -->
@@ -91,19 +108,13 @@ const mainImg = responsiveImage(heroImage, [400, 600, 800]);
         </div>
 
         <!-- Quick Highlight Badges -->
-        <div class="animate-fade-in-up pt-6 border-t border-white/10 grid grid-cols-3 gap-2 sm:gap-4 text-center sm:text-left" style="animation-delay: 400ms">
-          <div class="space-y-0.5 sm:space-y-1">
-            <div class="text-xl sm:text-3xl font-extrabold font-display text-white">100%</div>
-            <div class="text-[11px] sm:text-xs text-slate-300">Yksilöllinen OPO-ohjaus</div>
-          </div>
-          <div class="space-y-0.5 sm:space-y-1">
-            <div class="text-xl sm:text-3xl font-extrabold font-display text-sky-300">Japani</div>
-            <div class="text-[11px] sm:text-xs text-slate-300">Jiyu Gakuen -vaihto</div>
-          </div>
-          <div class="space-y-0.5 sm:space-y-1">
-            <div class="text-xl sm:text-3xl font-extrabold font-display text-amber-300">0 €</div>
-            <div class="text-[11px] sm:text-xs text-slate-300">Maksuton 2. aste</div>
-          </div>
+        <div class="animate-fade-in-up pt-6 border-t border-white/10 grid gap-2 sm:gap-4 text-center sm:text-left" style={`animation-delay: 400ms; grid-template-columns: repeat(${stats.length}, minmax(0, 1fr))`}>
+          {stats.map((stat, i) => (
+            <div class="space-y-0.5 sm:space-y-1">
+              <div class={`text-xl sm:text-3xl font-extrabold font-display ${STAT_COLOR_CLASSES[i % STAT_COLOR_CLASSES.length]}`}>{stat.value}</div>
+              <div class="text-[11px] sm:text-xs text-slate-300">{stat.label}</div>
+            </div>
+          ))}
         </div>
       </div>
 

@@ -57,6 +57,30 @@ export const homepageSchema = defineType({
       options: { hotspot: true },
       fields: [{ name: 'alt', type: 'string', title: 'Alt-teksti' }],
     }),
+    defineField({
+      name: 'heroStats',
+      title: 'Hero - Tilastolaatikot (Hero-kuvan alla olevat 3 lukua)',
+      description: '💡 Näytä esim. tunnuslukuja tai etuja. Suositus: täsmälleen 3 kohtaa, jotta ulkoasu pysyy siistinä.',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          title: 'Tilasto',
+          fields: [
+            { name: 'value', type: 'string', title: 'Luku / lyhyt teksti', description: 'Esim. "100%", "Japani" tai "0 €"' },
+            { name: 'label', type: 'string', title: 'Selite' },
+          ],
+          preview: {
+            select: { title: 'value', subtitle: 'label' },
+          },
+        },
+      ],
+      initialValue: [
+        { value: '100%', label: 'Yksilöllinen OPO-ohjaus' },
+        { value: 'Japani', label: 'Jiyu Gakuen -vaihto' },
+        { value: '0 €', label: 'Maksuton 2. aste' },
+      ],
+    }),
 
     // --- ESITTELYOSIO (Kuva + Teksti) ---
     defineField({

@@ -316,6 +316,7 @@ export interface HomepageData {
   heroBgImage?: any;
   heroBgImageMobile?: any;
   heroImage?: any;
+  heroStats?: { value: string; label: string }[];
   introBadge?: string;
   introTitle?: string;
   introDescription?: string;
@@ -327,6 +328,11 @@ const MOCK_HOMEPAGE: HomepageData = {
   heroBadge: 'Laadukasta lukio-opetusta Alajärvellä',
   heroTitle: 'Rakenna tulevaisuutesi Alajärven lukiossa',
   heroDescription: 'Tarjoamme turvallisen, yhteisöllisen ja nykyaikaisen oppimisympäristön. Meillä saat yksilöllistä ohjausta, vahvat valmiudet jatko-opintoihin sekä ainutlaatuisia kansainvälisyyskokemuksia muun muassa Japanin vaihto-ohjelmissa.',
+  heroStats: [
+    { value: '100%', label: 'Yksilöllinen OPO-ohjaus' },
+    { value: 'Japani', label: 'Jiyu Gakuen -vaihto' },
+    { value: '0 €', label: 'Maksuton 2. aste' },
+  ],
   introBadge: 'Miksi valita Alajärven lukio?',
   introTitle: 'Moderni lukio, jossa sinun tavoitteesi ovat keskiössä',
   introDescription: 'Alajärven lukio tarjoaa erinomaiset puitteet yleissivistävälle lukio-opiskelulle. Meillä yhdistyvät monipuolinen opintotarjotin, joustavat opintopolut sekä innostavat oppimisympäristöt.',
@@ -343,7 +349,7 @@ export async function getHomepage(): Promise<HomepageData> {
   try {
     const data = await sanityClient.fetch<HomepageData>(
       `*[_type == "homepage"] | order(_updatedAt desc)[0]{
-        heroBadge, heroTitle, heroDescription, heroBgImage, heroBgImageMobile, heroImage, introBadge, introTitle, introDescription, introImage, features
+        heroBadge, heroTitle, heroDescription, heroBgImage, heroBgImageMobile, heroImage, heroStats, introBadge, introTitle, introDescription, introImage, features
       }`
     );
     return data || MOCK_HOMEPAGE;

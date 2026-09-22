@@ -2,6 +2,9 @@
   "name": "alajarven-lukio-astro",
   "type": "module",
   "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "astro dev --port 4324 --host 0.0.0.0",
     "studio": "sanity dev --port 3333 --host 0.0.0.0",
@@ -11,16 +14,16 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/netlify": "^5.5.0",
-    "@astrojs/react": "^3.6.0",
-    "@astrojs/tailwind": "^5.1.0",
+    "@astrojs/netlify": "^8.2.6",
+    "@astrojs/react": "^6.0.6",
+    "@astrojs/tailwind": "^6.0.2",
     "@sanity/astro": "^3.5.1",
     "@sanity/client": "^7.0.0",
     "@sanity/image-url": "^1.0.2",
     "@sanity/locale-fi-fi": "^1.1.40",
     "@sanity/types": "^6.12.0",
     "@types/styled-components": "^5.1.34",
-    "astro": "^4.15.0",
+    "astro": "^7.3.3",
     "lucide-astro": "^0.438.0",
     "react": "^19.2.2",
     "react-dom": "^19.2.2",

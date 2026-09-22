@@ -209,7 +209,6 @@ const visibleEvents = calendarCells.flatMap((c) => c.events);
         {visibleEvents.map((evt) => {
           const modalId = `event-modal-${evt._id}`;
           return (
-              <!-- Event Details Modal -->
               <div
                 id={modalId}
                 class="event-modal-overlay fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md hidden items-center justify-center p-4 sm:p-6 overflow-y-auto"

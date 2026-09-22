@@ -14,8 +14,13 @@ export const quicklinkSchema = defineType({
     defineField({
       name: 'url',
       title: 'URL-osoite',
+      description: 'Ulkoinen osoite (https://...) tai sisäinen polku alkaen kauttaviivalla (esim. /opiskelijalle/opetussuunnitelma)',
       type: 'url',
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) =>
+        Rule.required().uri({
+          allowRelative: true,
+          scheme: ['http', 'https'],
+        }),
     }),
     defineField({
       name: 'description',

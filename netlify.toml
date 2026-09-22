@@ -5,6 +5,7 @@
 [build.environment]
   PUBLIC_SANITY_PROJECT_ID = "8idyoy2x"
   PUBLIC_SANITY_DATASET = "production"
+  NODE_VERSION = "22"
 
 # SPA redirect for embedded Sanity Studio (/studio)
 [[redirects]]

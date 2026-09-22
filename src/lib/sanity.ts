@@ -8,6 +8,8 @@ export const sanityClient = projectId
   ? createClient({
       projectId,
       dataset,
+      // Live API, not the CDN — Sanity edits must show up on the public site near-
+      // instantly, and the CDN can lag behind a publish by tens of seconds.
       useCdn: false,
       apiVersion: '2024-01-01',
     })

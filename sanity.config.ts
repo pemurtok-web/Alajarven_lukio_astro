@@ -10,7 +10,6 @@ const pageTemplates = [
   { id: 'page-opinto-ohjaus', title: 'Opinto-ohjaus (OPO)', slug: 'opinto-ohjaus' },
   { id: 'page-opiskeluhuolto', title: 'Opiskeluhuolto', slug: 'opiskeluhuolto' },
   { id: 'page-yo-kirjoitukset', title: 'YO-kirjoitukset', slug: 'yo-kirjoitukset' },
-  { id: 'page-lomakkeet', title: 'Lomakkeet & Ohjeet', slug: 'lomakkeet' },
   { id: 'page-kodin-ja-koulun-yhteistyo', title: 'Kodin ja koulun yhteistyö', slug: 'kodin-ja-koulun-yhteistyo' },
   { id: 'page-opetussuunnitelma', title: 'Opetussuunnitelma', slug: 'opetussuunnitelma' },
   { id: 'page-ruokalista', title: 'Ruokalista', slug: 'ruokalista' },
@@ -97,8 +96,8 @@ export default defineConfig({
                               .title('🎓 YO-kirjoitukset')
                               .child(S.document().schemaType('page').documentId('page-yo-kirjoitukset').initialValueTemplate('tpl-page-yo-kirjoitukset')),
                             S.listItem()
-                              .title('📑 Lomakkeet & Ohjeet')
-                              .child(S.document().schemaType('page').documentId('page-lomakkeet').initialValueTemplate('tpl-page-lomakkeet')),
+                              .title('📑 Lomakkeet (ladattavat lomakkeet)')
+                              .child(S.document().schemaType('formsPage').documentId('formsPage')),
                             S.listItem()
                               .title('🏡 Kodin ja koulun yhteistyö')
                               .child(S.document().schemaType('page').documentId('page-kodin-ja-koulun-yhteistyo').initialValueTemplate('tpl-page-kodin-ja-koulun-yhteistyo')),

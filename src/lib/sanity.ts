@@ -311,6 +311,51 @@ export async function getQuickLinks(): Promise<QuickLink[]> {
   }
 }
 
+export interface DownloadableForm {
+  _key: string;
+  title: string;
+  description?: string;
+  href: string;
+  isFile: boolean;
+  extension?: string;
+}
+
+export interface FormsPageData {
+  lead?: string;
+  downloadableForms: DownloadableForm[];
+}
+
+export async function getFormsPage(): Promise<FormsPageData> {
+  if (!sanityClient) return { downloadableForms: [] };
+  try {
+    const data = await sanityClient.fetch<{ lead?: string; downloadableForms?: any[] } | null>(
+      `*[_id == "formsPage"][0]{
+        lead,
+        downloadableForms[]{
+          _key, title, description, url,
+          "fileUrl": file.asset->url,
+          "fileName": file.asset->originalFilename,
+          "extension": file.asset->extension
+        }
+      }`
+    );
+    const downloadableForms = (data?.downloadableForms ?? [])
+      .filter((f) => f?.title && (f.fileUrl || f.url))
+      .map((f) => ({
+        _key: f._key,
+        title: f.title,
+        description: f.description,
+        // ?dl= makes the Sanity CDN serve the file as a download with its original name.
+        href: f.fileUrl ? `${f.fileUrl}?dl=${encodeURIComponent(f.fileName || '')}` : f.url,
+        isFile: Boolean(f.fileUrl),
+        extension: f.fileUrl ? f.extension : undefined,
+      }));
+    return { lead: data?.lead, downloadableForms };
+  } catch (e) {
+    return { downloadableForms: [] };
+  }
+}
+
 export interface HomepageData {
   heroBadge?: string;
   heroTitle?: string;

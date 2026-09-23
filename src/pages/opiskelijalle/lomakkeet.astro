@@ -3,85 +3,33 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import HeroWave from '../../components/HeroWave.astro';
+import { getFormsPage } from '../../lib/sanity';
 import {
   FileText,
   ChevronRight,
   Send,
   ExternalLink,
+  Download,
   Award,
-  ClipboardList,
-  Camera,
-  CalendarOff,
-  FileSignature,
   GraduationCap,
   Info,
 } from 'lucide-astro';
 
 const pageTitle = 'Lomakkeita';
-const pageLead = 'Osa lomakkeista voi täyttää suoraan verkossa. Muut lomakkeet ovat ladattavia tiedostoja.';
+const formsPage = await getFormsPage();
+const pageLead =
+  formsPage.lead?.trim() ||
+  'Ylioppilaskirjoituksiin ilmoittaudutaan verkossa. Muut lomakkeet ladataan, täytetään ja palautetaan koululle.';
 
-// Sähköiset lomakkeet — voi täyttää ja lähettää suoraan tällä sivustolla.
-const sahkoisetLomakkeet = [
-  {
-    icon: Award,
-    title: 'Ylioppilaskirjoituksiin ilmoittautuminen',
-    description: 'Ensimmäistä kertaa kirjoittaville sekä uutta kirjoituskertaa varten.',
-    href: '/opiskelijalle/yo-ilmoittautuminen',
-  },
-  {
-    icon: ClipboardList,
-    title: 'Ilmoittautuminen uusintaan',
-    description: 'Uusintakoe, rästikoe tai itsenäisen kurssin koe.',
-    href: '/opiskelijalle/ilmoittautuminen-uusintaan',
-  },
-  {
-    icon: CalendarOff,
-    title: 'Loma-anomus (yli viikko)',
-    description: 'Yli viikon mittainen poissaolo, jonka rehtori päättää.',
-    href: '/opiskelijalle/loma-anomus',
-  },
-  {
-    icon: Camera,
-    title: 'Valokuvauslupa',
-    description: 'Lupa opiskelijan kuvaamiseen ja kuvien julkaisemiseen.',
-    href: '/opiskelijalle/valokuvauslupa',
-  },
-];
+// Ainoa sähköisesti täytettävä lomake (koulun linjaus). Muut lomakkeet ovat ladattavia
+// tiedostoja, joita ylläpitäjä hallinnoi Sanityssä (formsPage-dokumentti).
+const yoLomake = {
+  title: 'Ylioppilaskirjoituksiin ilmoittautuminen',
+  description: 'Ensimmäistä kertaa kirjoittaville sekä uutta kirjoituskertaa varten.',
+  href: '/opiskelijalle/yo-ilmoittautuminen',
+};
 
-// Ladattavat / ulkoiset lomakkeet, joissa on useamman osapuolen allekirjoitus tai jotka
-// eivät ole koulun omia lomakkeita — pysyvät toistaiseksi PDF- tai ulkoisina linkkeinä.
-const ladattavatLomakkeet = [
-  {
-    icon: FileSignature,
-    title: 'Itsenäisen opiskelun sopimus',
-    description: 'Opettajan, opiskelijan ja rehtorin yhdessä hyväksymä sopimus kurssin suorittamisesta.',
-    href: 'https://drive.google.com/file/d/10hAclwe8qHwXXK6XixqxQAXu5vA4CMuL/view?usp=sharing',
-  },
-  {
-    icon: FileText,
-    title: 'Opintotukihakemus (Kela)',
-    description: 'Kelan oma virallinen lomake opintotuen hakemiseen.',
-    href: 'https://www.kela.fi/documents/10192/3861304/OT1.pdf',
-  },
-  {
-    icon: FileText,
-    title: 'Todistus opiskelijakortin saamiseksi',
-    description: 'Valmis todistuspohja opiskelijakorttia varten.',
-    href: 'https://assets.ctfassets.net/lt6mvg8ztynj/2gu1I8vIrZbm9ZgNyligy0/9a42facab6541ad26f95bb95aaa532f3/todistus_opiskelijakortin_saamiseksi_fi_2016.pdf',
-  },
-  {
-    icon: FileText,
-    title: 'Hakijan valintakortti',
-    description: 'Lomake lukioon hakevalle.',
-    href: 'https://drive.google.com/file/d/1olIzKbCJ9BlvJHqQO6oL19DNsN_4h0yK/view?usp=sharing',
-  },
-  {
-    icon: FileText,
-    title: 'Valintakortti',
-    description: 'Ylioppilaskirjoitusten valvontaan liittyvä lomake.',
-    href: 'https://drive.google.com/file/d/1dofiQ5Ydbun13o9Um7WQ3nxa_df-IEQe/view?usp=sharing',
-  },
-];
+const ladattavatLomakkeet = formsPage.downloadableForms;
 ---
 
 <Layout
@@ -124,7 +72,7 @@ const ladattavatLomakkeet = [
         <p class="text-sm text-slate-700">
           <strong class="text-slate-900">Yksittäisten tuntien poissaolo</strong> ilmoitetaan suoraan kyseisen oppitunnin opettajalle, ja
           <strong class="text-slate-900">1–7 päivän poissaolo</strong> ryhmänohjaajalle <a href="https://alajarvi.inschool.fi" target="_blank" rel="noopener noreferrer" class="font-bold text-alajarvi-700 underline hover:text-alajarvi-900">Wilman</a> kautta —
-          ei tällä sivustolla. Alla oleva loma-anomus on tarkoitettu vain yli viikon poissaoloihin.
+          ei tällä sivustolla. Yli viikon poissaoloa haetaan rehtorilta loma-anomuksella.
         </p>
       </div>
 
@@ -136,34 +84,32 @@ const ladattavatLomakkeet = [
           </div>
           <div>
             <h2 class="font-display font-bold text-xl sm:text-2xl text-alajarvi-900">Täytä verkossa</h2>
-            <p class="text-xs sm:text-sm text-slate-500">Nämä lomakkeet voi täyttää ja lähettää suoraan tällä sivustolla.</p>
+            <p class="text-xs sm:text-sm text-slate-500">Tämän lomakkeen voi täyttää ja lähettää suoraan tällä sivustolla.</p>
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-          {sahkoisetLomakkeet.map((lomake) => (
-            <a
-              href={lomake.href}
-              class="group p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-sm hover:shadow-lg hover:border-emerald-300 transition-all flex flex-col gap-3"
-            >
-              <div class="flex items-start justify-between gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-alajarvi-50 text-alajarvi-600 flex items-center justify-center shrink-0 group-hover:bg-alajarvi-500 group-hover:text-white transition-colors">
-                  <lomake.icon class="w-5 h-5" />
-                </div>
-                <span class="shrink-0 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider">
-                  Sähköinen lomake
-                </span>
+          <a
+            href={yoLomake.href}
+            class="group p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-sm hover:shadow-lg hover:border-emerald-300 transition-all flex flex-col gap-3"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <div class="w-11 h-11 rounded-2xl bg-alajarvi-50 text-alajarvi-600 flex items-center justify-center shrink-0 group-hover:bg-alajarvi-500 group-hover:text-white transition-colors">
+                <Award class="w-5 h-5" />
               </div>
-              <div class="space-y-1 flex-grow">
-                <h3 class="font-bold text-slate-900 text-base group-hover:text-alajarvi-700 transition-colors">{lomake.title}</h3>
-                <p class="text-xs sm:text-sm text-slate-500">{lomake.description}</p>
-              </div>
-              <span class="inline-flex items-center gap-1.5 text-sm font-bold text-alajarvi-600 group-hover:gap-2.5 transition-all">
-                Täytä lomake
-                <ChevronRight class="w-4 h-4" />
+              <span class="shrink-0 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider">
+                Sähköinen lomake
               </span>
-            </a>
-          ))}
+            </div>
+            <div class="space-y-1 flex-grow">
+              <h3 class="font-bold text-slate-900 text-base group-hover:text-alajarvi-700 transition-colors">{yoLomake.title}</h3>
+              <p class="text-xs sm:text-sm text-slate-500">{yoLomake.description}</p>
+            </div>
+            <span class="inline-flex items-center gap-1.5 text-sm font-bold text-alajarvi-600 group-hover:gap-2.5 transition-all">
+              Täytä lomake
+              <ChevronRight class="w-4 h-4" />
+            </span>
+          </a>
         </div>
       </section>
 
@@ -174,32 +120,45 @@ const ladattavatLomakkeet = [
             <FileText class="w-5 h-5" />
           </div>
           <div>
-            <h2 class="font-display font-bold text-xl sm:text-2xl text-alajarvi-900">Ladattavat ja ulkoiset lomakkeet</h2>
-            <p class="text-xs sm:text-sm text-slate-500">Nämä lomakkeet tulostetaan tai vaativat useamman osapuolen allekirjoituksen.</p>
+            <h2 class="font-display font-bold text-xl sm:text-2xl text-alajarvi-900">Ladattavat lomakkeet</h2>
+            <p class="text-xs sm:text-sm text-slate-500">Lataa lomake, täytä se ja palauta allekirjoitettuna koululle.</p>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {ladattavatLomakkeet.map((lomake) => (
-            <a
-              href={lomake.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-alajarvi-300 shadow-sm hover:shadow-md flex items-center justify-between gap-3 transition-all"
-            >
-              <div class="flex items-center gap-3.5 min-w-0">
-                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 group-hover:bg-alajarvi-50 group-hover:text-alajarvi-600 transition-colors">
-                  <lomake.icon class="w-5 h-5" />
+        {ladattavatLomakkeet.length > 0 ? (
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {ladattavatLomakkeet.map((lomake) => (
+              <a
+                href={lomake.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-alajarvi-300 shadow-sm hover:shadow-md flex items-center justify-between gap-3 transition-all"
+              >
+                <div class="flex items-center gap-3.5 min-w-0">
+                  <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 group-hover:bg-alajarvi-50 group-hover:text-alajarvi-600 transition-colors">
+                    <FileText class="w-5 h-5" />
+                  </div>
+                  <div class="min-w-0">
+                    <h3 class="font-bold text-slate-900 text-sm group-hover:text-alajarvi-600 transition-colors">
+                      {lomake.title}
+                      {lomake.extension && (
+                        <span class="ml-1.5 px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-bold uppercase align-middle">{lomake.extension}</span>
+                      )}
+                    </h3>
+                    {lomake.description && <p class="text-xs text-slate-500 mt-0.5">{lomake.description}</p>}
+                  </div>
                 </div>
-                <div class="min-w-0">
-                  <h4 class="font-bold text-slate-900 text-sm group-hover:text-alajarvi-600 transition-colors truncate">{lomake.title}</h4>
-                  <p class="text-xs text-slate-500 mt-0.5">{lomake.description}</p>
-                </div>
-              </div>
-              <ExternalLink class="w-4 h-4 text-slate-400 shrink-0 group-hover:text-alajarvi-500 group-hover:scale-110 transition-all" />
-            </a>
-          ))}
-        </div>
+                {lomake.isFile ? (
+                  <Download class="w-4 h-4 text-slate-400 shrink-0 group-hover:text-alajarvi-500 group-hover:scale-110 transition-all" aria-label="Lataa tiedosto" />
+                ) : (
+                  <ExternalLink class="w-4 h-4 text-slate-400 shrink-0 group-hover:text-alajarvi-500 group-hover:scale-110 transition-all" aria-label="Avautuu uuteen välilehteen" />
+                )}
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p class="text-sm text-slate-500">Ladattavia lomakkeita ei ole vielä lisätty. Kysy lomakkeita tarvittaessa koulusihteeriltä.</p>
+        )}
       </section>
 
       <!-- WILMA -->

@@ -55,24 +55,74 @@ function renderChildren(block: any) {
     return text;
   }).join('');
 }
+
+// Portable Text stores list items as flat blocks; wrap consecutive items in real
+// <ul>/<ol> elements (nested by `level`) so numbering restarts per list.
+function renderListHtml(items: any[]): string {
+  let html = '';
+  const stack: { tag: string; level: number }[] = [];
+  for (const item of items) {
+    const content = renderChildren(item);
+    if (!content) continue;
+    const level = item.level || 1;
+    const tag = item.listItem === 'number' ? 'ol' : 'ul';
+    while (stack.length && stack[stack.length - 1].level > level) {
+      html += `</li></${stack.pop()!.tag}>`;
+    }
+    const top = stack[stack.length - 1];
+    if (top && top.level === level) {
+      if (top.tag !== tag) {
+        html += `</li></${stack.pop()!.tag}>`;
+      } else {
+        html += '</li>';
+      }
+    }
+    const current = stack[stack.length - 1];
+    if (!current || current.level < level) {
+      const listClass = tag === 'ol' ? 'list-decimal' : level > 1 ? 'list-[circle]' : 'list-disc';
+      html += `<${tag} class="${listClass} pl-6 space-y-1 text-slate-700 my-2">`;
+      stack.push({ tag, level });
+    }
+    html += `<li class="pl-1">${content}`;
+  }
+  while (stack.length) html += `</li></${stack.pop()!.tag}>`;
+  return html;
+}
+
+// Group the flat block array: runs of list items become one list node,
+// other blocks keep their original index (heading ids depend on it).
+const nodes: { block?: any; idx?: number; listHtml?: string }[] = [];
+if (Array.isArray(value)) {
+  let run: any[] = [];
+  const flush = () => {
+    if (run.length) {
+      const listHtml = renderListHtml(run);
+      if (listHtml) nodes.push({ listHtml });
+      run = [];
+    }
+  };
+  value.forEach((block: any, idx: number) => {
+    if (block?._type === 'block' && block.listItem) {
+      run.push(block);
+    } else {
+      flush();
+      nodes.push({ block, idx });
+    }
+  });
+  flush();
+}
 ---
 
 {value && Array.isArray(value) ? (
   <div class="prose prose-slate max-w-4xl prose-headings:font-display prose-headings:text-alajarvi-800 prose-a:text-alajarvi-600 hover:prose-a:text-alajarvi-800 prose-img:rounded-2xl overflow-x-auto break-words space-y-4">
-    {value.map((block: any, idx: number) => {
+    {nodes.map((node) => {
+      if (node.listHtml) {
+        return <Fragment set:html={node.listHtml} />;
+      }
+      const { block, idx } = node as { block: any; idx: number };
       if (block._type === 'block') {
         const htmlContent = renderChildren(block);
         if (!htmlContent) return null;
-
-        if (block.listItem) {
-          const indentClass = block.level > 2 ? 'ml-12' : block.level === 2 ? 'ml-6' : '';
-          if (block.listItem === 'bullet') {
-            return <li key={idx} class={`list-disc list-inside text-slate-700 mb-1 ${indentClass}`} set:html={htmlContent} />;
-          }
-          if (block.listItem === 'number') {
-            return <li key={idx} class={`list-decimal list-inside text-slate-700 mb-1 ${indentClass}`} set:html={htmlContent} />;
-          }
-        }
 
         if (block.style === 'h2') {
           const headingId = `heading-${idx}`;

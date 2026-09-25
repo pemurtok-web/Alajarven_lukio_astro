@@ -115,6 +115,8 @@ export interface QuickLink {
   description?: string;
   icon: string;
   order: number;
+  /** 'topbar' | 'cards' | 'both' — puuttuva arvo tulkitaan yläpalkiksi */
+  placement?: 'topbar' | 'cards' | 'both';
 }
 
 
@@ -231,6 +233,33 @@ const MOCK_QUICKLINKS: QuickLink[] = [
     url: 'https://eperusteet.opintopolku.fi',
     icon: 'book-open',
     order: 3
+  },
+  {
+    _id: 'mock-ql-4',
+    title: 'Opinto-opas',
+    url: '/opiskelijalle/opinto-opas',
+    description: 'Kurssit, opintojaksot ja valinnat',
+    icon: 'book-open',
+    order: 4,
+    placement: 'cards'
+  },
+  {
+    _id: 'mock-ql-5',
+    title: 'Opintotarjotin',
+    url: '/opiskelijalle/opintotarjotin',
+    description: 'Lukuvuoden opintojaksojen jaksotus',
+    icon: 'file-text',
+    order: 5,
+    placement: 'cards'
+  },
+  {
+    _id: 'mock-ql-6',
+    title: 'Työaika',
+    url: '/opiskelijalle/tyoaika',
+    description: 'Jaksot, lomat ja tärkeät päivät',
+    icon: 'clock',
+    order: 6,
+    placement: 'cards'
   }
 ];
 
@@ -301,7 +330,7 @@ export async function getQuickLinks(): Promise<QuickLink[]> {
   try {
     const links = await sanityClient.fetch<QuickLink[]>(
       `*[_type == "quicklink"] | order(order asc){
-        _id, title, url, description, icon, order
+        _id, title, url, description, icon, order, placement
       }`
     );
 
@@ -309,6 +338,18 @@ export async function getQuickLinks(): Promise<QuickLink[]> {
   } catch (e) {
     return MOCK_QUICKLINKS;
   }
+}
+
+/** Sivun ylälaidan tumman palkin linkit (Wilma, Ruokalista, ...) */
+export async function getTopbarLinks(): Promise<QuickLink[]> {
+  const links = await getQuickLinks();
+  return links.filter(l => !l.placement || l.placement === 'topbar' || l.placement === 'both');
+}
+
+/** Etusivun hero-osion alla näkyvät isot kortit */
+export async function getHomeCardLinks(): Promise<QuickLink[]> {
+  const links = await getQuickLinks();
+  return links.filter(l => l.placement === 'cards' || l.placement === 'both');
 }
 
 export interface DownloadableForm {

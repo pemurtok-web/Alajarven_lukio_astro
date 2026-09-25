@@ -1,8 +1,8 @@
 ---
-import { getQuickLinks, getSiteSettings, getAllPages, urlForLogo, getImageDimensions } from '../lib/sanity';
+import { getTopbarLinks, getSiteSettings, getAllPages, urlForLogo, getImageDimensions } from '../lib/sanity';
 import { ExternalLink, ChevronDown, Menu, X, BookOpen, Utensils, GraduationCap, Home, Globe, Megaphone, Phone, FileText } from 'lucide-astro';
 
-const quickLinks = await getQuickLinks();
+const quickLinks = await getTopbarLinks();
 const siteSettings = await getSiteSettings();
 const allPages = await getAllPages();
 
@@ -18,8 +18,7 @@ const opiskelijallePages = [
   { title: 'YO-kirjoitukset', href: '/opiskelijalle/yo-kirjoitukset' },
   { title: 'Lomakkeet', href: '/opiskelijalle/lomakkeet' },
   { title: 'Kodin ja koulun yhteistyö', href: '/opiskelijalle/kodin-ja-koulun-yhteistyo' },
-  { title: 'Opetussuunnitelma', href: '/opiskelijalle/opetussuunnitelma' },
-  { title: 'Ruokalista', href: '/opiskelijalle/ruokalista' },
+  // Opetussuunnitelma ja Ruokalista ovat yläpalkin pikalinkeissä (Sanity: Pikalinkit)
 ];
 
 const kansainvalisyysPages = [
@@ -221,6 +220,25 @@ const topLevelPages = allPages
   <!-- Mobile Dropdown Menu -->
   <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-100 bg-white/98 backdrop-blur-lg shadow-2xl max-h-[85vh] flex flex-col">
     <div class="flex flex-col px-4 pt-3 pb-2 overflow-y-auto divide-y divide-slate-100">
+      <!-- Pikalinkit: kapealla näytöllä yläpalkki ei mahdu kokonaan näkyviin -->
+      {quickLinks.length > 0 && (
+        <div class="flex flex-wrap gap-2 px-3 pb-3">
+          {quickLinks.map(link => (
+            <a
+              href={link.url}
+              target={link.url?.startsWith('/') ? '_self' : '_blank'}
+              rel={link.url?.startsWith('/') ? undefined : 'noopener noreferrer'}
+              class="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-alajarvi-50 hover:bg-alajarvi-100 text-alajarvi-700 text-sm font-semibold border border-alajarvi-100 transition-colors"
+            >
+              {link.icon === 'wilma' && <GraduationCap class="w-4 h-4" />}
+              {link.icon === 'utensils' && <Utensils class="w-4 h-4" />}
+              {link.icon === 'book-open' && <BookOpen class="w-4 h-4" />}
+              <span>{link.title}</span>
+              {!link.url?.startsWith('/') && <ExternalLink class="w-3.5 h-3.5 opacity-70" />}
+            </a>
+          ))}
+        </div>
+      )}
       <a href="/" class="flex items-center gap-3 px-3 py-3 text-base font-semibold text-slate-800 hover:bg-alajarvi-50 hover:text-alajarvi-600 rounded-xl transition-colors">
         <Home class="w-[18px] h-[18px] text-alajarvi-400 shrink-0" />
         Etusivu

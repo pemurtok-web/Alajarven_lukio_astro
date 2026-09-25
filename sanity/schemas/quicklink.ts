@@ -23,10 +23,25 @@ export const quicklinkSchema = defineType({
         }),
     }),
     defineField({
+      name: 'placement',
+      title: 'Missä linkki näytetään?',
+      description: 'Yläpalkki = sivun ylälaidan tumma palkki (kaikilla sivuilla). Etusivun kortit = isot kortit etusivun kuvan alla.',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Yläpalkissa', value: 'topbar' },
+          { title: 'Etusivun korteissa', value: 'cards' },
+          { title: 'Molemmissa', value: 'both' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'topbar',
+    }),
+    defineField({
       name: 'description',
       title: 'Lyhyt kuvausteksti',
       type: 'string',
-      initialValue: 'Avaa virallinen verkkopalvelu',
+      description: 'Näkyy etusivun kortissa otsikon alla. Jos tyhjä, käytetään oletustekstiä.',
     }),
 
     defineField({
@@ -37,7 +52,9 @@ export const quicklinkSchema = defineType({
         list: [
           { title: 'Wilma', value: 'wilma' },
           { title: 'Ruokalista', value: 'utensils' },
-          { title: 'Opetussuunnitelma', value: 'book-open' },
+          { title: 'Kirja (Opetussuunnitelma / Opinto-opas)', value: 'book-open' },
+          { title: 'Asiakirja (Opintotarjotin)', value: 'file-text' },
+          { title: 'Kello (Työaika)', value: 'clock' },
           { title: 'Muu linkki', value: 'link' }
         ]
       }
@@ -59,7 +76,12 @@ export const quicklinkSchema = defineType({
   preview: {
     select: {
       title: 'title',
-      subtitle: 'url',
+      url: 'url',
+      placement: 'placement',
+    },
+    prepare({ title, url, placement }) {
+      const where = placement === 'cards' ? 'Etusivun kortit' : placement === 'both' ? 'Yläpalkki + kortit' : 'Yläpalkki';
+      return { title, subtitle: `${where} · ${url ?? ''}` };
     },
   },
 });

@@ -1,17 +1,20 @@
 ---
-import { getQuickLinks } from '../lib/sanity';
-import { ExternalLink, GraduationCap, Utensils, BookOpen, Link2 } from 'lucide-astro';
+import { getHomeCardLinks } from '../lib/sanity';
+import { ExternalLink, ArrowRight, GraduationCap, Utensils, BookOpen, FileText, Clock, Link2 } from 'lucide-astro';
 
-const links = await getQuickLinks();
+const links = await getHomeCardLinks();
 ---
 
+{links.length > 0 && (
 <section class="max-w-7xl mx-auto px-4 sm:px-8 mt-6 sm:-mt-8 pb-16 sm:pb-20 relative z-20">
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    {links.map((item) => (
+    {links.map((item) => {
+      const isInternal = item.url?.startsWith('/');
+      return (
       <a
         href={item.url}
-        target={item.url?.startsWith('/') ? '_self' : '_blank'}
-        rel={item.url?.startsWith('/') ? undefined : 'noopener noreferrer'}
+        target={isInternal ? '_self' : '_blank'}
+        rel={isInternal ? undefined : 'noopener noreferrer'}
         class="group p-6 rounded-2xl bg-white shadow-xl shadow-slate-200/50 border border-slate-100 hover:border-alajarvi-300 hover:shadow-2xl hover:shadow-alajarvi-500/10 transition-all duration-300 flex items-center justify-between transform hover:-translate-y-1"
       >
         <div class="flex items-center gap-4">
@@ -19,21 +22,25 @@ const links = await getQuickLinks();
             {item.icon === 'wilma' && <GraduationCap class="w-7 h-7" />}
             {item.icon === 'utensils' && <Utensils class="w-7 h-7" />}
             {item.icon === 'book-open' && <BookOpen class="w-7 h-7" />}
-            {item.icon === 'link' && <Link2 class="w-7 h-7" />}
+            {item.icon === 'file-text' && <FileText class="w-7 h-7" />}
+            {item.icon === 'clock' && <Clock class="w-7 h-7" />}
+            {(!item.icon || item.icon === 'link') && <Link2 class="w-7 h-7" />}
           </div>
           <div>
             <h3 class="font-display font-bold text-lg text-slate-800 group-hover:text-alajarvi-600 transition-colors">
               {item.title}
             </h3>
-            <p class="text-xs text-slate-500 mt-0.5">{item.description || 'Avaa virallinen verkkopalvelu'}</p>
+            <p class="text-xs text-slate-500 mt-0.5">{item.description || (isInternal ? 'Avaa sivu' : 'Avaa virallinen verkkopalvelu')}</p>
 
           </div>
         </div>
 
-        <div class="w-9 h-9 rounded-full bg-slate-100 group-hover:bg-alajarvi-100 text-slate-400 group-hover:text-alajarvi-600 flex items-center justify-center transition-colors">
-          <ExternalLink class="w-4 h-4" />
+        <div class="w-9 h-9 rounded-full bg-slate-100 group-hover:bg-alajarvi-100 text-slate-400 group-hover:text-alajarvi-600 flex items-center justify-center transition-colors shrink-0">
+          {isInternal ? <ArrowRight class="w-4 h-4" /> : <ExternalLink class="w-4 h-4" />}
         </div>
       </a>
-    ))}
+      );
+    })}
   </div>
 </section>
+)}

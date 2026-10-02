@@ -20,6 +20,11 @@ const features = (homepage.features && homepage.features.length > 0)
       { title: 'Korkeakouluyhteistyö', description: 'Väyläopintoja ja kurssikurkkauksia yliopistoihin ja amk:eihin.' }
     ];
 
+// Same sources as <Hero>'s background <picture>, preloaded so the LCP image starts
+// downloading with the HTML instead of after the parser reaches the <img>.
+const heroPreloadMobile = responsiveImage(homepage.heroBgImageMobile || homepage.heroBgImage, [480, 640, 800]);
+const heroPreloadDesktop = responsiveImage(homepage.heroBgImage, [640, 960, 1280, 1600, 1920]);
+
 const gridColsClass =
   features.length >= 8
     ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
@@ -37,6 +42,14 @@ const gridColsClass =
   description={homepage.introDescription || homepage.heroDescription || 'Alajärven lukio tarjoaa laadukasta ja monipuolista yleislukio-opetusta, vahvaa opinto-ohjausta ja laajoja kansainvälisyysmahdollisuuksia Alajärvellä.'}
   image={introImg?.src}
 >
+  <Fragment slot="head">
+    {heroPreloadMobile && (
+      <link rel="preload" as="image" media="(max-width: 640px)" imagesrcset={heroPreloadMobile.srcset} imagesizes="100vw" fetchpriority="high" />
+    )}
+    {heroPreloadDesktop && (
+      <link rel="preload" as="image" media="(min-width: 641px)" imagesrcset={heroPreloadDesktop.srcset} imagesizes="100vw" fetchpriority="high" />
+    )}
+  </Fragment>
   <Header />
 
   <main id="main-content" tabindex="-1" class="focus:outline-none">

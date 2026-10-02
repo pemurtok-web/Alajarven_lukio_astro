@@ -9,7 +9,7 @@ import { Phone } from 'lucide-astro';
 <a
   href="/yhteystiedot"
   id="contact-fab"
-  class="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 pl-4 pr-5 py-3.5 rounded-full bg-alajarvi-500 hover:bg-alajarvi-600 text-white font-bold text-sm shadow-xl shadow-alajarvi-900/25 transition-all hover:scale-105 active:scale-95"
+  class="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 pl-4 pr-5 py-3.5 rounded-full bg-alajarvi-500 hover:bg-alajarvi-600 text-white font-bold text-sm shadow-xl shadow-alajarvi-900/25 transition-transform hover:scale-105 active:scale-95"
   style="padding-bottom: calc(0.875rem + env(safe-area-inset-bottom))"
   aria-label="Ota yhteyttä"
 >
@@ -31,19 +31,19 @@ import { Phone } from 'lucide-astro';
     }
 
     const margin = 20;
+    const container = document.querySelector('main .max-w-7xl');
 
-    // Measure the pill in its full (icon + label) state first.
+    // Reads first, writes after: interleaving them forces a synchronous reflow.
+    // Measure the pill in its full (icon + label) state.
     label.style.display = '';
     fab.style.paddingLeft = '1rem';
     fab.style.paddingRight = '1.25rem';
     const pillWidth = fab.getBoundingClientRect().width;
-
-    const container = document.querySelector('main .max-w-7xl');
     const containerRight = container ? container.getBoundingClientRect().right : 0;
     const gutter = window.innerWidth - containerRight;
 
     if (container && gutter >= pillWidth + margin * 2) {
-      fab.style.right = `${window.innerWidth - containerRight - margin - pillWidth}px`;
+      fab.style.right = `${gutter - margin - pillWidth}px`;
       return;
     }
 
@@ -55,6 +55,12 @@ import { Phone } from 'lucide-astro';
     fab.style.right = `${margin}px`;
   }
 
-  positionContactFab();
-  window.addEventListener('resize', positionContactFab);
+  let fabFrame = 0;
+  function schedulePosition() {
+    cancelAnimationFrame(fabFrame);
+    fabFrame = requestAnimationFrame(positionContactFab);
+  }
+
+  schedulePosition();
+  window.addEventListener('resize', schedulePosition);
 </script>

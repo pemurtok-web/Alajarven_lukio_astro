@@ -105,8 +105,8 @@ export default defineConfig({
                               .title('📄 Opetussuunnitelma')
                               .child(S.document().schemaType('page').documentId('page-opetussuunnitelma').initialValueTemplate('tpl-page-opetussuunnitelma')),
                             S.listItem()
-                              .title('🍽️ Ruokalista')
-                              .child(S.document().schemaType('page').documentId('page-ruokalista').initialValueTemplate('tpl-page-ruokalista')),
+                              .title('🍽️ Ruokalista (Koulukeskus)')
+                              .child(S.document().schemaType('lunchMenu').documentId('lunchMenu')),
                           ])
                       ),
 

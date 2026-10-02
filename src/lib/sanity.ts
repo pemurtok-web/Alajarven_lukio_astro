@@ -728,3 +728,23 @@ export function splitBodyIntoCards(body: any[]): BodyCard[] {
 
 
 
+
+export interface LunchMenuData {
+  title: string;
+  period?: string;
+  note?: string;
+  weeks: { _key?: string; vko: number[]; days: { _key?: string; day: string; items: string[] }[] }[];
+}
+
+/** Koulukeskuksen ruokalista Sanitystä; varalla repossa oleva JSON jos Sanity ei vastaa tai dokumentti puuttuu. */
+export async function getLunchMenu(fallback: LunchMenuData): Promise<LunchMenuData> {
+  if (!sanityClient) return fallback;
+  try {
+    const data = await sanityClient.fetch<LunchMenuData | null>(
+      `*[_id == "lunchMenu"][0]{ title, period, note, weeks[]{ _key, vko, days[]{ _key, day, items } } }`
+    );
+    return data?.weeks?.length ? { ...fallback, ...data } : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}

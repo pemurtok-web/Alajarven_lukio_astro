@@ -4,7 +4,10 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import HeroWave from '../../components/HeroWave.astro';
 import { ChevronRight, Utensils } from 'lucide-astro';
-import menu from '../../data/ruokalista-koulukeskus.json';
+import fallbackMenu from '../../data/ruokalista-koulukeskus.json';
+import { getLunchMenu } from '../../lib/sanity';
+
+const menu = await getLunchMenu(fallbackMenu);
 
 const pageTitle = 'Ruokalista';
 const pageLead = `${menu.title} ${menu.period}. Lista kiertää viiden viikon jaksoissa.`;

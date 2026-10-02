@@ -6,6 +6,7 @@ import { pageSchema } from './page';
 import { quicklinkSchema } from './quicklink';
 import { contactInfoSchema } from './contactInfo';
 import { formsPageSchema } from './formsPage';
+import { lunchMenuSchema } from './lunchMenu';
 
 export const schemaTypes = [
   siteSettingsSchema,
@@ -16,6 +17,7 @@ export const schemaTypes = [
   quicklinkSchema,
   contactInfoSchema,
   formsPageSchema,
+  lunchMenuSchema,
 ];
 
 

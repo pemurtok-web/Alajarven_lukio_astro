@@ -223,7 +223,7 @@ const MOCK_QUICKLINKS: QuickLink[] = [
   {
     _id: 'mock-ql-2',
     title: 'Ruokalista',
-    url: 'https://alajarvi.fi/ruokalistat',
+    url: '/opiskelijalle/ruokalista',
     icon: 'utensils',
     order: 2
   },

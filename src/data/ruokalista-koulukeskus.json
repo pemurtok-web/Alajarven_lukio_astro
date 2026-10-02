@@ -1,0 +1,289 @@
+{
+  "title": "Koulukeskuksen ruokalista",
+  "period": "2026–2027",
+  "note": "Muutokset mahdollisia. Vuodenajat ja juhlapyhät voivat aiheuttaa muutoksia ruokalistalla.",
+  "weeks": [
+    {
+      "days": [
+        {
+          "day": "Maanantai",
+          "items": [
+            "Kalakeitto/Lohikeitto",
+            "leipä",
+            "tuorepala/hedelmä"
+          ]
+        },
+        {
+          "day": "Tiistai",
+          "items": [
+            "Kinkku/Kebabkiusaus",
+            "Kasviskiusaus",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Keskiviikko",
+          "items": [
+            "Uunibroilleri",
+            "kaura-riisiseos",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Torstai",
+          "items": [
+            "Makaronilaatikko",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Perjantai",
+          "items": [
+            "Riisipuuro/hiutalepuuro",
+            "marjakiisseli",
+            "leipä, kalkkunaleikkele",
+            "tuorepala/hedelmä"
+          ]
+        }
+      ],
+      "vko": [
+        33,
+        38,
+        43,
+        48,
+        53,
+        5,
+        10,
+        15,
+        20
+      ]
+    },
+    {
+      "days": [
+        {
+          "day": "Maanantai",
+          "items": [
+            "Broilerikastike/kebebkastike",
+            "kaura-riisiseos",
+            "turkkilainen jogurtti",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Tiistai",
+          "items": [
+            "Talon toivomus tai",
+            "Perunasoselaatikko",
+            "Mifu-perunavuoka",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Keskiviikko",
+          "items": [
+            "Tonnikalapasta",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Torstai",
+          "items": [
+            "Jauhelihakastike/Lihakastike",
+            "Härkiscurrykastike",
+            "perunat, lämmin kasvis",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Perjantai",
+          "items": [
+            "Hernekeitto",
+            "sämpylä",
+            "juusto",
+            "tuorepala/hedelmä"
+          ]
+        }
+      ],
+      "vko": [
+        34,
+        39,
+        44,
+        49,
+        1,
+        6,
+        11,
+        16,
+        21
+      ]
+    },
+    {
+      "days": [
+        {
+          "day": "Maanantai",
+          "items": [
+            "Lasagnette",
+            "Kasvislasagnette",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Tiistai",
+          "items": [
+            "Makkarakastike",
+            "maustetut uunikasvikset",
+            "perunat",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Keskiviikko",
+          "items": [
+            "Pinaattiohukaiset",
+            "pastasalaatti"
+          ]
+        },
+        {
+          "day": "Torstai",
+          "items": [
+            "Kalapihvit/pyörykät/kalapuikot",
+            "perunamuusi",
+            "tartarkastike",
+            "punajuurisalaatti, kurkkukuutio"
+          ]
+        },
+        {
+          "day": "Perjantai",
+          "items": [
+            "Juustoinen broilerikeitto",
+            "leipä",
+            "tuorepala/hedelmä"
+          ]
+        }
+      ],
+      "vko": [
+        35,
+        40,
+        45,
+        50,
+        2,
+        7,
+        12,
+        17,
+        22
+      ]
+    },
+    {
+      "days": [
+        {
+          "day": "Maanantai",
+          "items": [
+            "Jauhelihakeitto",
+            "Kasvissosekeitto",
+            "raejuusto",
+            "karjalanpiirakka",
+            "juusto/munavoi"
+          ]
+        },
+        {
+          "day": "Tiistai",
+          "items": [
+            "Lohikiusaus",
+            "maustetut uunipunajuuret",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Keskiviikko",
+          "items": [
+            "Broileripastavuoka",
+            "Vegaaninen makaronivuoka",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Torstai",
+          "items": [
+            "Uunimakkara/lihapullat",
+            "perunamuusi",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Perjantai",
+          "items": [
+            "Ohrapuuro/mannapuuro",
+            "kiisseli",
+            "Marjapuuro, leipä",
+            "tuorepala/hedelmä"
+          ]
+        }
+      ],
+      "vko": [
+        36,
+        41,
+        46,
+        51,
+        3,
+        8,
+        13,
+        18,
+        23
+      ]
+    },
+    {
+      "days": [
+        {
+          "day": "Maanantai",
+          "items": [
+            "Broilerinjauhelihakeitto",
+            "leipä, sulatejuusto",
+            "tuorepala/hedelmä"
+          ]
+        },
+        {
+          "day": "Tiistai",
+          "items": [
+            "Smetanakala",
+            "perunat/muusi",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Keskiviikko",
+          "items": [
+            "Miilunpolttajan pasta",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Torstai",
+          "items": [
+            "Kasvispyörykät/pihvit",
+            "perunat",
+            "kermaviilikastike",
+            "salaattipöytä"
+          ]
+        },
+        {
+          "day": "Perjantai",
+          "items": [
+            "Lihakeitto",
+            "Pinaattikeitto",
+            "leipä",
+            "tuorepala/hedelmä"
+          ]
+        }
+      ],
+      "vko": [
+        37,
+        42,
+        47,
+        52,
+        4,
+        9,
+        14,
+        19
+      ]
+    }
+  ]
+}

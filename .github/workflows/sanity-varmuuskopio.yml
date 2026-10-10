@@ -1,0 +1,130 @@
+name: Sanity-varmuuskopio
+
+# Viikoittainen varmuuskopio asiakkaan sisällöstä (tekstit, kuvat, tiedostot, myös luonnokset).
+#
+# Minne:
+#   1. Google Drive: Sanity-varmuuskopiot/<repo>/viikoittain/  (säilyy 90 päivää)
+#                    Sanity-varmuuskopiot/<repo>/kuukausittain/ (kuun 1. viikon kopio, säilyy pysyvästi)
+#   2. GitHub Actions -artefakti (90 päivää), jos Drive ei ole käytettävissä.
+#
+# Joka ajossa myös palautustesti: kopio muunnetaan hätätilan sisällöksi
+# (web/scripts/hatatila.ts). Jos kopiosta ei saisi sivustoa pystyyn, ajo epäonnistuu.
+#
+# GitHub-salaisuudet (Settings → Secrets and variables → Actions):
+#   SANITY_AUTH_TOKEN   Viewer-oikeuksin tehty token
+#   SANITY_PROJECT_ID   projektin tunnus (ei tarvita, jos se on kirjoitettu alle kohtaan PROJECT_ID)
+#   GDRIVE_TOKEN        Google Driven rclone-token (ohje: docs/varmuuskopio.md)
+# Valinnainen muuttuja (Variables): SANITY_DATASET, oletus "production".
+#
+# Epäonnistunut ajo → GitHub lähettää sähköpostin repon omistajalle.
+
+on:
+  schedule:
+    - cron: "17 2 * * 0" # sunnuntaisin klo 02:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # Projektin tunnus ei ole salainen (näkyy sivuston koodissa), joten sen voi kirjoittaa tähän.
+      PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID || vars.SANITY_PROJECT_ID || '8idyoy2x' }}
+      DATASET: ${{ vars.SANITY_DATASET || 'production' }}
+      DRIVE_DIR: Sanity-varmuuskopiot/${{ github.event.repository.name }}
+    steps:
+      - name: Tarkista salaisuudet
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        run: |
+          missing=""
+          [ -z "$PROJECT_ID" ] && missing="$missing SANITY_PROJECT_ID"
+          [ -z "$SANITY_AUTH_TOKEN" ] && missing="$missing SANITY_AUTH_TOKEN"
+          if [ -n "$missing" ]; then
+            echo "::error::Varmuuskopio ei toimi: GitHub-salaisuudet puuttuvat:$missing (ks. docs/varmuuskopio.md)"
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Vie datasetti
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        run: |
+          FILE="sanity-${{ github.event.repository.name }}-$(date -u +%Y-%m-%d).tar.gz"
+          echo "FILE=$FILE" >> "$GITHUB_ENV"
+          npx --yes @sanity/cli@latest dataset export "$DATASET" "$FILE" \
+            --project "$PROJECT_ID" --overwrite
+
+      - name: Tarkista kopion eheys
+        run: |
+          tar -tzf "$FILE" > /tmp/sisalto.txt
+          DATA=$(grep 'data.ndjson$' /tmp/sisalto.txt | head -1)
+          if [ -z "$DATA" ]; then
+            echo "::error::Kopiosta puuttuu data.ndjson – export epäonnistui."
+            exit 1
+          fi
+          DOCS=$(tar -xzOf "$FILE" "$DATA" | grep -c .)
+          IMAGES=$(grep -c '/images/.' /tmp/sisalto.txt || true)
+          FILES=$(grep -c '/files/.' /tmp/sisalto.txt || true)
+          SIZE=$(du -h "$FILE" | cut -f1)
+          echo "Dokumentteja $DOCS, kuvia $IMAGES, tiedostoja $FILES, koko $SIZE"
+          {
+            echo "### Varmuuskopio $FILE"
+            echo "| Dokumentteja | Kuvia | Tiedostoja | Koko |"
+            echo "|---|---|---|---|"
+            echo "| $DOCS | $IMAGES | $FILES | $SIZE |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$DOCS" -lt 2 ]; then
+            echo "::error::Kopiossa on vain $DOCS dokumenttia – onko datasetin nimi ($DATASET) oikein?"
+            exit 1
+          fi
+
+      - name: Palautustesti (hätätilan sisällöksi)
+        # Vain sivustoissa, joissa hätätila on (tämä pohja). Muissa riittää eheystarkistus.
+        if: hashFiles('web/scripts/hatatila.ts') != ''
+        run: |
+          npm ci --no-audit --no-fund
+          npm run hatatila -w web -- "$GITHUB_WORKSPACE/$FILE"
+
+      - name: Tallenna GitHubiin (90 päivää)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.FILE }}
+          path: ${{ env.FILE }}
+          retention-days: 90
+          compression-level: 0
+
+      - name: Tallenna Google Driveen
+        env:
+          GDRIVE_TOKEN: ${{ secrets.GDRIVE_TOKEN }}
+          RCLONE_CONFIG_GDRIVE_TYPE: drive
+          # drive.file: rclone näkee Drivessa vain itse luomansa tiedostot, ei muuta sisältöä.
+          RCLONE_CONFIG_GDRIVE_SCOPE: drive.file
+        run: |
+          if [ -z "$GDRIVE_TOKEN" ]; then
+            echo "::error::GDRIVE_TOKEN puuttuu – kopio tallentui vain GitHubiin (90 päivää). Ohje: docs/varmuuskopio.md"
+            exit 1
+          fi
+          export RCLONE_CONFIG_GDRIVE_TOKEN="$GDRIVE_TOKEN"
+          sudo apt-get update -qq && sudo apt-get install -y -qq rclone > /dev/null
+
+          rclone copy "$FILE" "gdrive:$DRIVE_DIR/viikoittain/"
+          # Kuukauden ensimmäisen viikon kopio säilytetään pysyvästi.
+          if [ "$(date -u +%-d)" -le 7 ]; then
+            rclone copy "$FILE" "gdrive:$DRIVE_DIR/kuukausittain/"
+          fi
+          # Yli 90 päivää vanhat viikkokopiot roskakoriin (Drive tyhjentää sen 30 päivässä).
+          rclone delete "gdrive:$DRIVE_DIR/viikoittain/" --min-age 90d
+
+          echo "Drivessa nyt:"
+          rclone lsl "gdrive:$DRIVE_DIR/"
+          echo "Tallennettu Google Driveen: $DRIVE_DIR" >> "$GITHUB_STEP_SUMMARY"

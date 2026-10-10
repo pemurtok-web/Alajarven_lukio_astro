@@ -62,7 +62,7 @@ jobs:
           FILE="sanity-${{ github.event.repository.name }}-$(date -u +%Y-%m-%d).tar.gz"
           echo "FILE=$FILE" >> "$GITHUB_ENV"
           npx --yes @sanity/cli@latest dataset export "$DATASET" "$FILE" \
-            --project "$PROJECT_ID" --overwrite
+            --project-id "$PROJECT_ID" --overwrite
 
       - name: Tarkista kopion eheys
         run: |

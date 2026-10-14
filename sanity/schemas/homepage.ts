@@ -82,6 +82,91 @@ export const homepageSchema = defineType({
       ],
     }),
 
+    // --- HERO PAINIKKEET ---
+    defineField({
+      name: 'heroPrimaryButton',
+      title: 'Hero - Pääpainike (valkoinen)',
+      description: 'Jos jätät tyhjäksi, painikkeessa lukee "Tule opiskelemaan (Hakijalle)" ja se vie Hakijalle-sivulle.',
+      type: 'object',
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        { name: 'text', type: 'string', title: 'Painikkeen teksti' },
+        {
+          name: 'link',
+          type: 'string',
+          title: 'Linkki',
+          description: 'Sivuston oma sivu kauttaviivalla alkaen, esim. /hakijalle – tai koko osoite https://…',
+        },
+      ],
+    }),
+    defineField({
+      name: 'heroSecondaryButton',
+      title: 'Hero - Toinen painike (läpikuultava)',
+      description: 'Jos jätät tyhjäksi, painikkeessa lukee "Tutustu opinto-oppaaseen" ja se vie Opinto-oppaaseen.',
+      type: 'object',
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        { name: 'text', type: 'string', title: 'Painikkeen teksti' },
+        {
+          name: 'link',
+          type: 'string',
+          title: 'Linkki',
+          description: 'Sivuston oma sivu kauttaviivalla alkaen, esim. /opiskelijalle/opinto-opas – tai koko osoite https://…',
+        },
+      ],
+    }),
+
+    defineField({
+      name: 'heroQuickCards',
+      title: 'Hero - Pikakortit (kuvan alla olevat 2 pientä linkkikorttia)',
+      description: 'Ensimmäisessä kortissa on maapallo-ikoni, toisessa ihmiset-ikoni. Jos jätät tyhjäksi, näytetään Kansainvälisyys- ja OPO & Tuki -kortit.',
+      type: 'array',
+      validation: (rule) => rule.max(2).warning('Ulkoasuun mahtuu kaksi korttia rinnakkain.'),
+      of: [
+        {
+          type: 'object',
+          title: 'Pikakortti',
+          fields: [
+            { name: 'title', type: 'string', title: 'Otsikko', description: 'Esim. "Kansainvälisyys"' },
+            { name: 'text', type: 'string', title: 'Pieni teksti', description: 'Esim. "Japanin vaihto-ohjelmat"' },
+            {
+              name: 'link',
+              type: 'string',
+              title: 'Linkki',
+              description: 'Sivuston oma sivu kauttaviivalla alkaen, esim. /kansainvalisyys/jiyu-gakuen',
+            },
+          ],
+          preview: { select: { title: 'title', subtitle: 'text' } },
+        },
+      ],
+    }),
+
+    // --- AJANKOHTAISTA- JA TAPAHTUMAKALENTERI-OSIOIDEN OTSIKOT ---
+    defineField({
+      name: 'newsSection',
+      title: 'Ajankohtaista-osio (etusivun uutisnostojen otsikko)',
+      description: 'Jos jätät kentän tyhjäksi, siinä näkyy nykyinen oletusteksti.',
+      type: 'object',
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        { name: 'badge', type: 'string', title: 'Pieni yläteksti', description: 'Oletus: "Ajankohtaista"' },
+        { name: 'title', type: 'string', title: 'Otsikko', description: 'Oletus: "Viimeisimmät uutiset ja tiedotteet"' },
+        { name: 'description', type: 'text', rows: 2, title: 'Kuvausteksti' },
+      ],
+    }),
+    defineField({
+      name: 'eventsSection',
+      title: 'Tapahtumakalenteri-osio (otsikko ja kuvaus)',
+      description: 'Jos jätät kentän tyhjäksi, siinä näkyy nykyinen oletusteksti.',
+      type: 'object',
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        { name: 'badge', type: 'string', title: 'Pieni yläteksti', description: 'Oletus: "Tapahtumakalenteri"' },
+        { name: 'title', type: 'string', title: 'Otsikko', description: 'Oletus: "Tulevat tapahtumat & lukuvuoden tärkeät päivämäärät"' },
+        { name: 'description', type: 'text', rows: 3, title: 'Kuvausteksti' },
+      ],
+    }),
+
     // --- ESITTELYOSIO (Kuva + Teksti) ---
     defineField({
       name: 'introBadge',

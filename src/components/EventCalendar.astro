@@ -1,8 +1,14 @@
 ---
-import { getUpcomingEvents, urlFor, retinaSrcSet, type EventItem } from '../lib/sanity';
+import { getUpcomingEvents, urlFor, retinaSrcSet, editAttr, type EventItem, type SectionHeading } from '../lib/sanity';
 import { Calendar as CalendarIcon, Clock, MapPin, ChevronRight, ChevronLeft, Sparkles, X, Info } from 'lucide-astro';
 import PortableText from './PortableText.astro';
 
+interface Props {
+  /** Heading texts from the homepage document (empty fields fall back to the defaults below) */
+  heading?: SectionHeading;
+}
+
+const { heading } = Astro.props;
 const events = await getUpcomingEvents();
 
 function formatDateBadge(dateStr: string) {
@@ -80,13 +86,13 @@ const visibleEvents = calendarCells.flatMap((c) => c.events);
       <div class="lg:col-span-4 space-y-4">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider">
           <CalendarIcon class="w-3.5 h-3.5 text-emerald-600" />
-          <span>Tapahtumakalenteri</span>
+          <span>{heading?.badge || 'Tapahtumakalenteri'}</span>
         </div>
         <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-alajarvi-900 tracking-tight">
-          Tulevat tapahtumat & lukuvuoden tärkeät päivämäärät
+          {heading?.title || 'Tulevat tapahtumat & lukuvuoden tärkeät päivämäärät'}
         </h2>
         <p class="text-slate-600 text-base leading-relaxed">
-          Pysy ajan tasalla lukion tapahtumista, kokeista, vanhempainilloista ja loma-ajoista. Klikkaa tapahtumaa lukeaksesi lisätiedot!
+          {heading?.description || 'Pysy ajan tasalla lukion tapahtumista, kokeista, vanhempainilloista ja loma-ajoista. Klikkaa tapahtumaa lukeaksesi lisätiedot!'}
         </p>
 
         <div class="pt-4 p-5 rounded-2xl bg-alajarvi-50 border border-alajarvi-100 space-y-2">
@@ -221,6 +227,7 @@ const visibleEvents = calendarCells.flatMap((c) => c.events);
                   {evt.image ? (
                     <div class="relative w-full h-56 sm:h-72 shrink-0 bg-slate-900">
                       <img
+                        {...editAttr(evt, 'image')}
                         src={urlFor(evt.image)?.width(1200).height(600).fit('crop').url()}
                         srcset={retinaSrcSet(evt.image, 1200, 600)}
                         width={1200}
@@ -305,7 +312,7 @@ const visibleEvents = calendarCells.flatMap((c) => c.events);
                           <span>Tapahtuman lisätiedot & ohjelma</span>
                         </h4>
                         <div class="prose prose-slate max-w-none">
-                          <PortableText value={evt.body} />
+                          <PortableText value={evt.body} doc={evt} path="body" />
                         </div>
                       </div>
                     )}

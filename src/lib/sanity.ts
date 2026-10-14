@@ -1,5 +1,9 @@
 import { createClient } from '@sanity/client';
 import imageUrlBuilder from '@sanity/image-url';
+import { stegaClean } from '@sanity/client/stega';
+import { createDataAttribute } from '@sanity/visual-editing/create-data-attribute';
+import { SANITY_API_READ_TOKEN } from 'astro:env/server';
+import { isPreview } from './preview-context';
 
 const projectId = import.meta.env.PUBLIC_SANITY_PROJECT_ID || '8idyoy2x';
 const dataset = import.meta.env.PUBLIC_SANITY_DATASET || 'production';
@@ -14,6 +18,71 @@ export const sanityClient = projectId
       apiVersion: '2024-01-01',
     })
   : null;
+
+// Server-only Viewer token for reading drafts in the Studio's Presentation tool. Never
+// PUBLIC_-prefixed, so it stays out of the browser bundle.
+export const previewToken: string | undefined = SANITY_API_READ_TOKEN;
+
+// String fields that the site compares or uses as attributes rather than shows as text.
+// Stega (the invisible click-to-edit markers) would break `=== 'h2'`-style checks, so
+// they're left unencoded on top of Sanity's own default denylist. Phone numbers and
+// emails ARE encoded — wrap them in clean() wherever they go into a tel:/mailto: link.
+const STEGA_SKIP = new Set([
+  'style', 'listItem', 'size', 'placement', 'menuPlacement', 'layoutStyle',
+  'alt', 'fileName', 'extension', 'fileUrl',
+]);
+
+const previewClient =
+  sanityClient && previewToken
+    ? sanityClient.withConfig({
+        token: previewToken,
+        perspective: 'drafts',
+        stega: {
+          enabled: true,
+          studioUrl: '/studio',
+          filter: (props) => {
+            const last = props.sourcePath.at(-1);
+            if (typeof last === 'string' && STEGA_SKIP.has(last)) return false;
+            // Sanity skips "email" by default; the site cleans it in mailto: links, so the
+            // visible address can still be click-to-edit.
+            if (last === 'email') return true;
+            return props.filterDefault(props);
+          },
+        },
+      })
+    : null;
+
+// Content fetchers go through this: drafts + edit markers inside the Studio preview,
+// the plain published-content client for everyone else.
+function getClient() {
+  return isPreview() && previewClient ? previewClient : sanityClient!;
+}
+
+type SanityDocRef = { _id?: string; _type?: string } | null | undefined;
+
+// Click-to-edit for things stega can't mark (images, whole blocks): spread the result onto
+// an element — `<img {...editAttr(page, 'mainImage')} />` — and the Studio's visual editor
+// draws a frame around it that opens that field. Empty outside the preview, so the public
+// HTML stays exactly as before.
+export function editAttr(doc: SanityDocRef, path: string): Record<string, string> {
+  if (!isPreview() || !doc?._id || !doc?._type) return {};
+  return {
+    'data-sanity': createDataAttribute({ id: doc._id, type: doc._type, path, baseUrl: '/studio' }).toString(),
+  };
+}
+
+/** Path to one array item by its _key, e.g. keyPath('gallery', img._key) → gallery[_key=="…"] */
+export function keyPath(field: string, key?: string): string {
+  return `${field}[_key=="${key}"]`;
+}
+
+/**
+ * Removes the invisible stega markers. Use when a CMS value goes into a link or is
+ * otherwise processed (tel:, mailto:, splitting into lines) rather than shown as is.
+ */
+export function clean<T>(value: T): T {
+  return stegaClean(value);
+}
 
 
 const builder = sanityClient ? imageUrlBuilder(sanityClient) : null;
@@ -267,9 +336,9 @@ const MOCK_QUICKLINKS: QuickLink[] = [
 export async function getTopNews(limit = 3): Promise<Post[]> {
   if (!sanityClient) return MOCK_POSTS.slice(0, limit);
   try {
-    const posts = await sanityClient.fetch<Post[]>(
+    const posts = await getClient().fetch<Post[]>(
       `*[_type == "post"] | order(publishedAt desc)[0...$limit]{
-        _id, title, slug, publishedAt, excerpt, mainImage
+        _id, _type, title, slug, publishedAt, excerpt, mainImage
       }`,
       { limit }
     );
@@ -283,9 +352,9 @@ export async function getTopNews(limit = 3): Promise<Post[]> {
 export async function getAllNews(): Promise<Post[]> {
   if (!sanityClient) return MOCK_POSTS;
   try {
-    const posts = await sanityClient.fetch<Post[]>(
+    const posts = await getClient().fetch<Post[]>(
       `*[_type == "post"] | order(publishedAt desc){
-        _id, title, slug, publishedAt, excerpt, mainImage
+        _id, _type, title, slug, publishedAt, excerpt, mainImage
       }`
     );
     return posts && posts.length > 0 ? posts : MOCK_POSTS;
@@ -299,9 +368,9 @@ export async function getNewsBySlug(slug: string): Promise<Post | null> {
     return MOCK_POSTS.find(p => p.slug.current === slug) || MOCK_POSTS[0];
   }
   try {
-    const post = await sanityClient.fetch<Post>(
+    const post = await getClient().fetch<Post>(
       `*[_type == "post" && slug.current == $slug][0]{
-        _id, title, slug, publishedAt, excerpt, mainImage, body
+        _id, _type, title, slug, publishedAt, excerpt, mainImage, body
       }`,
       { slug }
     );
@@ -314,9 +383,9 @@ export async function getNewsBySlug(slug: string): Promise<Post | null> {
 export async function getUpcomingEvents(): Promise<EventItem[]> {
   if (!sanityClient) return MOCK_EVENTS;
   try {
-    const events = await sanityClient.fetch<EventItem[]>(
+    const events = await getClient().fetch<EventItem[]>(
       `*[_type == "event"] | order(date asc){
-        _id, title, date, time, location, description, image, body
+        _id, _type, title, date, time, location, description, image, body
       }`
     );
     return events && events.length > 0 ? events : MOCK_EVENTS;
@@ -328,7 +397,7 @@ export async function getUpcomingEvents(): Promise<EventItem[]> {
 export async function getQuickLinks(): Promise<QuickLink[]> {
   if (!sanityClient) return MOCK_QUICKLINKS;
   try {
-    const links = await sanityClient.fetch<QuickLink[]>(
+    const links = await getClient().fetch<QuickLink[]>(
       `*[_type == "quicklink"] | order(order asc){
         _id, title, url, description, icon, order, placement
       }`
@@ -369,7 +438,7 @@ export interface FormsPageData {
 export async function getFormsPage(): Promise<FormsPageData> {
   if (!sanityClient) return { downloadableForms: [] };
   try {
-    const data = await sanityClient.fetch<{ lead?: string; downloadableForms?: any[] } | null>(
+    const data = await getClient().fetch<{ lead?: string; downloadableForms?: any[] } | null>(
       `*[_id == "formsPage"][0]{
         lead,
         downloadableForms[]{
@@ -397,6 +466,12 @@ export async function getFormsPage(): Promise<FormsPageData> {
   }
 }
 
+export interface SectionHeading {
+  badge?: string;
+  title?: string;
+  description?: string;
+}
+
 export interface HomepageData {
   heroBadge?: string;
   heroTitle?: string;
@@ -405,6 +480,11 @@ export interface HomepageData {
   heroBgImageMobile?: any;
   heroImage?: any;
   heroStats?: { value: string; label: string }[];
+  heroPrimaryButton?: { text?: string; link?: string };
+  heroSecondaryButton?: { text?: string; link?: string };
+  heroQuickCards?: { _key: string; title?: string; text?: string; link?: string }[];
+  newsSection?: SectionHeading;
+  eventsSection?: SectionHeading;
   introBadge?: string;
   introTitle?: string;
   introDescription?: string;
@@ -435,9 +515,9 @@ const MOCK_HOMEPAGE: HomepageData = {
 export async function getHomepage(): Promise<HomepageData> {
   if (!sanityClient) return MOCK_HOMEPAGE;
   try {
-    const data = await sanityClient.fetch<HomepageData>(
+    const data = await getClient().fetch<HomepageData>(
       `*[_type == "homepage"] | order(_updatedAt desc)[0]{
-        heroBadge, heroTitle, heroDescription, heroBgImage, heroBgImageMobile, heroImage, heroStats, introBadge, introTitle, introDescription, introImage, features
+        _id, _type, heroBadge, heroTitle, heroDescription, heroBgImage, heroBgImageMobile, heroImage, heroStats, heroPrimaryButton, heroSecondaryButton, heroQuickCards, newsSection, eventsSection, introBadge, introTitle, introDescription, introImage, features
       }`
     );
     return data || MOCK_HOMEPAGE;
@@ -456,9 +536,9 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
     };
   }
   try {
-    const page = await sanityClient.fetch<PageContent>(
+    const page = await getClient().fetch<PageContent>(
       `*[_type == "page" && (_id == $slug || _id == "page-" + $slug || _id == "drafts.page-" + $slug || slug.current == $slug || slug.current == "lukion-" + $slug || slug.current match $slug + "*")] | order(_updatedAt desc)[0]{
-        _id, title, slug, lead, layoutStyle,
+        _id, _type, title, slug, lead, layoutStyle,
         documentLinks[]{
           title,
           description,
@@ -508,9 +588,9 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
 export async function getTopLevelPageBySlug(slug: string): Promise<PageContent | null> {
   if (!sanityClient) return null;
   try {
-    const page = await sanityClient.fetch<PageContent | null>(
+    const page = await getClient().fetch<PageContent | null>(
       `*[_type == "page" && slug.current == $slug && menuPlacement == "top"] | order(_updatedAt desc)[0]{
-        _id, title, slug, lead, layoutStyle,
+        _id, _type, title, slug, lead, layoutStyle,
         documentLinks[]{
           title,
           description,
@@ -562,9 +642,9 @@ const MOCK_SITE_SETTINGS: SiteSettings = {
 export async function getSiteSettings(): Promise<SiteSettings> {
   if (!sanityClient) return MOCK_SITE_SETTINGS;
   try {
-    const settings = await sanityClient.fetch<SiteSettings>(
+    const settings = await getClient().fetch<SiteSettings>(
       `*[_type == "siteSettings"] | order(_updatedAt desc)[0]{
-        title, subtitle, logoImage, address, phone, email
+        _id, _type, title, subtitle, logoImage, address, phone, email
       }`
     );
     return settings || MOCK_SITE_SETTINGS;
@@ -628,9 +708,9 @@ const MOCK_CONTACT_INFO: ContactInfo = {
 export async function getContactInfo(): Promise<ContactInfo> {
   if (!sanityClient) return MOCK_CONTACT_INFO;
   try {
-    const info = await sanityClient.fetch<ContactInfo>(
+    const info = await getClient().fetch<ContactInfo>(
       `*[_type == "contactInfo"] | order(_updatedAt desc)[0]{
-        leadership, studentSupport, teacherOfficePhone, teacherEmailFormat,
+        _id, _type, leadership, studentSupport, teacherOfficePhone, teacherEmailFormat,
         teachers, coaches, schoolName, visitingAddress, officePhone, officeHours, mapsUrl
       }`
     );
@@ -643,7 +723,7 @@ export async function getContactInfo(): Promise<ContactInfo> {
 export async function getAllPages(): Promise<PageContent[]> {
   if (!sanityClient) return [];
   try {
-    const pages = await sanityClient.fetch<PageContent[]>(
+    const pages = await getClient().fetch<PageContent[]>(
       `*[_type == "page"] | order(_updatedAt desc){
         _id, title, slug, menuPlacement, menuOrder
       }`
@@ -740,7 +820,7 @@ export interface LunchMenuData {
 export async function getLunchMenu(fallback: LunchMenuData): Promise<LunchMenuData> {
   if (!sanityClient) return fallback;
   try {
-    const data = await sanityClient.fetch<LunchMenuData | null>(
+    const data = await getClient().fetch<LunchMenuData | null>(
       `*[_id == "lunchMenu"][0]{ title, period, note, weeks[]{ _key, vko, days[]{ _key, day, items } } }`
     );
     return data?.weeks?.length ? { ...fallback, ...data } : fallback;

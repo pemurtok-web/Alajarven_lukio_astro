@@ -21,7 +21,9 @@
     "@sanity/client": "^7.0.0",
     "@sanity/image-url": "^1.0.2",
     "@sanity/locale-fi-fi": "^1.1.40",
+    "@sanity/preview-url-secret": "^4.1.5",
     "@sanity/types": "^6.12.0",
+    "@sanity/visual-editing": "^6.1.3",
     "@types/styled-components": "^5.1.34",
     "astro": "^7.3.3",
     "lucide-astro": "^0.438.0",
@@ -37,6 +39,7 @@
     "typescript": "^5.5.4"
   },
   "overrides": {
-    "@sanity/ui": "^4.2.0"
+    "@sanity/ui": "^4.4.0",
+    "@sanity/visual-editing": "^6.1.3"
   }
 }

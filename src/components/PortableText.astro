@@ -1,13 +1,16 @@
 ---
-import { responsiveImage } from '../lib/sanity';
+import { responsiveImage, editAttr, keyPath } from '../lib/sanity';
 import { FileText, Download } from 'lucide-astro';
 import YouTubeEmbed from './YouTubeEmbed.astro';
 
 interface Props {
   value: any;
+  /** Document + field path of `value`, so images get click-to-edit frames in Studio preview */
+  doc?: { _id?: string; _type?: string };
+  path?: string;
 }
 
-const { value } = Astro.props;
+const { value, doc, path } = Astro.props;
 
 // Helper to render portable text spans with link marks, bold, italic
 function renderChildren(block: any) {
@@ -171,6 +174,7 @@ if (Array.isArray(value)) {
           <figure key={idx} class={`not-prose ${floatClass} group`}>
             <a href={img.src} target="_blank" rel="noopener noreferrer" class="block relative overflow-hidden rounded-2xl border border-slate-200 shadow-md bg-slate-50 cursor-zoom-in">
               <img
+                {...(path ? editAttr(doc, keyPath(path, block._key)) : {})}
                 src={img.src}
                 srcset={img.srcset}
                 sizes={isFloated ? '(min-width: 640px) 448px, 100vw' : '100vw'}

@@ -6,7 +6,7 @@ import LongPageNav from '../components/LongPageNav.astro';
 import HeroWave from '../components/HeroWave.astro';
 import PortableText from '../components/PortableText.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
-import { getTopLevelPageBySlug, urlFor, responsiveImage, extractPageAnchors, splitBodyIntoCards } from '../lib/sanity';
+import { getTopLevelPageBySlug, urlFor, responsiveImage, extractPageAnchors, splitBodyIntoCards, editAttr, keyPath } from '../lib/sanity';
 import { FileText, ChevronRight, Image as ImageIcon, CheckCircle, Globe, Star, BookOpen, Award } from 'lucide-astro';
 
 // Renders a brand-new, top-level content page created in Sanity with
@@ -46,7 +46,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
   <main class="bg-transparent min-h-[70vh]">
 
     <!-- Page Hero — full-width, edge-to-edge, flush against the header, with the Aalto wave mask at the bottom. -->
-    <div class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white">
+    <div {...editAttr(page, 'heroBgImage')} class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white">
       {page.heroBgImage && urlFor(page.heroBgImage) && (
         <div class="absolute inset-0 z-0 pointer-events-none">
           <img
@@ -115,6 +115,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
         <div class="group relative rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white hover:shadow-xl transition-all">
           <a href={mainImg?.src} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden bg-slate-50 flex flex-col justify-center">
             <img
+              {...editAttr(page, 'mainImage')}
               src={mainImg?.src}
               srcset={mainImg?.srcset}
               sizes="(min-width: 1024px) 1024px, 100vw"
@@ -193,7 +194,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                     </h2>
                   )}
                   <div class="text-slate-700 flex-grow pt-1">
-                    <PortableText value={card.blocks} />
+                    <PortableText value={card.blocks} doc={page} path="body" />
                   </div>
                 </div>
               ))}
@@ -225,7 +226,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                         </div>
                         {sec.content && (
                           <div class="pt-1 text-slate-700 flex-grow">
-                            <PortableText value={sec.content} />
+                            <PortableText value={sec.content} doc={page} path={`${keyPath('sections', sec._key)}.content`} />
                           </div>
                         )}
                       </div>
@@ -234,6 +235,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                           <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-slate-50">
                             <a href={imageUrl} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden">
                               <img
+                                {...editAttr(page, (sec.image ? `${keyPath('sections', sec._key)}.image` : keyPath('gallery', secImage?._key)))}
                                 src={secImgResponsive?.src || imageUrl}
                                 srcset={secImgResponsive?.srcset}
                                 sizes="(min-width: 1024px) 50vw, 100vw"
@@ -275,6 +277,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                   <div class="group relative rounded-3xl overflow-hidden shadow-md border border-slate-200 bg-white flex flex-col justify-between hover:shadow-lg transition-all h-full">
                     <a href={galleryImgUrl} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden bg-slate-50 h-full flex flex-col justify-center">
                       <img
+                        {...editAttr(page, keyPath('gallery', img._key))}
                         src={galleryImg?.src || galleryImgUrl}
                         srcset={galleryImg?.srcset}
                         sizes="(min-width: 1024px) 50vw, 100vw"
@@ -351,7 +354,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
           )}
 
           {page.body && page.body.length > 0 ? (
-            <PortableText value={page.body} />
+            <PortableText value={page.body} doc={page} path="body" />
           ) : !page.lead && !page.documentLinks?.length && !page.gallery?.length && !page.sections?.length ? (
             <p class="text-center text-slate-500 text-sm py-8">Sisältöä päivitetään pian.</p>
           ) : null}
@@ -381,7 +384,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                         </div>
                         {sec.content && (
                           <div class="pt-2">
-                            <PortableText value={sec.content} />
+                            <PortableText value={sec.content} doc={page} path={`${keyPath('sections', sec._key)}.content`} />
                           </div>
                         )}
                       </div>
@@ -390,6 +393,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                           <div class="group relative rounded-xl overflow-hidden shadow-sm border border-slate-200 bg-white">
                             <a href={imageUrl} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden">
                               <img
+                                {...editAttr(page, (sec.image ? `${keyPath('sections', sec._key)}.image` : keyPath('gallery', secImage?._key)))}
                                 src={secImgResponsive?.src || imageUrl}
                                 srcset={secImgResponsive?.srcset}
                                 sizes="(min-width: 1024px) 50vw, 100vw"
@@ -440,6 +444,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                     <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-slate-50 flex flex-col">
                       <a href={galleryImgUrl} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden">
                         <img
+                          {...editAttr(page, keyPath('gallery', img._key))}
                           src={galleryImg?.src || galleryImgUrl}
                           srcset={galleryImg?.srcset}
                           sizes="100vw"

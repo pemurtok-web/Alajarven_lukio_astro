@@ -5,7 +5,7 @@ import Footer from '../../components/Footer.astro';
 import LongPageNav from '../../components/LongPageNav.astro';
 import HeroWave from '../../components/HeroWave.astro';
 import PortableText from '../../components/PortableText.astro';
-import { getPageBySlug, urlFor, responsiveImage, extractPageAnchors } from '../../lib/sanity';
+import { getPageBySlug, urlFor, responsiveImage, extractPageAnchors, editAttr, keyPath } from '../../lib/sanity';
 import { GraduationCap, CheckCircle, BookOpen, Globe, Award, HelpCircle, FileText, Image as ImageIcon } from 'lucide-astro';
 
 const page = await getPageBySlug('hakijalle');
@@ -36,7 +36,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
 
     <!-- Page Hero — full-width, edge-to-edge (no rounded corners), flush against the
          header, with the flowing Aalto wave mask at the bottom. -->
-    <div class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white">
+    <div {...editAttr(page, 'heroBgImage')} class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white">
       {page?.heroBgImage && urlFor(page.heroBgImage) && (
         <div class="absolute inset-0 z-0 pointer-events-none">
           <img
@@ -79,6 +79,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
         <div class="overflow-hidden rounded-3xl bg-white border border-slate-200/80 shadow-xl group">
           <div class="relative overflow-hidden">
             <img
+              {...editAttr(page, 'mainImage')}
               src={mainImg?.src}
               srcset={mainImg?.srcset}
               sizes="(min-width: 1024px) 1024px, 100vw"
@@ -121,7 +122,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
 
       {page?.body && page.body.length > 0 && (
         <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200/80">
-          <PortableText value={page.body} />
+          <PortableText value={page.body} doc={page} path="body" />
         </div>
       )}
 
@@ -156,7 +157,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                   <div class={`text-slate-700 leading-relaxed text-base space-y-4 ${imageUrl && idx % 2 === 1 ? 'lg:order-2' : 'lg:order-1'}`}>
                     {sec.content ? (
-                      <PortableText value={sec.content} />
+                      <PortableText value={sec.content} doc={page} path={`${keyPath('sections', sec._key)}.content`} />
                     ) : (
                       <p>Sisältöä päivitetään.</p>
                     )}
@@ -199,6 +200,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                       <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-slate-50">
                         <a href={imageUrl} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden">
                           <img
+                            {...editAttr(page, (sec.image ? `${keyPath('sections', sec._key)}.image` : keyPath('gallery', secImage?._key)))}
                             src={secImgResponsive?.src || imageUrl}
                             srcset={secImgResponsive?.srcset}
                             sizes="(min-width: 1024px) 50vw, 100vw"
@@ -387,6 +389,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                 <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-white flex flex-col justify-between hover:shadow-lg transition-all">
                   <a href={galleryImgUrl} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden bg-slate-50">
                     <img
+                      {...editAttr(page, keyPath('gallery', img._key))}
                       src={galleryImg?.src || galleryImgUrl}
                       srcset={galleryImg?.srcset}
                       sizes="(min-width: 640px) 50vw, 100vw"

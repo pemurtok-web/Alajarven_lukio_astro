@@ -1,7 +1,20 @@
 import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
 import { fiFILocale } from '@sanity/locale-fi-fi';
+import { presentationTool } from 'sanity/presentation';
 import { schemaTypes } from './sanity/schemas';
+import { resolve } from './sanity/presentationResolve';
+
+// Where the Presentation tool loads the site from. The embedded Studio (/studio) shares
+// the site's origin; the standalone `npm run studio` (localhost, usually :3333) points at
+// the local Astro dev server instead.
+const ASTRO_DEV_PORT = '4324';
+const previewOrigin =
+  typeof window !== 'undefined' &&
+  ['localhost', '127.0.0.1'].includes(window.location.hostname) &&
+  window.location.port !== ASTRO_DEV_PORT
+    ? `http://localhost:${ASTRO_DEV_PORT}`
+    : undefined;
 
 const pageTemplates = [
   { id: 'page-opinto-opas', title: 'Opinto-opas', slug: 'opinto-opas' },
@@ -29,6 +42,7 @@ export default defineConfig({
   dataset: import.meta.env.PUBLIC_SANITY_DATASET || 'production',
   plugins: [
     structureTool({
+      title: 'Sisällöt',
       structure: (S) =>
         S.list()
           .title('Alajärven lukio - Sisällöt')
@@ -189,8 +203,23 @@ export default defineConfig({
               ),
           ]),
     }),
+    presentationTool({
+      title: 'Visuaalinen muokkaus',
+      resolve,
+      previewUrl: {
+        origin: previewOrigin,
+        previewMode: {
+          enable: '/api/draft-mode/enable',
+          disable: '/api/draft-mode/disable',
+        },
+      },
+    }),
     fiFILocale(),
   ],
+  // Content releases aren't used by the school's editors (and are limited on the Free
+  // plan); the tool's navbar title is hardcoded in English, so hide it altogether.
+  releases: { enabled: false },
+  tools: (prev) => prev.filter((tool) => tool.name !== 'releases'),
   schema: {
     types: schemaTypes,
     templates: (prev) => [

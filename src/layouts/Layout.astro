@@ -3,6 +3,8 @@ import '../styles/global.css';
 import LightboxModal from '../components/LightboxModal.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 import ContactFab from '../components/ContactFab.astro';
+import { VisualEditing } from '@sanity/astro/visual-editing';
+import { clean } from '../lib/sanity';
 
 const gtmId = import.meta.env.PUBLIC_GTM_ID;
 
@@ -37,11 +39,13 @@ interface Props {
   image?: string;
 }
 
-const {
-  title = 'Alajärven lukio | Laadukasta ja yhteisöllistä lukio-opetusta',
-  description = 'Alajärven lukio tarjoaa laadukasta ja monipuolista yleislukio-opetusta, vahvaa opinto-ohjausta ja laajoja kansainvälisyysmahdollisuuksia Alajärvellä.',
-  image,
-} = Astro.props;
+const props = Astro.props;
+// <head> values can't be clicked, so strip the Studio preview's invisible edit markers.
+const title = clean(props.title) || 'Alajärven lukio | Laadukasta ja yhteisöllistä lukio-opetusta';
+const description =
+  clean(props.description) ||
+  'Alajärven lukio tarjoaa laadukasta ja monipuolista yleislukio-opetusta, vahvaa opinto-ohjausta ja laajoja kansainvälisyysmahdollisuuksia Alajärvellä.';
+const image = props.image;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = image ? new URL(image, Astro.site).toString() : undefined;
@@ -202,5 +206,6 @@ const ogImageURL = image ? new URL(image, Astro.site).toString() : undefined;
       <CookieConsent />
       <ContactFab />
     </div>
+    <VisualEditing enabled={Astro.locals.preview} />
   </body>
 </html>

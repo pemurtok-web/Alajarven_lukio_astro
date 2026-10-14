@@ -1,7 +1,13 @@
 ---
-import { getTopNews, urlFor, retinaSrcSet } from '../lib/sanity';
+import { getTopNews, urlFor, retinaSrcSet, editAttr, type SectionHeading } from '../lib/sanity';
 import { Calendar, ArrowRight, Newspaper } from 'lucide-astro';
 
+interface Props {
+  /** Heading texts from the homepage document (empty fields fall back to the defaults below) */
+  heading?: SectionHeading;
+}
+
+const { heading } = Astro.props;
 const newsItems = await getTopNews(3);
 ---
 
@@ -13,13 +19,13 @@ const newsItems = await getTopNews(3);
       <div>
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-alajarvi-100 text-alajarvi-700 text-xs font-bold uppercase tracking-wider mb-3">
           <Newspaper class="w-3.5 h-3.5" />
-          <span>Ajankohtaista</span>
+          <span>{heading?.badge || 'Ajankohtaista'}</span>
         </div>
         <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-alajarvi-900 tracking-tight">
-          Viimeisimmät uutiset ja tiedotteet
+          {heading?.title || 'Viimeisimmät uutiset ja tiedotteet'}
         </h2>
         <p class="text-slate-600 mt-2 text-base max-w-2xl">
-          Seuraa Alajärven lukion tapahtumia, opiskelijoiden menestystä ja lukuvuoden tärkeitä tiedotteita.
+          {heading?.description || 'Seuraa Alajärven lukion tapahtumia, opiskelijoiden menestystä ja lukuvuoden tärkeitä tiedotteita.'}
         </p>
       </div>
 
@@ -40,6 +46,7 @@ const newsItems = await getTopNews(3);
           <div class="relative h-48 bg-gradient-to-br from-alajarvi-600 to-alajarvi-800 overflow-hidden">
             {item.mainImage ? (
               <img
+                {...editAttr(item, 'mainImage')}
                 src={urlFor(item.mainImage)?.width(600).height(400).fit('crop').url() || ''}
                 srcset={retinaSrcSet(item.mainImage, 600, 400)}
                 width={600}

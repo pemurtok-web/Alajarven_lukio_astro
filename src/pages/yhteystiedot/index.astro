@@ -5,7 +5,7 @@ import Footer from '../../components/Footer.astro';
 import LongPageNav from '../../components/LongPageNav.astro';
 import HeroWave from '../../components/HeroWave.astro';
 import PortableText from '../../components/PortableText.astro';
-import { getPageBySlug, getContactInfo, urlFor, responsiveImage, retinaSrcSet } from '../../lib/sanity';
+import { getPageBySlug, getContactInfo, urlFor, responsiveImage, retinaSrcSet, clean, editAttr, keyPath } from '../../lib/sanity';
 import { MapPin, Phone, Mail, User, Clock, Send, Trophy, GraduationCap, HeartHandshake, ShieldCheck, FileText } from 'lucide-astro';
 
 const page = await getPageBySlug('yhteystiedot');
@@ -57,7 +57,7 @@ function initials(name?: string) {
 
     <!-- Page Hero — full-width, edge-to-edge (no rounded corners), flush against the
          header, with the flowing Aalto wave mask at the bottom. -->
-    <div class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white">
+    <div {...editAttr(page, 'heroBgImage')} class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white">
       {page?.heroBgImage && urlFor(page.heroBgImage) && (
         <div class="absolute inset-0 z-0 pointer-events-none">
           <img
@@ -98,6 +98,7 @@ function initials(name?: string) {
         <div class="overflow-hidden rounded-3xl bg-white border border-slate-200/80 shadow-xl group mb-8">
           <div class="relative overflow-hidden">
             <img
+              {...editAttr(page, 'mainImage')}
               src={mainImg?.src}
               srcset={mainImg?.srcset}
               sizes="(min-width: 1024px) 1024px, 100vw"
@@ -140,7 +141,7 @@ function initials(name?: string) {
 
       {page?.body && (
         <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200/80 mb-12">
-          <PortableText value={page.body} />
+          <PortableText value={page.body} doc={page} path="body" />
         </div>
       )}
 
@@ -167,6 +168,7 @@ function initials(name?: string) {
                 <div class="flex items-center gap-3">
                   {person.image && urlFor(person.image) ? (
                     <img
+                      {...editAttr(contact, `${keyPath('leadership', (person as any)._key)}.image`)}
                       src={urlFor(person.image)?.width(128).height(128).fit('crop').url()}
                       srcset={retinaSrcSet(person.image, 64, 64)}
                       width={64}
@@ -190,13 +192,13 @@ function initials(name?: string) {
                   {person.phone && (
                     <p class="flex items-center gap-2">
                       <Phone class="w-4 h-4 text-alajarvi-500 shrink-0" />
-                      <a href={`tel:${person.phone.replace(/\s/g, '')}`} class="hover:text-alajarvi-600 font-medium">{person.phone}</a>
+                      <a href={`tel:${clean(person.phone).replace(/\s/g, '')}`} class="hover:text-alajarvi-600 font-medium">{person.phone}</a>
                     </p>
                   )}
                   {person.email && (
                     <p class="flex items-center gap-2">
                       <Mail class="w-4 h-4 text-alajarvi-500 shrink-0" />
-                      <a href={`mailto:${person.email}`} class="hover:text-alajarvi-600 text-xs">{person.email}</a>
+                      <a href={`mailto:${clean(person.email)}`} class="hover:text-alajarvi-600 text-xs">{person.email}</a>
                     </p>
                   )}
                 </div>
@@ -224,6 +226,7 @@ function initials(name?: string) {
                   <div class="flex items-center gap-3">
                     {person.image && urlFor(person.image) ? (
                       <img
+                        {...editAttr(contact, `${keyPath('studentSupport', (person as any)._key)}.image`)}
                         src={urlFor(person.image)?.width(96).height(96).fit('crop').url()}
                         srcset={retinaSrcSet(person.image, 48, 48)}
                         width={48}
@@ -250,13 +253,13 @@ function initials(name?: string) {
                     {person.phone && (
                       <p class="flex items-center gap-2">
                         <Phone class="w-4 h-4 text-alajarvi-500 shrink-0" />
-                        <a href={`tel:${person.phone.replace(/\s/g, '')}`} class="hover:text-alajarvi-600 font-medium">{person.phone}</a>
+                        <a href={`tel:${clean(person.phone).replace(/\s/g, '')}`} class="hover:text-alajarvi-600 font-medium">{person.phone}</a>
                       </p>
                     )}
                     {person.email && (
                       <p class="flex items-center gap-2">
                         <Mail class="w-4 h-4 text-alajarvi-500 shrink-0" />
-                        <a href={`mailto:${person.email}`} class="hover:text-alajarvi-600 text-xs">{person.email}</a>
+                        <a href={`mailto:${clean(person.email)}`} class="hover:text-alajarvi-600 text-xs">{person.email}</a>
                       </p>
                     )}
                   </div>
@@ -268,7 +271,7 @@ function initials(name?: string) {
           {contact.teacherOfficePhone && (
             <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between text-sm">
               <span class="font-bold text-slate-800">Lukion opettajainhuone:</span>
-              <a href={`tel:${contact.teacherOfficePhone.replace(/\s/g, '')}`} class="font-semibold text-alajarvi-600 hover:underline">{contact.teacherOfficePhone}</a>
+              <a href={`tel:${clean(contact.teacherOfficePhone).replace(/\s/g, '')}`} class="font-semibold text-alajarvi-600 hover:underline">{contact.teacherOfficePhone}</a>
             </div>
           )}
         </section>

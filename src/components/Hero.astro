@@ -1,11 +1,22 @@
 ---
 import { ArrowRight, Sparkles, Globe, Compass, GraduationCap, Users } from 'lucide-astro';
-import { urlFor, responsiveImage } from '../lib/sanity';
+import { urlFor, responsiveImage, editAttr, clean } from '../lib/sanity';
 import HeroWave from './HeroWave.astro';
 
 interface Stat {
   value: string;
   label: string;
+}
+
+interface QuickCard {
+  title?: string;
+  text?: string;
+  link?: string;
+}
+
+interface HeroButton {
+  text?: string;
+  link?: string;
 }
 
 interface Props {
@@ -16,6 +27,11 @@ interface Props {
   heroBgImageMobile?: any;
   heroImage?: any;
   heroStats?: Stat[];
+  primaryButton?: HeroButton;
+  secondaryButton?: HeroButton;
+  quickCards?: QuickCard[];
+  /** The homepage document, for click-to-edit frames on the images in Studio preview */
+  editDoc?: { _id?: string; _type?: string };
 }
 
 const DEFAULT_STATS: Stat[] = [
@@ -34,16 +50,36 @@ const {
   heroBgImageMobile,
   heroImage,
   heroStats,
+  primaryButton,
+  secondaryButton,
+  quickCards,
+  editDoc,
 } = Astro.props;
 
+const primaryText = primaryButton?.text || 'Tule opiskelemaan (Hakijalle)';
+const primaryHref = clean(primaryButton?.link) || '/hakijalle';
+const secondaryText = secondaryButton?.text || 'Tutustu opinto-oppaaseen';
+const secondaryHref = clean(secondaryButton?.link) || '/opiskelijalle/opinto-opas';
+
 const stats = heroStats && heroStats.length > 0 ? heroStats : DEFAULT_STATS;
+
+const DEFAULT_CARDS: QuickCard[] = [
+  { title: 'Kansainvälisyys', text: 'Japanin vaihto-ohjelmat', link: '/kansainvalisyys/jiyu-gakuen' },
+  { title: 'OPO & Tuki', text: 'Aina apuna opiskelussa', link: '/yhteystiedot#opinto-ohjaus' },
+];
+// Icon and colour go by position, so editors only deal with text and link.
+const CARD_STYLES = [
+  { icon: Globe, iconBox: 'bg-amber-400/20 text-amber-300', hover: 'group-hover:text-amber-300' },
+  { icon: Users, iconBox: 'bg-sky-400/20 text-sky-300', hover: 'group-hover:text-sky-300' },
+];
+const cards = (quickCards && quickCards.length > 0 ? quickCards : DEFAULT_CARDS).slice(0, 2);
 
 const bgImgMobile = responsiveImage(heroBgImageMobile || heroBgImage, [480, 640, 800]);
 const bgImgDesktop = responsiveImage(heroBgImage, [640, 960, 1280, 1600, 1920]);
 const mainImg = responsiveImage(heroImage, [400, 600, 800]);
 ---
 
-<section class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white py-16 sm:py-24">
+<section {...editAttr(editDoc, 'heroBgImage')} class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white py-16 sm:py-24">
   {heroBgImage && (
     <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
       <picture class="w-full h-full">
@@ -91,19 +127,19 @@ const mainImg = responsiveImage(heroImage, [400, 600, 800]);
         <!-- CTA Action Buttons (Full width on mobile for easy tap) -->
         <div class="animate-fade-in-up flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2" style="animation-delay: 300ms">
           <a
-            href="/hakijalle"
+            href={primaryHref}
             class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-alajarvi-900 bg-white hover:bg-alajarvi-50 shadow-lg shadow-black/10 transition-all hover:scale-[1.02] active:scale-95 text-sm sm:text-base text-center"
           >
-            <span>Tule opiskelemaan (Hakijalle)</span>
+            <span>{primaryText}</span>
             <ArrowRight class="w-4 h-4 shrink-0" />
           </a>
           
           <a
-            href="/opiskelijalle/opinto-opas"
+            href={secondaryHref}
             class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md transition-all active:scale-95 text-sm sm:text-base text-center"
           >
             <GraduationCap class="w-4 h-4 text-sky-300 shrink-0" />
-            <span>Tutustu opinto-oppaaseen</span>
+            <span>{secondaryText}</span>
           </a>
         </div>
 
@@ -121,7 +157,7 @@ const mainImg = responsiveImage(heroImage, [400, 600, 800]);
       <!-- Image & Cards Column (5 cols) -->
       <div class="animate-fade-in-up lg:col-span-5 relative" style="animation-delay: 250ms">
         <!-- Main Featured Image Container -->
-        <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 group">
+        <div {...editAttr(editDoc, 'heroImage')} class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 group">
           {mainImg ? (
             <img
               src={mainImg.src}
@@ -153,29 +189,23 @@ const mainImg = responsiveImage(heroImage, [400, 600, 800]);
 
         <!-- Floating Interactive Quick Cards -->
         <div class="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <a href="/kansainvalisyys/jiyu-gakuen" class="p-3.5 sm:p-4 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 backdrop-blur-md transition-all group">
-            <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-xl bg-amber-400/20 text-amber-300 flex items-center justify-center shrink-0">
-                <Globe class="w-5 h-5" />
-              </div>
-              <div>
-                <h4 class="text-sm font-bold text-white group-hover:text-amber-300 transition-colors">Kansainvälisyys</h4>
-                <p class="text-[11px] text-slate-300">Japanin vaihto-ohjelmat</p>
-              </div>
-            </div>
-          </a>
-
-          <a href="/yhteystiedot#opinto-ohjaus" class="p-3.5 sm:p-4 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 backdrop-blur-md transition-all group">
-            <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-xl bg-sky-400/20 text-sky-300 flex items-center justify-center shrink-0">
-                <Users class="w-5 h-5" />
-              </div>
-              <div>
-                <h4 class="text-sm font-bold text-white group-hover:text-sky-300 transition-colors">OPO & Tuki</h4>
-                <p class="text-[11px] text-slate-300">Aina apuna opiskelussa</p>
-              </div>
-            </div>
-          </a>
+          {cards.map((card, i) => {
+            const style = CARD_STYLES[i % CARD_STYLES.length];
+            const CardIcon = style.icon;
+            return (
+              <a href={clean(card.link) || '#'} class="p-3.5 sm:p-4 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 backdrop-blur-md transition-all group">
+                <div class="flex items-center gap-3">
+                  <div class={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${style.iconBox}`}>
+                    <CardIcon class="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 class={`text-sm font-bold text-white transition-colors ${style.hover}`}>{card.title}</h4>
+                    <p class="text-[11px] text-slate-300">{card.text}</p>
+                  </div>
+                </div>
+              </a>
+            );
+          })}
         </div>
 
       </div>

@@ -7,7 +7,7 @@ import QuickLinks from '../components/QuickLinks.astro';
 import NewsHighlights from '../components/NewsHighlights.astro';
 import EventCalendar from '../components/EventCalendar.astro';
 import { Award, BookOpen, Compass, CheckCircle2, ArrowRight } from 'lucide-astro';
-import { getHomepage, responsiveImage } from '../lib/sanity';
+import { getHomepage, responsiveImage, editAttr, keyPath, clean } from '../lib/sanity';
 
 const homepage = await getHomepage();
 const introImg = homepage.introImage ? responsiveImage(homepage.introImage, [400, 600, 800, 1000]) : null;
@@ -49,16 +49,20 @@ const gridColsClass =
       heroBgImageMobile={homepage.heroBgImageMobile}
       heroImage={homepage.heroImage}
       heroStats={homepage.heroStats}
+      primaryButton={homepage.heroPrimaryButton}
+      secondaryButton={homepage.heroSecondaryButton}
+      quickCards={homepage.heroQuickCards}
+      editDoc={homepage}
     />
 
     <!-- Dynamic Quicklinks -->
     <QuickLinks />
 
     <!-- News Highlights Section -->
-    <NewsHighlights />
+    <NewsHighlights heading={homepage.newsSection} />
 
     <!-- Event Calendar Section -->
-    <EventCalendar />
+    <EventCalendar heading={homepage.eventsSection} />
 
     <!-- Esittelyosio & Valttikortit -->
     <section class="pt-10 pb-16 sm:pb-20 bg-transparent border-y border-slate-200/40">
@@ -97,7 +101,7 @@ const gridColsClass =
             <!-- Image Column -->
             <div class="lg:col-span-5">
               {introImg ? (
-                <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200">
+                <div {...editAttr(homepage, 'introImage')} class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200">
                   <img
                     src={introImg.src}
                     srcset={introImg.srcset}
@@ -157,6 +161,7 @@ const gridColsClass =
                   {featImg && (
                     <div class="relative w-full aspect-[16/10] overflow-hidden bg-slate-100 shrink-0 border-b border-slate-100">
                       <img
+                        {...editAttr(homepage, `${keyPath('features', feat._key)}.image`)}
                         src={featImg.src}
                         srcset={featImg.srcset}
                         sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
@@ -187,8 +192,8 @@ const gridColsClass =
                           ))}
                         </ul>
                       ) : feat.description && feat.description.includes('\n') ? (
-                        <div class="space-y-1.5 text-base text-slate-700 pt-1 pl-1">
-                          {feat.description.split('\n').map((line: string, idx: number) => {
+                        <div {...editAttr(homepage, `${keyPath('features', feat._key)}.description`)} class="space-y-1.5 text-base text-slate-700 pt-1 pl-1">
+                          {clean(feat.description).split('\n').map((line: string, idx: number) => {
                             const trimmed = line.trim();
                             if (!trimmed) return null;
                             const isLead = idx === 0 && !/^[-•*]/.test(trimmed);

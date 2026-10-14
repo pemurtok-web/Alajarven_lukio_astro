@@ -1,5 +1,5 @@
 ---
-import { getTopbarLinks, getSiteSettings, getAllPages, urlForLogo, getImageDimensions } from '../lib/sanity';
+import { getTopbarLinks, getSiteSettings, getAllPages, urlForLogo, getImageDimensions, clean, editAttr } from '../lib/sanity';
 import { ExternalLink, ChevronDown, Menu, X, BookOpen, Utensils, GraduationCap, Home, Globe, Megaphone, Phone, FileText } from 'lucide-astro';
 
 const quickLinks = await getTopbarLinks();
@@ -74,7 +74,7 @@ const topLevelPages = allPages
         {siteSettings.phone && (
           <>
             <span class="hidden lg:inline text-slate-500">|</span>
-            <a href={`tel:${siteSettings.phone.replace(/\s+/g, '')}`} class="hidden lg:inline text-slate-300 hover:text-white transition-colors">
+            <a href={`tel:${clean(siteSettings.phone).replace(/\s+/g, '')}`} class="hidden lg:inline text-slate-300 hover:text-white transition-colors">
               📞 {siteSettings.phone}
             </a>
           </>
@@ -82,7 +82,7 @@ const topLevelPages = allPages
         {siteSettings.email && (
           <>
             <span class="hidden xl:inline text-slate-500">|</span>
-            <a href={`mailto:${siteSettings.email}`} class="hidden xl:inline text-slate-300 hover:text-white transition-colors">
+            <a href={`mailto:${clean(siteSettings.email)}`} class="hidden xl:inline text-slate-300 hover:text-white transition-colors">
               ✉️ {siteSettings.email}
             </a>
           </>
@@ -115,6 +115,7 @@ const topLevelPages = allPages
     <a href="/" class="group flex items-center gap-3 shrink-0">
       {logoUrl ? (
         <img
+          {...editAttr(siteSettings, 'logoImage')}
           src={logoUrl}
           width={logoDims?.width}
           height={logoDims?.height}

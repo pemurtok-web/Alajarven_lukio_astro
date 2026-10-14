@@ -3,7 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PortableText from '../../components/PortableText.astro';
-import { getNewsBySlug, getAllNews, urlFor, retinaSrcSet } from '../../lib/sanity';
+import { getNewsBySlug, getAllNews, urlFor, retinaSrcSet, editAttr } from '../../lib/sanity';
 import { Calendar, ChevronRight, ArrowLeft, Share2, Tag } from 'lucide-astro';
 
 export async function getStaticPaths() {
@@ -68,6 +68,7 @@ const articleJsonLd = {
         {post.mainImage && (
           <div class="h-64 sm:h-96 w-full bg-slate-800 relative">
             <img
+              {...editAttr(post, 'mainImage')}
               src={mainImageUrl || ''}
               srcset={retinaSrcSet(post.mainImage, 1200, 600)}
               width={1200}
@@ -102,7 +103,7 @@ const articleJsonLd = {
 
           <div class="pt-4 border-t border-slate-100">
             {post.body ? (
-              <PortableText value={post.body} />
+              <PortableText value={post.body} doc={post} path="body" />
             ) : (
               <div class="prose prose-slate max-w-none text-slate-700 leading-relaxed">
                 <p>Alajärven lukion julkaisema uutinen. Lisätietoja saa lukion kansliasta tai ryhmänohjaajilta.</p>

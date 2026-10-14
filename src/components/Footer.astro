@@ -1,8 +1,16 @@
 ---
 import { MapPin, Phone, Mail, ExternalLink, Heart } from 'lucide-astro';
-import { getSiteSettings, urlForLogo, getImageDimensions } from '../lib/sanity';
+import { getSiteSettings, getContactInfo, urlForLogo, getImageDimensions, editAttr, clean } from '../lib/sanity';
 
 const siteSettings = await getSiteSettings();
+// Contact details come from the same "Yhteystiedot" document as the contact page, so
+// they only need updating in one place. The principal is the first leadership entry whose
+// role mentions "rehtori" but not "apulais" (falls back to the first entry).
+const contact = await getContactInfo();
+const leadership = contact.leadership || [];
+const principal =
+  leadership.find((p) => /rehtori/i.test(clean(p.role) || '') && !/apulais/i.test(clean(p.role) || '')) || leadership[0];
+const address = contact.visitingAddress;
 const logoUrl = siteSettings.logoImage ? urlForLogo(siteSettings.logoImage)?.url() : null;
 const logoDims = siteSettings.logoImage ? getImageDimensions(siteSettings.logoImage) : undefined;
 ---
@@ -15,6 +23,7 @@ const logoDims = siteSettings.logoImage ? getImageDimensions(siteSettings.logoIm
         <div class="flex items-center gap-3">
           {logoUrl ? (
             <img
+              {...editAttr(siteSettings, 'logoImage')}
               src={logoUrl}
               width={logoDims?.width}
               height={logoDims?.height}
@@ -101,22 +110,30 @@ const logoDims = siteSettings.logoImage ? getImageDimensions(siteSettings.logoIm
           Ota yhteyttä
         </h3>
         <ul class="space-y-3 text-sm text-slate-300">
-          <li class="flex items-start gap-2.5">
-            <MapPin class="w-4 h-4 text-alajarvi-400 mt-1 shrink-0" />
-            <span>Kaupintie 7, 62900 Alajärvi</span>
-          </li>
-          <li class="flex items-center gap-2.5">
-            <Phone class="w-4 h-4 text-alajarvi-400 shrink-0" />
-            <a href="tel:0406739091" class="hover:text-white">040 673 9091 (Rehtori)</a>
-          </li>
-          <li class="flex items-center gap-2.5">
-            <Phone class="w-4 h-4 text-alajarvi-400 shrink-0" />
-            <a href="tel:0406620717" class="hover:text-white">040 662 0717 (Kanslia)</a>
-          </li>
-          <li class="flex items-center gap-2.5">
-            <Mail class="w-4 h-4 text-alajarvi-400 shrink-0" />
-            <a href="mailto:anne.luodeslampi@alajarvi.fi" class="hover:text-white text-xs">anne.luodeslampi@alajarvi.fi</a>
-          </li>
+          {address && (
+            <li class="flex items-start gap-2.5">
+              <MapPin class="w-4 h-4 text-alajarvi-400 mt-1 shrink-0" />
+              <span>{address}</span>
+            </li>
+          )}
+          {principal?.phone && (
+            <li class="flex items-center gap-2.5">
+              <Phone class="w-4 h-4 text-alajarvi-400 shrink-0" />
+              <a href={`tel:${clean(principal.phone).replace(/\s/g, '')}`} class="hover:text-white">{principal.phone} ({principal.role || 'Rehtori'})</a>
+            </li>
+          )}
+          {contact.officePhone && (
+            <li class="flex items-center gap-2.5">
+              <Phone class="w-4 h-4 text-alajarvi-400 shrink-0" />
+              <a href={`tel:${clean(contact.officePhone).replace(/\s/g, '')}`} class="hover:text-white">{contact.officePhone} (Kanslia)</a>
+            </li>
+          )}
+          {principal?.email && (
+            <li class="flex items-center gap-2.5">
+              <Mail class="w-4 h-4 text-alajarvi-400 shrink-0" />
+              <a href={`mailto:${clean(principal.email)}`} class="hover:text-white text-xs">{principal.email}</a>
+            </li>
+          )}
         </ul>
       </div>
 

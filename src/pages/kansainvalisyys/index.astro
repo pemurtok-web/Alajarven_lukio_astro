@@ -6,7 +6,7 @@ import LongPageNav from '../../components/LongPageNav.astro';
 import HeroWave from '../../components/HeroWave.astro';
 import PortableText from '../../components/PortableText.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
-import { getPageBySlug, urlFor, responsiveImage, extractPageAnchors } from '../../lib/sanity';
+import { getPageBySlug, urlFor, responsiveImage, extractPageAnchors, editAttr, keyPath } from '../../lib/sanity';
 import { Globe, ChevronRight, FileText, CheckCircle, Star, BookOpen, Award } from 'lucide-astro';
 
 const page = await getPageBySlug('kansainvalisyys');
@@ -33,7 +33,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
     <!-- Page Hero — full-width, edge-to-edge (no rounded corners), flush against the header,
          with the flowing Aalto wave mask at the bottom. Breadcrumb lives inside it (restyled
          for the dark background) instead of its own row above. -->
-    <div class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white">
+    <div {...editAttr(page, 'heroBgImage')} class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white">
       {page?.heroBgImage && urlFor(page.heroBgImage) && (
         <div class="absolute inset-0 z-0 pointer-events-none">
           <img
@@ -103,6 +103,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
         <div class="group relative rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white hover:shadow-xl transition-all">
           <a href={mainImg?.src} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden bg-slate-50 flex flex-col justify-center">
             <img
+              {...editAttr(page, 'mainImage')}
               src={mainImg?.src}
               srcset={mainImg?.srcset}
               sizes="(min-width: 1024px) 1024px, 100vw"
@@ -206,7 +207,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                         </div>
 
                         <div class="text-slate-700 leading-relaxed text-base space-y-3">
-                          {sec.content && <PortableText value={sec.content} />}
+                          {sec.content && <PortableText value={sec.content} doc={page} path={`${keyPath('sections', sec._key)}.content`} />}
                         </div>
                       </div>
 
@@ -216,6 +217,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
                           <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-slate-50">
                             <a href={imageUrl} target="_blank" rel="noopener noreferrer" class="block relative cursor-zoom-in overflow-hidden">
                               <img
+                                {...editAttr(page, (sec.image ? `${keyPath('sections', sec._key)}.image` : keyPath('gallery', secImage?._key)))}
                                 src={secImgResponsive?.src || imageUrl}
                                 srcset={secImgResponsive?.srcset}
                                 sizes="(min-width: 1024px) 50vw, 100vw"
@@ -259,7 +261,7 @@ const mainImg = page?.mainImage ? responsiveImage(page.mainImage, [640, 960, 128
         /* STANDARD ARTICLE LAYOUT (fallback) */
         <div class="bg-white rounded-3xl p-5 sm:p-8 md:p-10 shadow-sm border border-slate-200/80 space-y-8">
           {page?.body && page.body.length > 0 ? (
-            <PortableText value={page.body} />
+            <PortableText value={page.body} doc={page} path="body" />
           ) : (
             <p class="text-center text-slate-500 text-sm py-8">Sisältöä päivitetään pian.</p>
           )}

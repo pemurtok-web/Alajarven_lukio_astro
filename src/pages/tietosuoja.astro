@@ -43,7 +43,7 @@ const page = await getPageBySlug('tietosuoja');
         )}
 
         {page?.body && page.body.length > 0 && (
-          <PortableText value={page.body} />
+          <PortableText value={page.body} doc={page} path="body" />
         )}
       </div>
 

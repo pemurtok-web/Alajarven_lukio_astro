@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { getAllNews, getPageBySlug, urlFor, responsiveImage, retinaSrcSet } from '../../lib/sanity';
+import { getAllNews, getPageBySlug, urlFor, responsiveImage, retinaSrcSet, editAttr, keyPath } from '../../lib/sanity';
 import { Newspaper, Calendar, ArrowRight, ChevronRight, Search } from 'lucide-astro';
 import HeroWave from '../../components/HeroWave.astro';
 
@@ -23,7 +23,7 @@ const heroImg = page?.heroBgImage ? responsiveImage(page.heroBgImage, [640, 960,
     <!-- Page Hero — full-width, edge-to-edge (no rounded corners), flush against the header,
          with the flowing Aalto wave mask at the bottom. Breadcrumb lives inside it (restyled
          for the dark background) instead of its own row above. -->
-    <div class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white">
+    <div {...editAttr(page, 'heroBgImage')} class="relative overflow-hidden bg-gradient-to-br from-alajarvi-900 via-alajarvi-800 to-[#045CD2] text-white">
       {page?.heroBgImage && urlFor(page.heroBgImage) && (
         <div class="absolute inset-0 z-0 pointer-events-none">
           <img
@@ -70,6 +70,7 @@ const heroImg = page?.heroBgImage ? responsiveImage(page.heroBgImage, [640, 960,
             <div class="relative h-48 bg-gradient-to-br from-alajarvi-700 to-alajarvi-900 overflow-hidden">
               {item.mainImage ? (
                 <img
+                  {...editAttr(item, 'mainImage')}
                   src={urlFor(item.mainImage)?.width(600).height(400).fit('crop').url() || ''}
                   srcset={retinaSrcSet(item.mainImage, 600, 400)}
                   width={600}

@@ -26,9 +26,18 @@ export default defineConfig({
     plugins: [fixSanityWindowsAliases],
     // The visual editing overlay only renders in Studio preview mode, so Vite never sees
     // it during its startup scan and would serve it unbundled (its CommonJS deps such as
-    // lodash then fail to load in the browser). Pre-bundle it explicitly.
+    // lodash then fail to load in the browser). Pre-bundle it explicitly — together with
+    // React's JSX runtimes, which would otherwise be discovered late and re-optimized
+    // mid-load, leaving the page with two React copies ("_jsxDEV is not a function").
     optimizeDeps: {
-      include: ['@sanity/visual-editing/react'],
+      include: [
+        '@sanity/visual-editing/react',
+        'react',
+        'react-dom',
+        'react-dom/client',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
+      ],
     },
   },
   site: 'https://alajarven-lukio-dev.netlify.app',

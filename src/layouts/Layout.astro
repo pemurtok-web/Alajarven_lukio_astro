@@ -136,6 +136,13 @@ const ogImageURL = image ? new URL(image, Astro.site).toString() : undefined;
     <noscript>
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
     </noscript>
+
+    <!-- Every page's images come from Sanity's CDN: open the connection while the HTML is
+    still downloading, so the first (LCP) image doesn't pay DNS + TLS on top of its own load. -->
+    <link rel="preconnect" href="https://cdn.sanity.io" />
+    <!-- Pages can preload their LCP image here (it otherwise isn't discovered until the parser
+    gets past the ~100 KB of inlined CSS). -->
+    <slot name="head" />
   </head>
   <body class="min-h-screen flex flex-col bg-[#F6FAFE] text-slate-800 antialiased selection:bg-alajarvi-500 selection:text-white overflow-x-clip w-full max-w-full relative">
     {gtmId && (

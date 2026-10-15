@@ -30,6 +30,12 @@ const gridColsClass =
     : features.length === 2
     ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2'
     : 'grid-cols-1 max-w-md mx-auto';
+
+// Preload the hero background (the LCP element). Widths must match Hero.astro so the
+// browser reuses the preloaded file instead of fetching a second one.
+const heroBg = homepage.heroBgImage;
+const heroPreloadMobile = heroBg ? responsiveImage(homepage.heroBgImageMobile || heroBg, [480, 640, 800]) : null;
+const heroPreloadDesktop = heroBg ? responsiveImage(heroBg, [640, 960, 1280, 1600, 1920]) : null;
 ---
 
 <Layout
@@ -37,6 +43,12 @@ const gridColsClass =
   description={homepage.introDescription || homepage.heroDescription || 'Alajärven lukio tarjoaa laadukasta ja monipuolista yleislukio-opetusta, vahvaa opinto-ohjausta ja laajoja kansainvälisyysmahdollisuuksia Alajärvellä.'}
   image={introImg?.src}
 >
+  {heroPreloadMobile && (
+    <link slot="head" rel="preload" as="image" media="(max-width: 640px)" imagesrcset={heroPreloadMobile.srcset} imagesizes="100vw" fetchpriority="high" />
+  )}
+  {heroPreloadDesktop && (
+    <link slot="head" rel="preload" as="image" media="(min-width: 641px)" imagesrcset={heroPreloadDesktop.srcset} imagesizes="100vw" fetchpriority="high" />
+  )}
   <Header />
 
   <main id="main-content" tabindex="-1" class="focus:outline-none">
